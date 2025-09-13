@@ -146,3 +146,57 @@ For production with PostgreSQL, update database configuration in `src/config/dat
 - Helmet middleware provides security headers
 - CORS is configured for development (allow all origins)
 - Input validation should be added as needed
+
+## TODO
+
+The following features are planned or could be enhanced in future iterations:
+
+1. **Order Management System**
+   - Implement order creation and tracking
+   - Add order status updates (pending, preparing, on-the-way, delivered)
+   - Create order history functionality
+
+2. **Shopping Cart Functionality** 
+   - Implement add/remove items from cart
+   - Add quantity management
+   - Enable cart persistence between sessions
+
+3. **Payment Processing Integration**
+   - Integrate payment gateway (Stripe, PayPal)
+   - Implement order confirmation flow
+   - Add transaction logging
+
+4. **Advanced User Profile Management**
+   - Allow user information editing
+   - Implement address book management
+   - Add order history viewing capability
+
+5. **Restaurant Owner Dashboard**
+   - Create menu management interface
+   - Implement order receiving notifications
+   - Add performance analytics dashboard
+
+6. **Push Notifications System**
+   - Implement order status updates
+   - Add promotional message delivery
+   - Enable system alert notifications
+
+7. **Enhanced Search & Filtering**
+   - Advanced filtering by price range, cuisine type, delivery time
+   - Sorting options (rating, price, popularity)
+   - Location-based filtering capabilities
+
+8. **Reviews and Ratings System**
+   - Customer reviews for restaurants/dishes
+   - Rating aggregation functionality
+   - Review moderation tools
+
+9. **Mobile Responsiveness Improvements**
+   - Optimize UI for mobile devices
+   - Implement touch-friendly interactions
+   - Improve performance on mobile networks
+
+10. **Security Enhancements**
+    - Implement rate limiting for API endpoints
+    - Add more comprehensive input validation
+    - Enhance JWT token security features
