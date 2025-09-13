@@ -50,7 +50,7 @@ To get started quickly, follow these steps:
 
 5. Access the application:
    - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8080/api
+   - Backend API: http://localhost:59806/api
 
 ### Running Without Docker
 
@@ -61,7 +61,7 @@ If you prefer not to use Docker, you can run the services individually:
    cd restaurantes-backend
    ./mvnw compile quarkus:dev
    ```
-   The backend will be available at http://localhost:8080/api
+   The backend will be available at http://localhost:59806/api
 
 2. **Start the Frontend**:
    ```bash
@@ -80,7 +80,7 @@ Environment variables are used to configure both frontend and backend services. 
    ```
 
 2. **Update the `.env` file** with your specific configuration:
-   - `VITE_API_URL`: URL of the backend API (default: `http://localhost:8080/api`)
+   - `VITE_API_URL`: URL of the backend API (default: `http://localhost:59806/api`)
    - Other frontend-specific variables
 
 3. **Backend environment variables**:
@@ -95,7 +95,7 @@ Environment variables are used to configure both frontend and backend services. 
    ```
 
 2. Update the `.env` file with your specific configuration:
-   - `VITE_API_URL`: URL of the backend API (default: `http://localhost:8080/api`)
+   - `VITE_API_URL`: URL of the backend API (default: `http://localhost:59806/api`)
    - Other frontend-specific variables
 
 ### Running Services Individually
@@ -107,7 +107,7 @@ If you prefer to run the services individually, follow these steps:
 cd restaurantes-backend
 ./mvnw compile quarkus:dev
 ```
-The backend service will be available at `http://localhost:8080`
+The backend service will be available at `http://localhost:59806`
 
 #### Frontend (React)
 ```bash
@@ -157,7 +157,7 @@ cd restaurantes-backend
 # Run the application in development mode (with live reload)
 ./mvnw quarkus:dev
 
-# The backend API will be available at http://localhost:8080
+# The backend API will be available at http://localhost:59806
 ```
 
 #### Packaging and Running
@@ -218,7 +218,7 @@ This will:
 - Start the frontend service on port 3000
 - Set up proper network connections between containers
 
-You can access the application at [http://localhost:3000](http://localhost:3000) and the Swagger API documentation at [http://localhost:8080/q/swagger](http://localhost:8080/q/swagger).
+You can access the application at [http://localhost:3000](http://localhost:3000) and the Swagger API documentation at [http://localhost:59806/q/swagger](http://localhost:59806/q/swagger).
 
 ## 🛠️ Technology Stack
 
@@ -416,7 +416,7 @@ We use Liquibase for database schema migrations:
 3. **Checking migration status**:
    ```bash
    ./mvnw quarkus:dev
-   # Access Liquibase UI at http://localhost:8080/q/liquibase-ui
+   # Access Liquibase UI at http://localhost:59806/q/liquibase-ui
    ```
 
 ### Development Environment
@@ -425,7 +425,7 @@ The application uses an H2 in-memory database for development, which is automati
 For local development without Docker:
 1. Make sure you have Java 17+ installed
 2. Start the backend service as described in the "Running Without Docker" section
-3. The H2 console will be available at http://localhost:8080/h2-console
+3. The H2 console will be available at http://localhost:59806/h2-console
 
 ### Production Environment
 For production, you'll need to configure a PostgreSQL or MySQL database:
@@ -476,10 +476,10 @@ The backend provides a REST API with comprehensive endpoints for all application
 
 For detailed API documentation, visit the following URLs when the backend is running:
 
-- **Swagger UI**: [http://localhost:8080/q/swagger](http://localhost:8080/q/swagger)
+- **Swagger UI**: [http://localhost:59806/q/swagger](http://localhost:59806/q/swagger)
   The Swagger UI provides an interactive interface to explore and test all available endpoints.
 
-- **OpenAPI JSON**: [http://localhost:8080/q/openapi](http://localhost:8080/q/openapi)
+- **OpenAPI JSON**: [http://localhost:59806/q/openapi](http://localhost:59806/q/openapi)
   Machine-readable API specification in OpenAPI format.
 
 ### API Authentication
@@ -512,7 +512,7 @@ The API follows semantic versioning principles with version numbers included in 
 - **Symptoms**: The frontend shows API errors or can't load data
 - **Solutions**:
   - Verify both services are running (`npm start` and `./mvnw quarkus:dev`)
-  - Check that the API URL in `.env` matches your setup (default: `http://localhost:8080/api`)
+  - Check that the API URL in `.env` matches your setup (default: `http://localhost:59806/api`)
   - Look for CORS errors in the browser console
   - Ensure no firewall is blocking port 8080
 
@@ -547,15 +547,15 @@ The API follows semantic versioning principles with version numbers included in 
 1. **Check logs**: Both frontend and backend provide helpful error messages in their terminal output
 2. **Browser console**: For frontend issues, check the browser's developer console for JavaScript errors
 3. **Network tab**: Use your browser's network tab to inspect API requests and responses
-4. **Swagger UI**: Test API endpoints directly at [http://localhost:8080/q/swagger](http://localhost:8080/q/swagger)
-5. **Health endpoint**: Check backend health at [http://localhost:8080/q/health](http://localhost:8080/q/health)
+4. **Swagger UI**: Test API endpoints directly at [http://localhost:59806/q/swagger](http://localhost:59806/q/swagger)
+5. **Health endpoint**: Check backend health at [http://localhost:59806/q/health](http://localhost:59806/q/health)
 
 ### API Documentation
 
 Our REST API is documented using OpenAPI/Swagger. You can access the interactive documentation at:
 
-- [Swagger UI](http://localhost:8080/q/swagger)
-- [OpenAPI JSON](http://localhost:8080/q/openapi)
+- [Swagger UI](http://localhost:59806/q/swagger)
+- [OpenAPI JSON](http://localhost:59806/q/openapi)
 
 The API follows RESTful principles with proper HTTP status codes and response formats.
 
@@ -826,8 +826,8 @@ public class RestaurantResource {
 Create a `.env` file in the `restaurantes-frontend` directory with the following variables:
 
 ```bash
-# Backend API URL (default: http://localhost:8080/api)
-VITE_API_URL=http://localhost:8080/api
+# Backend API URL (default: http://localhost:59806/api)
+VITE_API_URL=http://localhost:59806/api
 
 # Payment gateway keys (for production)
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
@@ -1436,7 +1436,7 @@ cd restaurantes
 
 1. **Development**:
    - Use H2 database (configured by default)
-   - Access console at http://localhost:8080/h2-console
+   - Access console at http://localhost:59806/h2-console
 2. **Production**:
    - Configure PostgreSQL/MySQL settings in application.properties
 
@@ -1715,7 +1715,7 @@ Please note:
 
 2. **Frontend not connecting to backend**:
    - Verify both services are running (`npm start` and `./mvnw quarkus:dev`)
-   - Check that API URL in `.env` matches your setup (default: `http://localhost:8080/api`)
+   - Check that API URL in `.env` matches your setup (default: `http://localhost:59806/api`)
    - Look for CORS errors in the browser console
 
 3. **Database connection issues**:
