@@ -7,6 +7,20 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 59806;
 
+// Import models
+const sequelize = require('./config/database');
+const Order = require('./models/Order');
+const OrderItem = require('./models/OrderItem');
+
+// Sync database (this will create tables if they don't exist)
+sequelize.sync()
+    .then(() => {
+        console.log('Database synchronized successfully');
+    })
+    .catch((error) => {
+        console.error('Error synchronizing database:', error);
+    });
+
 // Middleware
 app.use(helmet());
 app.use(cors({
@@ -24,6 +38,7 @@ const categoryRoutes = require('./routes/category');
 const searchRoutes = require('./routes/search');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const orderRoutes = require('./routes/order');
 
 // Routes
 app.use('/api/restaurants', restaurantRoutes);
@@ -32,6 +47,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

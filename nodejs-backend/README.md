@@ -107,6 +107,13 @@ The application uses a relational database schema with the following key tables:
 - `GET /api/search/restaurants?q=searchTerm&category=categoryId` - Search restaurants
 - `GET /api/search/dishes?q=searchTerm&restaurantId=restaurantId` - Search dishes
 
+### Orders
+- `POST /api/orders` - Create a new order
+- `GET /api/orders` - Get all orders (for user or admin)
+- `GET /api/orders/:id` - Get a specific order by ID
+- `PUT /api/orders/:id` - Update an order status (admin only)
+- `DELETE /api/orders/:id` - Cancel an order
+
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
@@ -151,52 +158,47 @@ For production with PostgreSQL, update database configuration in `src/config/dat
 
 The following features are planned or could be enhanced in future iterations:
 
-1. **Order Management System**
-   - Implement order creation and tracking
-   - Add order status updates (pending, preparing, on-the-way, delivered)
-   - Create order history functionality
-
-2. **Shopping Cart Functionality** 
+1. **Shopping Cart Functionality** 
    - Implement add/remove items from cart
    - Add quantity management
    - Enable cart persistence between sessions
 
-3. **Payment Processing Integration**
+2. **Payment Processing Integration**
    - Integrate payment gateway (Stripe, PayPal)
    - Implement order confirmation flow
    - Add transaction logging
 
-4. **Advanced User Profile Management**
+3. **Advanced User Profile Management**
    - Allow user information editing
    - Implement address book management
    - Add order history viewing capability
 
-5. **Restaurant Owner Dashboard**
+4. **Restaurant Owner Dashboard**
    - Create menu management interface
    - Implement order receiving notifications
    - Add performance analytics dashboard
 
-6. **Push Notifications System**
+5. **Push Notifications System**
    - Implement order status updates
    - Add promotional message delivery
    - Enable system alert notifications
 
-7. **Enhanced Search & Filtering**
+6. **Enhanced Search & Filtering**
    - Advanced filtering by price range, cuisine type, delivery time
    - Sorting options (rating, price, popularity)
    - Location-based filtering capabilities
 
-8. **Reviews and Ratings System**
+7. **Reviews and Ratings System**
    - Customer reviews for restaurants/dishes
    - Rating aggregation functionality
    - Review moderation tools
 
-9. **Mobile Responsiveness Improvements**
+8. **Mobile Responsiveness Improvements**
    - Optimize UI for mobile devices
    - Implement touch-friendly interactions
    - Improve performance on mobile networks
 
-10. **Security Enhancements**
+9. **Security Enhancements**
     - Implement rate limiting for API endpoints
     - Add more comprehensive input validation
     - Enhance JWT token security features
