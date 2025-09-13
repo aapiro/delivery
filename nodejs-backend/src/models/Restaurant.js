@@ -14,6 +14,21 @@ const Restaurant = sequelize.define('Restaurant', {
     description: {
         type: DataTypes.TEXT
     },
+    logo: {
+        type: DataTypes.STRING(512)
+    },
+    cover_image: {
+        type: DataTypes.STRING(512)
+    },
+    address: {
+        type: DataTypes.TEXT
+    },
+    phone: {
+        type: DataTypes.STRING(20)
+    },
+    email: {
+        type: DataTypes.STRING(255)
+    },
     cuisine_type: {
         type: DataTypes.STRING(100)
     },
@@ -43,8 +58,20 @@ const Restaurant = sequelize.define('Restaurant', {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     },
-    image_url: {
-        type: DataTypes.STRING(512)
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    category_id: {
+        type: DataTypes.INTEGER
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'restaurants',

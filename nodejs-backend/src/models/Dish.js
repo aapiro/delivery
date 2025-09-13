@@ -11,6 +11,9 @@ const Dish = sequelize.define('Dish', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    category_id: {
+        type: DataTypes.INTEGER
+    },
     name: {
         type: DataTypes.STRING(255),
         allowNull: false
@@ -25,9 +28,33 @@ const Dish = sequelize.define('Dish', {
     image_url: {
         type: DataTypes.STRING(512)
     },
+    original_price: {
+        type: DataTypes.DECIMAL(6, 2)
+    },
     is_available: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    is_popular: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    preparation_time: {
+        type: DataTypes.INTEGER
+    },
+    ingredients: {
+        type: DataTypes.TEXT
+    },
+    allergens: {
+        type: DataTypes.TEXT
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'dishes',

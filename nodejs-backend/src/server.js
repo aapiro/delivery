@@ -20,10 +20,18 @@ app.use(express.urlencoded({ extended: true }));
 // Import routes
 const restaurantRoutes = require('./routes/restaurant');
 const dishRoutes = require('./routes/dish');
+const categoryRoutes = require('./routes/category');
+const searchRoutes = require('./routes/search');
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
 
 // Routes
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/dishes', dishRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
