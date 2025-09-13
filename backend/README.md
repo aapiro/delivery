@@ -14,7 +14,7 @@ Quarkus-based backend for the DeliveryApp multi-restaurant delivery platform.
 ./mvnw quarkus:dev
 ```
 
-This starts the application with live reload at [http://localhost:8080](http://localhost:8080).
+This starts the application with live reload at [http://localhost:59806](http://localhost:59806).
 
 ### Packaging and Running
 
@@ -400,7 +400,7 @@ Configure environment variables in `application.properties`:
 
 1. **Development**:
    - H2 database configured by default
-   - Access console at http://localhost:8080/h2-console
+   - Access console at http://localhost:59806/h2-console
 2. **Production**:
    - Configure PostgreSQL/MySQL settings in application.properties
 
@@ -579,7 +579,7 @@ The backend provides a REST API with comprehensive endpoints for all application
 | POST   | /api/restaurants   | Create a new restaurant    |
 | GET    | /api/menu-items    | Get all menu items          |
 
-For detailed API documentation, visit [http://localhost:8080/q/swagger](http://localhost:8080/q/swagger) when the backend is running in development mode. The Swagger UI provides an interactive interface to explore and test all available endpoints.
+For detailed API documentation, visit [http://localhost:59806/q/swagger](http://localhost:59806/q/swagger) when the backend is running in development mode. The Swagger UI provides an interactive interface to explore and test all available endpoints.
 
 ### API Authentication
 All protected endpoints require a valid JWT token, which can be obtained by authenticating at `/api/auth/login`.
