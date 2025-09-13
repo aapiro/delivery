@@ -1,6 +1,5 @@
 package com.example;
 
-import io.quarkus.hibernate.orm.panache.MappingTo;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -8,7 +7,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "restaurants")
-@MappingTo(Restaurant.class)
 public class Restaurant {
 
     @Id

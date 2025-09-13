@@ -1,12 +1,10 @@
 package com.example;
 
-import io.quarkus.hibernate.orm.panache.MappingTo;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "dishes")
-@MappingTo(Dish.class)
 public class Dish {
 
     @Id
