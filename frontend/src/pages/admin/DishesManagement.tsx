@@ -37,6 +37,18 @@ const DishesManagement: React.FC = () => {
             setDishes(response);
         } catch (error) {
             console.error('Error fetching dishes:', error);
+            // Set default empty state in case of error
+            setDishes({
+                data: [],
+                pagination: {
+                    page: 1,
+                    limit: 20,
+                    total: 0,
+                    totalPages: 0,
+                    hasNext: false,
+                    hasPrev: false
+                }
+            });
         } finally {
             setLoading(false);
         }
@@ -172,7 +184,7 @@ const DishesManagement: React.FC = () => {
                                         Cargando platos...
                                     </td>
                                 </tr>
-                            ) : dishes.data.length === 0 ? (
+                            ) : (dishes && dishes.data) ? (dishes.data.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
                                         No se encontraron platos
@@ -242,13 +254,19 @@ const DishesManagement: React.FC = () => {
                                         </td>
                                     </tr>
                                 ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                                        No se encontraron platos
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
 
                 {/* Pagination */}
-                {dishes.pagination.totalPages > 1 && (
+                {dishes && dishes.pagination && dishes.pagination.totalPages > 1 && (
                     <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
                         <div className="flex-1 flex justify-between sm:hidden">
                             <Button
@@ -271,11 +289,11 @@ const DishesManagement: React.FC = () => {
                                 <p className="text-sm text-gray-700">
                                     Mostrando{' '}
                                     <span className="font-medium">
-                                        {(currentPage - 1) * dishes.pagination.limit + 1}
+                                        {(currentPage - 1) * (dishes.pagination.limit || 20) + 1}
                                     </span>{' '}
                                     a{' '}
                                     <span className="font-medium">
-                                        {Math.min(currentPage * dishes.pagination.limit, dishes.pagination.total)}
+                                        {Math.min(currentPage * (dishes.pagination.limit || 20), dishes.pagination.total)}
                                     </span>{' '}
                                     de{' '}
                                     <span className="font-medium">{dishes.pagination.total}</span> platos

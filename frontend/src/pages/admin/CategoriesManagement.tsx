@@ -33,6 +33,18 @@ const CategoriesManagement: React.FC = () => {
             setCategories(response);
         } catch (error) {
             console.error('Error fetching categories:', error);
+            // Set default empty state in case of error
+            setCategories({
+                data: [],
+                pagination: {
+                    page: 1,
+                    limit: 20,
+                    total: 0,
+                    totalPages: 0,
+                    hasNext: false,
+                    hasPrev: false
+                }
+            });
         } finally {
             setLoading(false);
         }
@@ -121,7 +133,7 @@ const CategoriesManagement: React.FC = () => {
                             </div>
                         </Card>
                     ))
-                ) : categories.data.length === 0 ? (
+                ) : (categories && categories.data) ? (categories.data.length === 0 ? (
                     <div className="col-span-full text-center py-12">
                         <div className="text-gray-500">
                             <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
@@ -184,6 +196,14 @@ const CategoriesManagement: React.FC = () => {
                             </div>
                         </Card>
                     ))
+                )) : (
+                    <div className="col-span-full text-center py-12">
+                        <div className="text-gray-500">
+                            <Search className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                            <p className="text-lg font-medium">No se encontraron categorías</p>
+                            <p className="text-sm">Intenta ajustar los filtros de búsqueda</p>
+                        </div>
+                    </div>
                 )}
             </div>
 
