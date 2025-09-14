@@ -1,11 +1,9 @@
 package com.example;
 
-import io.quarkus.hibernate.orm.panache.MappingTo;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "restaurant_categories")
-@MappingTo(RestaurantCategory.class)
 public class RestaurantCategory {
 
     @EmbeddedId
