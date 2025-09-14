@@ -141,13 +141,13 @@ const AdminDashboard: React.FC = () => {
                                     <div className="flex items-center space-x-2 text-xs text-gray-500">
                                         <span>{item.orderCount} pedidos</span>
                                         <span>•</span>
-                                        <span>€{item.revenue.toFixed(2)}</span>
+                                        <span>€{(item.revenue !== undefined ? item.revenue : 0).toFixed(2)}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center space-x-1">
                                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
                                     <span className="text-sm text-gray-600">
-                                        {item.restaurant.rating.toFixed(1)}
+                                        {(item.restaurant.rating !== undefined ? item.restaurant.rating : 0).toFixed(1)}
                                     </span>
                                 </div>
                             </div>
