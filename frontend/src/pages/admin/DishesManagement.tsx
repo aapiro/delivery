@@ -207,7 +207,7 @@ const DishesManagement: React.FC = () => {
                                             {dish.category?.name || 'N/A'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            ${dish.price.toFixed(2)}
+                                            ${(dish.price !== undefined ? dish.price : 0).toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             {getStatusBadge(dish.isAvailable)}

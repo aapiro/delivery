@@ -273,7 +273,7 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
                     <div className="flex items-center space-x-1 ml-2">
                         <Star className="w-4 h-4 text-yellow-400 fill-current" />
                         <span className="text-sm text-gray-600">
-                            {restaurant.rating.toFixed(1)}
+                            {(restaurant.rating !== undefined ? restaurant.rating : 0).toFixed(1)}
                         </span>
                     </div>
                 </div>
@@ -291,7 +291,7 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
                         <Clock className="w-4 h-4 mr-2" />
                         <span>{restaurant.deliveryTime}</span>
                         <span className="mx-2">•</span>
-                        <span>€{restaurant.deliveryFee.toFixed(2)}</span>
+                        <span>€{(restaurant.deliveryFee !== undefined ? restaurant.deliveryFee : 0).toFixed(2)}</span>
                     </div>
                 </div>
 
