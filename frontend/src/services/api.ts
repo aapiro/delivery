@@ -225,3 +225,44 @@ export const api = {
     setAuthToken: (token: string) => apiService.setAuthToken(token),
     removeAuthToken: () => apiService.removeAuthToken(),
 };
+
+// ============= AUTHENTICATION METHODS =============
+export const registerUser = async ({ name, email, password }: { name: string; email: string; password: string }) => {
+    try {
+        const response = await api.post<{ user: any; token: string; refreshToken: string }>('/auth/register', {
+            name,
+            email,
+            password
+        });
+        
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const loginUser = async ({ email, password }: { email: string; password: string }) => {
+    try {
+        const response = await api.post<{ user: any; token: string; refreshToken: string }>('/auth/login', {
+            email,
+            password
+        });
+        
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const logoutUser = async () => {
+    try {
+        // En una implementación real, aquí se haría la llamada al endpoint de logout
+        localStorage.removeItem(CACHE_KEYS.TOKEN);
+        localStorage.removeItem(CACHE_KEYS.REFRESH_TOKEN);
+        localStorage.removeItem(CACHE_KEYS.USER);
+        
+        return { success: true };
+    } catch (error) {
+        throw error;
+    }
+};
