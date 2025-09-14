@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import { queryClient } from './services/queryClient';
+import { AuthProvider } from './components/common/AuthProvider';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -15,11 +16,13 @@ root.render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <BrowserRouter>
-                <App />
-                {/* React Query DevTools - temporalmente deshabilitado por error de locale */}
-                {/* {process.env.NODE_ENV === 'development' && (
-                    <ReactQueryDevtools initialIsOpen={false} />
-                )} */}
+                <AuthProvider>
+                    <App />
+                    {/* React Query DevTools - temporalmente deshabilitado por error de locale */}
+                    {/* {process.env.NODE_ENV === 'development' && (
+                        <ReactQueryDevtools initialIsOpen={false} />
+                    )} */}
+                </AuthProvider>
             </BrowserRouter>
         </QueryClientProvider>
     </React.StrictMode>

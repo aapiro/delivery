@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-
-// Mock user data (in a real app, this would be in database)
-let users = [];
+const User = require('../models/User');
 
 // POST /api/auth/register - Register new user
 router.post('/register', async (req, res) => {
@@ -11,7 +9,7 @@ router.post('/register', async (req, res) => {
         const { name, email, password } = req.body;
         
         // Check if user already exists
-        const existingUser = users.find(user => user.email === email);
+        const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists' });
         }
@@ -20,21 +18,16 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // Create new user
-        const newUser = {
-            id: users.length + 1,
+        const newUser = await User.create({
             name,
             email,
-            password: hashedPassword,
-            created_at: new Date(),
-            updated_at: new Date()
-        };
-        
-        users.push(newUser);
+            password: hashedPassword
+        });
         
         res.status(201).json({
             user: { id: newUser.id, name: newUser.name, email: newUser.email },
-            token: 'mock-jwt-token-' + newUser.id,
-            refreshToken: 'mock-refresh-token-' + newUser.id
+            token: 'jwt-token-' + newUser.id,
+            refreshToken: 'refresh-token-' + newUser.id
         });
     } catch (error) {
         console.error('Error registering user:', error);
@@ -48,7 +41,7 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
         
         // Find user by email
-        const user = users.find(u => u.email === email);
+        const user = await User.findOne({ where: { email } });
         if (!user) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -61,8 +54,8 @@ router.post('/login', async (req, res) => {
         
         res.json({
             user: { id: user.id, name: user.name, email: user.email },
-            token: 'mock-jwt-token-' + user.id,
-            refreshToken: 'mock-refresh-token-' + user.id
+            token: 'jwt-token-' + user.id,
+            refreshToken: 'refresh-token-' + user.id
         });
     } catch (error) {
         console.error('Error logging in:', error);
@@ -77,13 +70,13 @@ router.post('/refresh', async (req, res) => {
         
         // In a real app, you would verify the refresh token and generate new tokens
         
-        if (!refreshToken || !refreshToken.startsWith('mock-refresh-token-')) {
+        if (!refreshToken || !refreshToken.startsWith('refresh-token-')) {
             return res.status(401).json({ error: 'Invalid refresh token' });
         }
         
         const userId = refreshToken.split('-').pop();
         res.json({
-            token: 'new-mock-jwt-token-' + userId,
+            token: 'new-jwt-token-' + userId,
             refreshToken: refreshToken
         });
     } catch (error) {

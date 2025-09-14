@@ -5,6 +5,8 @@ import RestaurantsPage from './pages/RestaurantsPage';
 import RestaurantDetailPage from './pages/RestaurantDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 
 // Admin imports
 import AdminLogin from './pages/admin/AdminLogin';
@@ -45,9 +47,11 @@ function App() {
                 <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
                 <Route path="/orders/:id" element={<OrderDetailPage />} />
 
+                {/* Rutas de autenticación */}
+                <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+                <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+
                 {/* Páginas temporales */}
-                <Route path={ROUTES.LOGIN} element={<PlaceholderPage title="Iniciar Sesión" />} />
-                <Route path={ROUTES.REGISTER} element={<PlaceholderPage title="Registrarse" />} />
                 <Route path={ROUTES.CART} element={<PlaceholderPage title="Carrito" />} />
                 <Route path={ROUTES.ORDERS} element={<PlaceholderPage title="Mis Pedidos" />} />
                 <Route path={ROUTES.PROFILE} element={<PlaceholderPage title="Mi Perfil" />} />
