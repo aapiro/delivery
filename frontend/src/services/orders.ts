@@ -32,7 +32,7 @@ export interface GetOrdersParams {
 export const createOrder = async (orderData: CreateOrderRequest): Promise<Order> => {
   try {
     const response = await api.post<{ data: Order }>('/orders', orderData);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error(`Failed to create order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -52,7 +52,7 @@ export const getOrders = async (params?: GetOrdersParams): Promise<Order[]> => {
     const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
     const response = await api.get<{ data: Order[] }>(`/orders${queryString}`);
     
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error(`Failed to fetch orders: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -64,7 +64,7 @@ export const getOrders = async (params?: GetOrdersParams): Promise<Order[]> => {
 export const getOrderById = async (orderId: number): Promise<Order> => {
   try {
     const response = await api.get<{ data: Order }>(`/orders/${orderId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error(`Failed to fetch order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -79,7 +79,7 @@ export const updateOrderStatus = async (
 ): Promise<Order> => {
   try {
     const response = await api.put<{ data: Order }>(`/orders/${orderId}`, statusData);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error(`Failed to update order status: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -91,7 +91,7 @@ export const updateOrderStatus = async (
 export const cancelOrder = async (orderId: number): Promise<Order> => {
   try {
     const response = await api.delete<{ data: Order }>(`/orders/${orderId}`);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error(`Failed to cancel order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
