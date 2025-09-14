@@ -2,6 +2,8 @@ const { runMigrations } = require('./run-migrations');
 const Restaurant = require('../models/Restaurant');
 const Dish = require('../models/Dish');
 const Category = require('../models/Category');
+const User = require('../models/User');
+const bcrypt = require('bcrypt');
 
 async function seedData() {
     try {
@@ -9,6 +11,33 @@ async function seedData() {
         
         // Run migrations first to ensure tables exist
         await runMigrations();
+        
+        // Create test users if they don't exist
+        const existingUsers = await User.findAll();
+        
+        if (existingUsers.length === 0) {
+            console.log('Creating test users...');
+            
+            // Hash passwords for test users
+            const hashedPassword1 = await bcrypt.hash('password123', 10);
+            const hashedPassword2 = await bcrypt.hash('mypassword', 10);
+            
+            await User.create({
+                name: 'John Doe',
+                email: 'john@example.com',
+                password: hashedPassword1
+            });
+            
+            await User.create({
+                name: 'Jane Smith',
+                email: 'jane@example.com',
+                password: hashedPassword2
+            });
+            
+            console.log('Test users created successfully');
+        } else {
+            console.log('Users already exist, skipping user creation');
+        }
         
         // Create categories
         const categories = [
