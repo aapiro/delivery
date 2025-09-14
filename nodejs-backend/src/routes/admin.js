@@ -92,9 +92,9 @@ router.get('/restaurants', async (req, res) => {
 
         const totalPages = Math.ceil(count / limit);
         
-        // Ensure numeric fields are properly formatted
+        // Ensure numeric fields are properly formatted and create deliveryTime
         const formattedRestaurants = restaurants.map(restaurant => {
-            return {
+            const restaurantData = {
                 ...restaurant.dataValues,
                 rating: parseFloat(restaurant.rating) || 0.0,
                 delivery_fee: parseFloat(restaurant.delivery_fee) || 0.00,
@@ -102,6 +102,19 @@ router.get('/restaurants', async (req, res) => {
                 delivery_time_min: parseInt(restaurant.delivery_time_min) || 0,
                 delivery_time_max: parseInt(restaurant.delivery_time_max) || 0,
                 minimum_order: parseFloat(restaurant.minimum_order) || 0.00
+            };
+            
+            // Create deliveryTime string from min and max values
+            let deliveryTime = '';
+            if (restaurantData.delivery_time_min > 0 && restaurantData.delivery_time_max > 0) {
+                deliveryTime = `${restaurantData.delivery_time_min}-${restaurantData.delivery_time_max} min`;
+            } else if (restaurantData.delivery_time_min > 0) {
+                deliveryTime = `${restaurantData.delivery_time_min} min`;
+            }
+            
+            return {
+                ...restaurantData,
+                deliveryTime: deliveryTime
             };
         });
         
@@ -144,8 +157,8 @@ router.get('/restaurants/:id', async (req, res) => {
             });
         }
         
-        // Ensure numeric fields are properly formatted
-        const formattedRestaurant = {
+        // Ensure numeric fields are properly formatted and create deliveryTime
+        const restaurantData = {
             ...restaurant.dataValues,
             rating: parseFloat(restaurant.rating) || 0.0,
             delivery_fee: parseFloat(restaurant.delivery_fee) || 0.00,
@@ -153,6 +166,19 @@ router.get('/restaurants/:id', async (req, res) => {
             delivery_time_min: parseInt(restaurant.delivery_time_min) || 0,
             delivery_time_max: parseInt(restaurant.delivery_time_max) || 0,
             minimum_order: parseFloat(restaurant.minimum_order) || 0.00
+        };
+        
+        // Create deliveryTime string from min and max values
+        let deliveryTime = '';
+        if (restaurantData.delivery_time_min > 0 && restaurantData.delivery_time_max > 0) {
+            deliveryTime = `${restaurantData.delivery_time_min}-${restaurantData.delivery_time_max} min`;
+        } else if (restaurantData.delivery_time_min > 0) {
+            deliveryTime = `${restaurantData.delivery_time_min} min`;
+        }
+        
+        const formattedRestaurant = {
+            ...restaurantData,
+            deliveryTime: deliveryTime
         };
         
         res.json({
