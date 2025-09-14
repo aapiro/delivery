@@ -109,7 +109,7 @@ const UsersManagement: React.FC = () => {
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
                     <p className="text-gray-600">
-                        {data?.pagination.total || 0} usuarios registrados
+                        {data?.pagination?.total || 0} usuarios registrados
                     </p>
                 </div>
             </div>
@@ -217,7 +217,7 @@ const UsersManagement: React.FC = () => {
             </Card>
 
             {/* Pagination */}
-            {data && data.pagination.totalPages > 1 && (
+            {data?.pagination && data.pagination.totalPages > 1 && (
                 <div className="flex justify-center space-x-2">
                     <Button
                         variant="outline"
