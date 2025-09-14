@@ -92,10 +92,23 @@ router.get('/restaurants', async (req, res) => {
 
         const totalPages = Math.ceil(count / limit);
         
+        // Ensure numeric fields are properly formatted
+        const formattedRestaurants = restaurants.map(restaurant => {
+            return {
+                ...restaurant.dataValues,
+                rating: parseFloat(restaurant.rating) || 0.0,
+                delivery_fee: parseFloat(restaurant.delivery_fee) || 0.00,
+                review_count: parseInt(restaurant.review_count) || 0,
+                delivery_time_min: parseInt(restaurant.delivery_time_min) || 0,
+                delivery_time_max: parseInt(restaurant.delivery_time_max) || 0,
+                minimum_order: parseFloat(restaurant.minimum_order) || 0.00
+            };
+        });
+        
         res.json({
             success: true,
             data: {
-                data: restaurants,
+                data: formattedRestaurants,
                 pagination: {
                     page,
                     limit,
@@ -131,9 +144,20 @@ router.get('/restaurants/:id', async (req, res) => {
             });
         }
         
+        // Ensure numeric fields are properly formatted
+        const formattedRestaurant = {
+            ...restaurant.dataValues,
+            rating: parseFloat(restaurant.rating) || 0.0,
+            delivery_fee: parseFloat(restaurant.delivery_fee) || 0.00,
+            review_count: parseInt(restaurant.review_count) || 0,
+            delivery_time_min: parseInt(restaurant.delivery_time_min) || 0,
+            delivery_time_max: parseInt(restaurant.delivery_time_max) || 0,
+            minimum_order: parseFloat(restaurant.minimum_order) || 0.00
+        };
+        
         res.json({
             success: true,
-            data: restaurant,
+            data: formattedRestaurant,
             message: 'Restaurant fetched successfully'
         });
     } catch (error) {
