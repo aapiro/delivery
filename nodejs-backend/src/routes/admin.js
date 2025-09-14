@@ -93,19 +93,27 @@ router.get('/restaurants', async (req, res) => {
         const totalPages = Math.ceil(count / limit);
         
         res.json({
-            data: restaurants,
-            pagination: {
-                page,
-                limit,
-                total: count,
-                totalPages,
-                hasNext: page < totalPages,
-                hasPrev: page > 1
-            }
+            success: true,
+            data: {
+                data: restaurants,
+                pagination: {
+                    page,
+                    limit,
+                    total: count,
+                    totalPages,
+                    hasNext: page < totalPages,
+                    hasPrev: page > 1
+                }
+            },
+            message: 'Restaurants fetched successfully'
         });
     } catch (error) {
         console.error('Error fetching restaurants:', error);
-        res.status(500).json({ error: 'Failed to fetch restaurants' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to fetch restaurants']
+        });
     }
 });
 
@@ -116,13 +124,25 @@ router.get('/restaurants/:id', async (req, res) => {
         const restaurant = await Restaurant.findByPk(id);
         
         if (!restaurant) {
-            return res.status(404).json({ error: 'Restaurant not found' });
+            return res.status(404).json({
+                success: false,
+                data: null,
+                errors: ['Restaurant not found']
+            });
         }
         
-        res.json(restaurant);
+        res.json({
+            success: true,
+            data: restaurant,
+            message: 'Restaurant fetched successfully'
+        });
     } catch (error) {
         console.error('Error fetching restaurant:', error);
-        res.status(500).json({ error: 'Failed to fetch restaurant' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to fetch restaurant']
+        });
     }
 });
 
@@ -130,10 +150,18 @@ router.get('/restaurants/:id', async (req, res) => {
 router.post('/restaurants', async (req, res) => {
     try {
         const restaurant = await Restaurant.create(req.body);
-        res.status(201).json(restaurant);
+        res.status(201).json({
+            success: true,
+            data: restaurant,
+            message: 'Restaurant created successfully'
+        });
     } catch (error) {
         console.error('Error creating restaurant:', error);
-        res.status(500).json({ error: 'Failed to create restaurant' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to create restaurant']
+        });
     }
 });
 
@@ -146,14 +174,26 @@ router.put('/restaurants/:id', async (req, res) => {
         });
 
         if (!updated) {
-            return res.status(404).json({ error: 'Restaurant not found' });
+            return res.status(404).json({
+                success: false,
+                data: null,
+                errors: ['Restaurant not found']
+            });
         }
 
         const updatedRestaurant = await Restaurant.findByPk(id);
-        res.json(updatedRestaurant);
+        res.json({
+            success: true,
+            data: updatedRestaurant,
+            message: 'Restaurant updated successfully'
+        });
     } catch (error) {
         console.error('Error updating restaurant:', error);
-        res.status(500).json({ error: 'Failed to update restaurant' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to update restaurant']
+        });
     }
 });
 
@@ -166,13 +206,25 @@ router.delete('/restaurants/:id', async (req, res) => {
         });
 
         if (!deleted) {
-            return res.status(404).json({ error: 'Restaurant not found' });
+            return res.status(404).json({
+                success: false,
+                data: null,
+                errors: ['Restaurant not found']
+            });
         }
 
-        res.json({ message: 'Restaurant deleted successfully' });
+        res.json({
+            success: true,
+            data: { message: 'Restaurant deleted successfully' },
+            message: 'Restaurant deleted successfully'
+        });
     } catch (error) {
         console.error('Error deleting restaurant:', error);
-        res.status(500).json({ error: 'Failed to delete restaurant' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to delete restaurant']
+        });
     }
 });
 
@@ -183,7 +235,11 @@ router.patch('/restaurants/:id/toggle-status', async (req, res) => {
         const restaurant = await Restaurant.findByPk(id);
 
         if (!restaurant) {
-            return res.status(404).json({ error: 'Restaurant not found' });
+            return res.status(404).json({
+                success: false,
+                data: null,
+                errors: ['Restaurant not found']
+            });
         }
 
         // Toggle the is_active status
@@ -191,10 +247,18 @@ router.patch('/restaurants/:id/toggle-status', async (req, res) => {
             is_active: !restaurant.is_active
         });
 
-        res.json(updatedRestaurant);
+        res.json({
+            success: true,
+            data: updatedRestaurant,
+            message: 'Restaurant status toggled successfully'
+        });
     } catch (error) {
         console.error('Error toggling restaurant status:', error);
-        res.status(500).json({ error: 'Failed to toggle restaurant status' });
+        res.status(500).json({
+            success: false,
+            data: null,
+            errors: ['Failed to toggle restaurant status']
+        });
     }
 });
 
