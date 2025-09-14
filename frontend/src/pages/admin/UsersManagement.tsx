@@ -200,7 +200,7 @@ const UsersManagement: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {data?.data.map((user) => (
+                            {data?.data && data.data.map((user) => (
                                 <UserRow
                                     key={user.id}
                                     user={user}
