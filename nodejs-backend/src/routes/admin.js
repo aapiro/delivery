@@ -90,13 +90,17 @@ router.get('/restaurants', async (req, res) => {
             order: [['created_at', 'DESC']]
         });
 
+        const totalPages = Math.ceil(count / limit);
+        
         res.json({
             data: restaurants,
             pagination: {
                 page,
                 limit,
                 total: count,
-                pages: Math.ceil(count / limit)
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
             }
         });
     } catch (error) {
@@ -219,13 +223,17 @@ router.get('/dishes', async (req, res) => {
             order: [['created_at', 'DESC']]
         });
 
+        const totalPages = Math.ceil(count / limit);
+        
         res.json({
             data: dishes,
             pagination: {
                 page,
                 limit,
                 total: count,
-                pages: Math.ceil(count / limit)
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
             }
         });
     } catch (error) {
@@ -344,13 +352,17 @@ router.get('/categories', async (req, res) => {
             order: [['created_at', 'DESC']]
         });
 
+        const totalPages = Math.ceil(count / limit);
+        
         res.json({
             data: categories,
             pagination: {
                 page,
                 limit,
                 total: count,
-                pages: Math.ceil(count / limit)
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
             }
         });
     } catch (error) {
@@ -474,13 +486,17 @@ router.get('/orders', async (req, res) => {
             order: [['created_at', 'DESC']]
         });
 
+        const totalPages = Math.ceil(count / limit);
+        
         res.json({
             data: orders,
             pagination: {
                 page,
                 limit,
                 total: count,
-                pages: Math.ceil(count / limit)
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrev: page > 1
             }
         });
     } catch (error) {
