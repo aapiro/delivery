@@ -115,9 +115,116 @@ El frontend intenta conectarse a `http://localhost:59806/api/...` pero el servid
 2. **Validar registro y login funcionando**
 3. **Verificar persistencia de datos**
 
+## Endpoints del Frontend React
+
+### 🔐 Autenticación (Auth)
+- `POST /auth/register` - Registro de nuevo usuario
+- `POST /auth/login` - Inicio de sesión de usuario
+- `POST /auth/refresh` - Refrescar token de autenticación
+- `POST /auth/logout` - Cierre de sesión
+- `GET /auth/profile` - Obtener perfil del usuario
+
+### 🏪 Restaurantes
+- `GET /restaurants` - Listar todos los restaurantes
+- `GET /restaurants/{id}` - Detalle de un restaurante específico
+- `GET /restaurants/{id}/dishes` - Platos de un restaurante específico
+- `GET /restaurants/categories` - Categorías de restaurantes
+- `GET /restaurants/search` - Búsqueda de restaurantes
+
+### 🍽️ Platos (Dishes)
+- `GET /dishes` - Listar todos los platos
+- `GET /dishes/{id}` - Detalle de un plato específico
+- `GET /restaurants/{restaurantId}/dish-categories` - Categorías de platos por restaurante
+- `GET /dishes/search` - Búsqueda de platos
+
+### 🛒 Pedidos (Orders)
+- `POST /orders` - Crear nuevo pedido
+- `GET /orders` - Listar pedidos del usuario
+- `GET /orders/{id}` - Detalle de un pedido específico
+- `PUT /orders/{id}` - Actualizar estado de pedido
+- `DELETE /orders/{id}` - Cancelar pedido
+- `GET /orders/{id}/track` - Seguimiento de pedido
+
+### 🧾 Carrito (Cart)
+- `GET /cart` - Obtener contenido del carrito
+- `POST /cart/add` - Agregar producto al carrito
+- `PUT /cart/update` - Actualizar cantidad en el carrito
+- `DELETE /cart/remove` - Eliminar producto del carrito
+- `DELETE /cart/clear` - Limpiar carrito
+
+### 👤 Usuarios (Users)
+- `GET /users/addresses` - Obtener direcciones de usuario
+- `POST /users/addresses` - Agregar nueva dirección
+- `PUT /users/addresses/{id}` - Actualizar dirección
+- `DELETE /users/addresses/{id}` - Eliminar dirección
+- `PUT /users/addresses/{id}/default` - Establecer dirección por defecto
+
+### 🎯 Búsqueda (Search)
+- `GET /search` - Búsqueda general de restaurantes y platos
+
+### 📊 Reportes
+- `GET /reports/sales` - Reporte de ventas
+- `GET /reports/users` - Reporte de usuarios
+- `GET /reports/export` - Exportar reportes
+
+## Sección Administrativa (Admin)
+
+### 👤 Autenticación Admin
+- `POST /admin/auth/login` - Inicio de sesión admin
+- `POST /admin/auth/logout` - Cierre de sesión admin
+- `POST /admin/auth/refresh` - Refrescar token admin
+- `GET /admin/auth/profile` - Perfil del administrador
+
+### 🏪 Gestión de Restaurantes
+- `GET /admin/restaurants` - Listar restaurantes (con filtros)
+- `GET /admin/restaurants/{id}` - Detalle de restaurante
+- `POST /admin/restaurants` - Crear nuevo restaurante
+- `PUT /admin/restaurants/{id}` - Actualizar restaurante
+- `DELETE /admin/restaurants/{id}` - Eliminar restaurante
+- `PATCH /admin/restaurants/{id}/toggle-status` - Cambiar estado del restaurante
+
+### 🍽️ Gestión de Platos
+- `GET /admin/dishes` - Listar platos (con filtros)
+- `GET /admin/dishes/{id}` - Detalle de plato
+- `POST /admin/dishes` - Crear nuevo plato
+- `PUT /admin/dishes/{id}` - Actualizar plato
+- `DELETE /admin/dishes/{id}` - Eliminar plato
+- `PATCH /admin/dishes/{id}/toggle-availability` - Cambiar disponibilidad
+
+### 🏷️ Gestión de Categorías
+- `GET /admin/categories` - Listar categorías (con filtros)
+- `GET /admin/categories/{id}` - Detalle de categoría
+- `POST /admin/categories` - Crear nueva categoría
+- `PUT /admin/categories/{id}` - Actualizar categoría
+- `DELETE /admin/categories/{id}` - Eliminar categoría
+- `PATCH /admin/categories/{id}/toggle-status` - Cambiar estado de categoría
+
+### 📦 Gestión de Pedidos
+- `GET /admin/orders` - Listar pedidos (con filtros)
+- `GET /admin/orders/{id}` - Detalle de pedido
+- `PUT /admin/orders/{id}/status` - Actualizar estado del pedido
+- `DELETE /admin/orders/{id}/cancel` - Cancelar pedido
+- `POST /admin/orders/{id}/refund` - Procesar reembolso
+
+### 👥 Gestión de Usuarios
+- `GET /admin/users` - Listar usuarios (con filtros)
+- `GET /admin/users/{id}` - Detalle de usuario
+- `PUT /admin/users/{id}` - Actualizar información del usuario
+- `PATCH /admin/users/{id}/toggle-status` - Cambiar estado del usuario
+- `DELETE /admin/users/{id}` - Eliminar usuario
+
+### 📈 Reportes Admin
+- `GET /admin/reports/sales` - Reporte de ventas
+- `GET /admin/reports/users` - Reporte de usuarios
+- `GET /admin/reports/export` - Exportar reportes
+
+### ⚙️ Sistema Admin
+- `GET /admin/system/admins` - Listar administradores
+- `GET /admin/system/settings` - Configuración del sistema
+
 ## Notas Técnicas
 
-- El sistema usa SQLite para almacenamiento local
+- El sistema usa SQLite para almacenamiento local (en backend Node.js)
 - Las contraseñas se hashen con bcrypt (estructura implementada)
 - Se sigue el patrón de separación frontend/backend
 - La base de datos ya contiene usuarios de prueba
