@@ -1,17 +1,15 @@
 package com.example;
 
-import io.quarkus.hibernate.orm.panache.MappingTo;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "dishes")
-@MappingTo(Dish.class)
 public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
@@ -32,11 +30,11 @@ public class Dish {
     @Column(name = "is_available")
     private boolean isAvailable;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

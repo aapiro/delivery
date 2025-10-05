@@ -24,7 +24,7 @@ public class RestaurantAdminResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Restaurant getRestaurantById(@PathParam("id") int id) {
+    public Restaurant getRestaurantById(@PathParam("id") Long id) {
         return restaurantService.getRestaurantById(id);
     }
 
@@ -39,13 +39,13 @@ public class RestaurantAdminResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Restaurant updateRestaurant(@PathParam("id") int id, Restaurant updatedRestaurant) {
+    public Restaurant updateRestaurant(@PathParam("id") Long id, Restaurant updatedRestaurant) {
         return restaurantService.updateRestaurant(id, updatedRestaurant);
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteRestaurant(@PathParam("id") int id) {
+    public Response deleteRestaurant(@PathParam("id") Long id) {
         restaurantService.deleteRestaurant(id);
         return Response.noContent().build();
     }
@@ -53,7 +53,7 @@ public class RestaurantAdminResource {
     @PATCH
     @Path("/{id}/toggle-status")
     @Produces(MediaType.APPLICATION_JSON)
-    public Restaurant toggleRestaurantStatus(@PathParam("id") int id) {
+    public Restaurant toggleRestaurantStatus(@PathParam("id") Long id) {
         return restaurantService.toggleRestaurantStatus(id);
     }
 }

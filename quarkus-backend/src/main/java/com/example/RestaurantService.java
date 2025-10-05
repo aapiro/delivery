@@ -37,7 +37,7 @@ public class RestaurantService {
         
         if (isOpen != null) {
             restaurants = restaurants.stream()
-                .filter(r -> r.isOpen() != null && r.isOpen() == isOpen)
+                .filter(r -> r.isOpen() == isOpen)
                 .collect(Collectors.toList());
         }
         
@@ -50,12 +50,12 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public Restaurant getRestaurantById(int id) {
+    public Restaurant getRestaurantById(Long id) {
         return restaurantRepository.findById(id);
     }
 
     @Transactional
-    public Restaurant updateRestaurant(int id, Restaurant updatedRestaurant) {
+    public Restaurant updateRestaurant(Long id, Restaurant updatedRestaurant) {
         Restaurant existing = restaurantRepository.findById(id);
         if (existing == null) {
             throw new NotFoundException("Restaurant with ID " + id + " not found");
@@ -116,21 +116,24 @@ public class RestaurantService {
     }
 
     @Transactional
-    public Restaurant toggleRestaurantStatus(int id) {
+    public Restaurant toggleRestaurantStatus(Long id) {
         Restaurant restaurant = restaurantRepository.findById(id);
         if (restaurant == null) {
             throw new NotFoundException("Restaurant with ID " + id + " not found");
         }
         
         // Toggle the open status
-        boolean currentStatus = restaurant.isOpen() != null ? restaurant.isOpen() : false;
+        Boolean currentStatus = restaurant.isOpen();
+        if (currentStatus == null) {
+            currentStatus = false;
+        }
         restaurant.setOpen(!currentStatus);
         
         return restaurant;
     }
 
     @Transactional
-    public void deleteRestaurant(int id) {
+    public void deleteRestaurant(Long id) {
         Restaurant restaurant = restaurantRepository.findById(id);
         if (restaurant != null) {
             restaurantRepository.delete(restaurant);

@@ -21,12 +21,12 @@ public class DishService {
         return dish;
     }
 
-    public Dish getDishById(int id) {
+    public Dish getDishById(Long id) {
         return dishRepository.findById(id);
     }
 
     @Transactional
-    public Dish updateDish(int id, Dish updatedDish) {
+    public Dish updateDish(Long id, Dish updatedDish) {
         Dish existingDish = dishRepository.findById(id);
 
         if (existingDish == null) {
@@ -44,7 +44,7 @@ public class DishService {
     }
 
     @Transactional
-    public void deleteDish(int id) {
+    public void deleteDish(Long id) {
         Dish dish = dishRepository.findById(id);
 
         if (dish == null) {

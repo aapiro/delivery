@@ -1,11 +1,9 @@
 package com.example;
 
-import io.quarkus.hibernate.orm.panache.MappingTo;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "restaurant_categories")
-@MappingTo(RestaurantCategory.class)
 public class RestaurantCategory {
 
     @EmbeddedId
@@ -15,7 +13,7 @@ public class RestaurantCategory {
         this.id = new RestaurantCategoryId();
     }
 
-    public RestaurantCategory(int restaurantId, int categoryId) {
+    public RestaurantCategory(Long restaurantId, Long categoryId) {
         this.id = new RestaurantCategoryId(restaurantId, categoryId);
     }
 
@@ -31,32 +29,32 @@ public class RestaurantCategory {
     public static class RestaurantCategoryId implements java.io.Serializable {
 
         @Column(name = "restaurant_id")
-        private int restaurantId;
+        private Long restaurantId;
 
         @Column(name = "category_id")
-        private int categoryId;
+        private Long categoryId;
 
         public RestaurantCategoryId() {}
 
-        public RestaurantCategoryId(int restaurantId, int categoryId) {
+        public RestaurantCategoryId(Long restaurantId, Long categoryId) {
             this.restaurantId = restaurantId;
             this.categoryId = categoryId;
         }
 
         // Getters and setters
-        public int getRestaurantId() {
+        public Long getRestaurantId() {
             return restaurantId;
         }
 
-        public void setRestaurantId(int restaurantId) {
+        public void setRestaurantId(Long restaurantId) {
             this.restaurantId = restaurantId;
         }
 
-        public int getCategoryId() {
+        public Long getCategoryId() {
             return categoryId;
         }
 
-        public void setCategoryId(int categoryId) {
+        public void setCategoryId(Long categoryId) {
             this.categoryId = categoryId;
         }
 
@@ -67,14 +65,14 @@ public class RestaurantCategory {
 
             RestaurantCategoryId that = (RestaurantCategoryId) o;
 
-            if (restaurantId != that.restaurantId) return false;
-            return categoryId == that.categoryId;
+            if (!restaurantId.equals(that.restaurantId)) return false;
+            return categoryId.equals(that.categoryId);
         }
 
         @Override
         public int hashCode() {
-            int result = restaurantId;
-            result = 31 * result + categoryId;
+            int result = restaurantId.hashCode();
+            result = 31 * result + categoryId.hashCode();
             return result;
         }
     }

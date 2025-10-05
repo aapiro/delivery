@@ -27,7 +27,7 @@ public class RestaurantResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Restaurant getRestaurantById(@PathParam("id") int id) {
+    public Restaurant getRestaurantById(@PathParam("id") Long id) {
         return restaurantService.getRestaurantById(id);
     }
 
@@ -35,13 +35,13 @@ public class RestaurantResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Restaurant updateRestaurant(@PathParam("id") int id, Restaurant updatedRestaurant) {
+    public Restaurant updateRestaurant(@PathParam("id") Long id, Restaurant updatedRestaurant) {
         return restaurantService.updateRestaurant(id, updatedRestaurant);
     }
 
     @DELETE
     @Path("/{id}")
-    public void deleteRestaurant(@PathParam("id") int id) {
+    public void deleteRestaurant(@PathParam("id") Long id) {
         restaurantService.deleteRestaurant(id);
     }
 }
