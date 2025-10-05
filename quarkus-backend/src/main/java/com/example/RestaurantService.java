@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RestaurantService {
@@ -15,6 +16,32 @@ public class RestaurantService {
 
     public List<Restaurant> getAllRestaurants() {
         return restaurantRepository.listAll();
+    }
+
+    public List<Restaurant> getAllRestaurantsFiltered(String name, String cuisine, Boolean isOpen) {
+        // Get all restaurants first
+        List<Restaurant> restaurants = restaurantRepository.listAll();
+        
+        // Apply filters if provided
+        if (name != null && !name.isEmpty()) {
+            restaurants = restaurants.stream()
+                .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (cuisine != null && !cuisine.isEmpty()) {
+            restaurants = restaurants.stream()
+                .filter(r -> r.getCuisine() != null && r.getCuisine().toLowerCase().contains(cuisine.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (isOpen != null) {
+            restaurants = restaurants.stream()
+                .filter(r -> r.isOpen() != null && r.isOpen() == isOpen)
+                .collect(Collectors.toList());
+        }
+        
+        return restaurants;
     }
 
     @Transactional
@@ -86,6 +113,20 @@ public class RestaurantService {
         }
 
         return existing;
+    }
+
+    @Transactional
+    public Restaurant toggleRestaurantStatus(int id) {
+        Restaurant restaurant = restaurantRepository.findById(id);
+        if (restaurant == null) {
+            throw new NotFoundException("Restaurant with ID " + id + " not found");
+        }
+        
+        // Toggle the open status
+        boolean currentStatus = restaurant.isOpen() != null ? restaurant.isOpen() : false;
+        restaurant.setOpen(!currentStatus);
+        
+        return restaurant;
     }
 
     @Transactional
