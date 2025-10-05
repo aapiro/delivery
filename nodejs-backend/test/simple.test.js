@@ -23,7 +23,7 @@ describe('Basic Setup Tests', () => {
         const fs = require('fs');
         const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
         
-        expect(packageJson.name).toBe('delivery-app-backend');
+        expect(packageJson.name).toBe('delivery-app-quarkus-backend');
         expect(packageJson.version).toBe('1.0.0');
         expect(packageJson.dependencies).toBeDefined();
         expect(packageJson.devDependencies).toBeDefined();

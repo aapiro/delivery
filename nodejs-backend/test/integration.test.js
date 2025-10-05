@@ -1,4 +1,4 @@
-// Integration tests for the backend API
+// Integration tests for the quarkus-backend API
 
 const request = require('supertest');
 const app = require('../src/server');

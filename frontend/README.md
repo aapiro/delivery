@@ -58,7 +58,7 @@ If you prefer not to use Docker, you can run the services individually:
 
 1. **Start the Backend**:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw compile quarkus:dev
    ```
    The backend will be available at http://localhost:59806/api
@@ -104,7 +104,7 @@ If you prefer to run the services individually, follow these steps:
 
 #### Backend (Quarkus)
 ```bash
-cd restaurantes-backend
+cd restaurantes-quarkus-backend
 ./mvnw compile quarkus:dev
 ```
 The backend service will be available at `http://localhost:59806`
@@ -151,13 +151,13 @@ npm start
 #### Installation and Running
 
 ```bash
-# Navigate to the backend directory
-cd restaurantes-backend
+# Navigate to the quarkus-backend directory
+cd restaurantes-quarkus-backend
 
 # Run the application in development mode (with live reload)
 ./mvnw quarkus:dev
 
-# The backend API will be available at http://localhost:59806
+# The quarkus-backend API will be available at http://localhost:59806
 ```
 
 #### Packaging and Running
@@ -192,7 +192,7 @@ For a complete development experience, you'll want to run both frontend and back
 
 1. In one terminal window, start the backend:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw quarkus:dev
    ```
 
@@ -405,7 +405,7 @@ We use Liquibase for database schema migrations:
 
 1. **Running migrations**:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw quarkus:dev  # Runs migrations automatically on startup
    ```
 
@@ -447,7 +447,7 @@ For production, you'll need to configure a PostgreSQL or MySQL database:
 
 3. **Run migrations with Liquibase**:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw quarkus:dev  # Runs migrations automatically on startup
    ```
 
@@ -914,10 +914,10 @@ docker run -p 3000:3000 delivery-frontend
 
 ```bash
 # Build image
-docker build -f restaurantes-backend/Dockerfile.jvm -t restaurantes-backend .
+docker build -f restaurantes-quarkus-backend/Dockerfile.jvm -t restaurantes-quarkus-backend .
 
 # Run container
-docker run -p 8080:8080 restaurantes-backend
+docker run -p 8080:8080 restaurantes-quarkus-backend
 ```
 
 ## 🚀 Deployment
@@ -940,7 +940,7 @@ This will create an optimized production build in the `dist` directory. The buil
 #### Backend
 For JVM mode (easier to debug):
 ```bash
-cd restaurantes-backend
+cd restaurantes-quarkus-backend
 ./mvnw package
 java -jar target/quarkus-app/quarkus-run.jar
 ```
@@ -968,14 +968,14 @@ docker run -p 3000:3000 delivery-frontend
 #### Backend
 ```bash
 # Build image (JVM mode)
-docker build -f restaurantes-backend/Dockerfile.jvm -t restaurantes-backend .
+docker build -f restaurantes-quarkus-backend/Dockerfile.jvm -t restaurantes-quarkus-backend .
 
 # Run container
-docker run -p 8080:8080 restaurantes-backend
+docker run -p 8080:8080 restaurantes-quarkus-backend
 
 # For native builds:
-docker build -f restaurantes-backend/Dockerfile.native -t restaurantes-backend-native .
-docker run -p 8080:8080 restaurantes-backend-native
+docker build -f restaurantes-quarkus-backend/Dockerfile.native -t restaurantes-quarkus-backend-native .
+docker run -p 8080:8080 restaurantes-quarkus-backend-native
 ```
 
 ### Docker Compose (Recommended)
@@ -1040,7 +1040,7 @@ QUARKUS_DATASOURCE_PASSWORD=your_db_password
 
 1. **Database Migrations**:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw liquibase:update
    ```
 
@@ -1305,7 +1305,7 @@ Testing is a critical part of our development process:
 ### Running All Tests
 ```bash
 cd restaurantes
-./run-tests.sh  # Runs all frontend and backend tests
+./run-tests.sh  # Runs all frontend and quarkus-backend tests
 ```
 
 ## ✅ Code Quality
@@ -1595,7 +1595,7 @@ Testing is a critical part of our development process:
 ### Running All Tests
 ```bash
 cd restaurantes
-./run-tests.sh  # Runs all frontend and backend tests
+./run-tests.sh  # Runs all frontend and quarkus-backend tests
 ```
 
 ## 🚀 CI/CD Pipeline
@@ -1622,7 +1622,7 @@ The project includes comprehensive tests to ensure reliability and maintainabili
 
 2. **Backend Tests**:
    ```bash
-   cd restaurantes-backend
+   cd restaurantes-quarkus-backend
    ./mvnw test  # Runs all tests (unit, integration)
    ./mvnw verify  # Runs tests and checks code quality
    ```

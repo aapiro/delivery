@@ -596,10 +596,10 @@ The backend can be run using a Docker container:
 
 ```bash
 # Build image
-docker build -f Dockerfile.jvm -t restaurantes-backend .
+docker build -f Dockerfile.jvm -t restaurantes-quarkus-backend .
 
 # Run container
-docker run -p 8080:8080 restaurantes-backend
+docker run -p 8080:8080 restaurantes-quarkus-backend
 ```
 
 For production, you might want to use the native executable for better performance:
@@ -609,10 +609,10 @@ For production, you might want to use the native executable for better performan
 ./mvnw package -Dnative
 
 # Build Docker image with native executable
-docker build -f Dockerfile.native -t restaurantes-backend-native .
+docker build -f Dockerfile.native -t restaurantes-quarkus-backend-native .
 
 # Run container
-docker run -p 8080:8080 restaurantes-backend-native
+docker run -p 8080:8080 restaurantes-quarkus-backend-native
 ```
 
 ## ❓ Troubleshooting
