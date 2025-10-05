@@ -27,7 +27,7 @@ public class DishResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Dish getDishById(@PathParam("id") int id) {
+    public Dish getDishById(@PathParam("id") Long id) {
         return dishService.getDishById(id);
     }
 
@@ -35,13 +35,13 @@ public class DishResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Dish updateDish(@PathParam("id") int id, Dish updatedDish) {
+    public Dish updateDish(@PathParam("id") Long id, Dish updatedDish) {
         return dishService.updateDish(id, updatedDish);
     }
 
     @DELETE
     @Path("/{id}")
-    public void deleteDish(@PathParam("id") int id) {
+    public void deleteDish(@PathParam("id") Long id) {
         dishService.deleteDish(id);
     }
 }
