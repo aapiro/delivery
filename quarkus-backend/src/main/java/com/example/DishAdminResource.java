@@ -56,4 +56,17 @@ public class DishAdminResource {
     public Dish toggleDishAvailability(@PathParam("id") Long id) {
         return dishService.toggleDishAvailability(id);
     }
+    
+    /**
+     * Search dishes by name or category (admin endpoint)
+     * GET /admin/dishes/search?name={name}&categoryId={categoryId}
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dish> searchDishes(
+            @QueryParam("name") String name,
+            @QueryParam("categoryId") Long categoryId) {
+        return dishService.searchDishes(name, categoryId);
+    }
 }

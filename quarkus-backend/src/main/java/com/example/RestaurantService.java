@@ -141,4 +141,35 @@ public class RestaurantService {
             throw new NotFoundException("Restaurant with ID " + id + " not found");
         }
     }
+    
+    /**
+     * Get all categories for restaurants
+     */
+    public List<Category> getAllCategories() {
+        // This would typically return a list of categories from the database
+        // For now, we'll just return an empty list or implement later if needed
+        return List.of();
+    }
+
+    /**
+     * Search restaurants by name or cuisine
+     */
+    public List<Restaurant> searchRestaurants(String name, String cuisine) {
+        List<Restaurant> restaurants = restaurantRepository.listAll();
+        
+        // Apply filters if provided
+        if (name != null && !name.isEmpty()) {
+            restaurants = restaurants.stream()
+                .filter(r -> r.getName() != null && r.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (cuisine != null && !cuisine.isEmpty()) {
+            restaurants = restaurants.stream()
+                .filter(r -> r.getCuisine() != null && r.getCuisine().toLowerCase().contains(cuisine.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        return restaurants;
+    }
 }

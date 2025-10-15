@@ -44,4 +44,28 @@ public class DishResource {
     public void deleteDish(@PathParam("id") Long id) {
         dishService.deleteDish(id);
     }
+    
+    /**
+     * Search dishes by name or category
+     * GET /dishes/search?name={name}&categoryId={categoryId}
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Dish> searchDishes(
+            @QueryParam("name") String name,
+            @QueryParam("categoryId") Long categoryId) {
+        return dishService.searchDishes(name, categoryId);
+    }
+
+    /**
+     * Get dish categories for a specific restaurant
+     * GET /restaurants/{restaurantId}/dish-categories
+     */
+    @GET
+    @Path("/restaurants/{restaurantId}/dish-categories")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Category> getRestaurantDishCategories(@PathParam("restaurantId") Long restaurantId) {
+        return dishService.getRestaurantDishCategories(restaurantId);
+    }
 }
