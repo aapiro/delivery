@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/01-create-restaurant-tables.xml
   - include:
       file: db/changelog/02-insert-sample-data.xml
+  - include:
+      file: db/changelog/03-create-order-tables.xml
