@@ -228,3 +228,77 @@ El frontend intenta conectarse a `http://localhost:59806/api/...` pero el servid
 - Las contraseñas se hashen con bcrypt (estructura implementada)
 - Se sigue el patrón de separación frontend/backend
 - La base de datos ya contiene usuarios de prueba
+
+## Estado Actual del Backend Quarkus
+
+### Endpoints Implementados en Quarkus Backend:
+- RestaurantResource: GET /restaurants, POST /restaurants, GET /restaurants/{id}, PUT /restaurants/{id}, DELETE /restaurants/{id}
+- DishResource: GET /dishes, POST /dishes, GET /dishes/{id}, PUT /dishes/{id}, DELETE /dishes/{id}  
+- RestaurantAdminResource: GET /admin/restaurants (with filters), GET /admin/restaurants/{id}, POST /admin/restaurants, PUT /admin/restaurants/{id}, DELETE /admin/restaurants/{id}, PATCH /admin/restaurants/{id}/toggle-status
+
+### Endpoints Faltantes en Quarkus Backend:
+#### 🔐 Autenticación (Auth)
+- `GET /auth/profile` - Obtener perfil del usuario
+- `POST /auth/logout` - Cierre de sesión
+
+#### 🏪 Restaurantes
+- `GET /restaurants/categories` - Categorías de restaurantes
+- `GET /restaurants/search` - Búsqueda de restaurantes
+
+#### 🍽️ Platos (Dishes)
+- `GET /dishes/search` - Búsqueda de platos
+- `GET /restaurants/{restaurantId}/dish-categories` - Categorías de platos por restaurante
+
+#### 🛒 Pedidos (Orders)
+- `POST /orders` - Crear nuevo pedido
+- `GET /orders` - Listar pedidos del usuario
+- `GET /orders/{id}` - Detalle de un pedido específico
+- `PUT /orders/{id}` - Actualizar estado de pedido
+- `DELETE /orders/{id}` - Cancelar pedido
+- `GET /orders/{id}/track` - Seguimiento de pedido
+
+#### 🧾 Carrito (Cart)
+- `GET /cart` - Obtener contenido del carrito
+- `POST /cart/add` - Agregar producto al carrito
+- `PUT /cart/update` - Actualizar cantidad en el carrito
+- `DELETE /cart/remove` - Eliminar producto del carrito
+- `DELETE /cart/clear` - Limpiar carrito
+
+#### 👤 Usuarios (Users)
+- `GET /users/addresses` - Obtener direcciones de usuario
+- `POST /users/addresses` - Agregar nueva dirección
+- `PUT /users/addresses/{id}` - Actualizar dirección
+- `DELETE /users/addresses/{id}` - Eliminar dirección
+- `PUT /users/addresses/{id}/default` - Establecer dirección por defecto
+
+#### 💳 Pagos (Payments)
+- `GET /payments/methods` - Obtener métodos de pago
+- `POST /payments/process` - Procesar pago
+- `POST /payments/webhook` - Webhook de pagos
+
+#### 🏢 Sección Administrativa (Admin) - Completa
+Todas las siguientes rutas están completamente faltantes:
+- `/admin/dashboard`, `/admin/dashboard/stats`
+- Gestión de Restaurantes: todos los endpoints CRUD con filtros y estado
+- Gestión de Platos: todos los endpoints CRUD con disponibilidad
+- Gestión de Categorías: todos los endpoints CRUD con estado
+- Gestión de Pedidos: todos los endpoints CRUD con estados, cancelaciones y reembolsos
+- Gestión de Usuarios: todos los endpoints CRUD con estado
+- Reportes Admin: ventas, usuarios, exportación
+- Sistema Admin: listado de administradores, configuración
+
+## Recomendaciones para Implementación
+
+1. **Prioridad Alta**: Implementar endpoints de autenticación faltantes (`/auth/profile`, `/auth/logout`)
+2. **Prioridad Media**: Añadir funcionalidades CRUD completas para pedidos, carrito y usuarios
+3. **Prioridad Baja**: Implementar búsqueda avanzada y sistema de pagos
+4. **Admin Panel**: Desarrollar completamente el backend del panel administrativo
+
+## Estado Actual de Integración
+
+El frontend espera una API completa con todos los endpoints mencionados anteriormente, pero actualmente:
+- El backend Node.js maneja autenticación (register/login/refresh/logout)
+- El backend Quarkus implementa solo operaciones básicas CRUD para restaurantes y platos
+- La mayoría de las funcionalidades del frontend no están disponibles en el backend Quarkus
+
+Para una integración completa, se requiere implementar los endpoints faltantes en el backend Quarkus.
