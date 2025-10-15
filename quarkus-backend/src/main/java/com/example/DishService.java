@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DishService {
@@ -13,6 +14,32 @@ public class DishService {
 
     public List<Dish> getAllDishes() {
         return dishRepository.listAll();
+    }
+
+    public List<Dish> getAllDishesFiltered(String name, Long categoryId, Boolean isAvailable) {
+        // Get all dishes first
+        List<Dish> dishes = dishRepository.listAll();
+        
+        // Apply filters if provided
+        if (name != null && !name.isEmpty()) {
+            dishes = dishes.stream()
+                .filter(d -> d.getName() != null && d.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (categoryId != null) {
+            dishes = dishes.stream()
+                .filter(d -> d.getCategory() != null && d.getCategory().getId() == categoryId)
+                .collect(Collectors.toList());
+        }
+        
+        if (isAvailable != null) {
+            dishes = dishes.stream()
+                .filter(d -> d.isAvailable() == isAvailable)
+                .collect(Collectors.toList());
+        }
+        
+        return dishes;
     }
 
     @Transactional
@@ -39,8 +66,28 @@ public class DishService {
         existingDish.setPrice(updatedDish.getPrice());
         existingDish.setImageUrl(updatedDish.getImageUrl());
         existingDish.setRestaurant(updatedDish.getRestaurant());
+        existingDish.setCategory(updatedDish.getCategory());
+        existingDish.setAvailable(updatedDish.isAvailable());
 
         return existingDish;
+    }
+
+    @Transactional
+    public Dish toggleDishAvailability(Long id) {
+        Dish dish = dishRepository.findById(id);
+        
+        if (dish == null) {
+            throw new NotFoundException("Dish not found");
+        }
+        
+        // Toggle the availability status
+        Boolean currentStatus = dish.isAvailable();
+        if (currentStatus == null) {
+            currentStatus = false;
+        }
+        dish.setAvailable(!currentStatus);
+        
+        return dish;
     }
 
     @Transactional
