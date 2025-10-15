@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <!-- Create orders table -->
+    <changeSet id="5" author="openhands">
+        <createTable tableName="orders">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="restaurant_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_order_restaurant"
+                             references="restaurants(id)"/>
+            </column>
+            <column name="total_amount" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delivery_address" type="text"/>
+            <column name="order_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estimated_delivery_time" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create order_items table -->
+    <changeSet id="6" author="openhands">
+        <createTable tableName="order_items">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="order_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_order_item_order"
+                             references="orders(id)"/>
+            </column>
+            <column name="dish_id" type="int">
+                <constraints nullable="false" foreignKeyName="fk_order_item_dish"
+                             references="dishes(id)"/>
+            </column>
+            <column name="quantity" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="decimal(10,2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
