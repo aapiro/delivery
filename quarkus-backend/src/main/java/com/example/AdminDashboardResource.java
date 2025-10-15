@@ -16,9 +16,21 @@ public class AdminDashboardResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDashboardOverview() {
-        // For now, we'll return a simple message indicating the endpoint works
-        // In a real implementation, this would return comprehensive dashboard data
-        DashboardOverview overview = new DashboardOverview("Admin Dashboard Overview");
+        // Return comprehensive dashboard overview with key metrics
+        DashboardService.DashboardStats stats = dashboardService.getDashboardStatistics();
+        
+        // Create a more detailed overview response
+        DashboardOverview overview = new DashboardOverview(
+            "Admin Dashboard Overview",
+            stats.getTotalRestaurants(),
+            stats.getActiveRestaurants(), 
+            stats.getTotalDishes(),
+            stats.getAvailableDishes(),
+            stats.getTotalOrders(),
+            stats.getRecentOrders(),
+            stats.getTotalRevenue()
+        );
+        
         return Response.ok(overview).build();
     }
 

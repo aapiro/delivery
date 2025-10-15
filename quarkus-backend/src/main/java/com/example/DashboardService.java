@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class DashboardService {
@@ -46,6 +48,13 @@ public class DashboardService {
                 .filter(order -> order.getOrderDate().isAfter(sevenDaysAgo))
                 .count();
         
+        // Order status distribution
+        Map<OrderStatus, Long> orderStatusDistribution = orders.stream()
+                .collect(Collectors.groupingBy(Order::getStatus, Collectors.counting()));
+                
+        // Get top selling dishes (top 5)
+        List<TopSellingDish> topSellingDishes = getTopSellingDishes(orders);
+        
         return new DashboardStats(
             totalRestaurants,
             activeRestaurants,
@@ -53,8 +62,26 @@ public class DashboardService {
             availableDishes,
             totalOrders,
             recentOrders,
-            totalRevenue
+            totalRevenue,
+            orderStatusDistribution,
+            topSellingDishes
         );
+    }
+    
+    private List<TopSellingDish> getTopSellingDishes(List<Order> orders) {
+        // This is a simplified implementation - in a real system, we would need to 
+        // join with OrderItem table and aggregate by dish
+        return orders.stream()
+                .flatMap(order -> order.getItems().stream())
+                .collect(Collectors.groupingBy(
+                    orderItem -> orderItem.getDish(), 
+                    Collectors.summingInt(OrderItem::getQuantity)
+                ))
+                .entrySet().stream()
+                .sorted(Map.Entry.<Dish, Integer>comparingByValue().reversed())
+                .limit(5)
+                .map(entry -> new TopSellingDish(entry.getKey().getName(), entry.getValue()))
+                .collect(Collectors.toList());
     }
     
     public static class DashboardStats {
@@ -65,10 +92,13 @@ public class DashboardService {
         private long totalOrders;
         private long recentOrders; // Orders in last 7 days
         private BigDecimal totalRevenue;
+        private Map<OrderStatus, Long> orderStatusDistribution;
+        private List<TopSellingDish> topSellingDishes;
 
         public DashboardStats(long totalRestaurants, long activeRestaurants, long totalDishes, 
                             long availableDishes, long totalOrders, long recentOrders, 
-                            BigDecimal totalRevenue) {
+                            BigDecimal totalRevenue, Map<OrderStatus, Long> orderStatusDistribution,
+                            List<TopSellingDish> topSellingDishes) {
             this.totalRestaurants = totalRestaurants;
             this.activeRestaurants = activeRestaurants;
             this.totalDishes = totalDishes;
@@ -76,6 +106,8 @@ public class DashboardService {
             this.totalOrders = totalOrders;
             this.recentOrders = recentOrders;
             this.totalRevenue = totalRevenue;
+            this.orderStatusDistribution = orderStatusDistribution;
+            this.topSellingDishes = topSellingDishes;
         }
 
         // Getters
@@ -133,6 +165,50 @@ public class DashboardService {
 
         public void setTotalRevenue(BigDecimal totalRevenue) {
             this.totalRevenue = totalRevenue;
+        }
+
+        public Map<OrderStatus, Long> getOrderStatusDistribution() {
+            return orderStatusDistribution;
+        }
+
+        public void setOrderStatusDistribution(Map<OrderStatus, Long> orderStatusDistribution) {
+            this.orderStatusDistribution = orderStatusDistribution;
+        }
+
+        public List<TopSellingDish> getTopSellingDishes() {
+            return topSellingDishes;
+        }
+
+        public void setTopSellingDishes(List<TopSellingDish> topSellingDishes) {
+            this.topSellingDishes = topSellingDishes;
+        }
+    }
+    
+    // DTO for top selling dishes
+    public static class TopSellingDish {
+        private String dishName;
+        private int quantitySold;
+
+        public TopSellingDish(String dishName, int quantitySold) {
+            this.dishName = dishName;
+            this.quantitySold = quantitySold;
+        }
+
+        // Getters and setters
+        public String getDishName() {
+            return dishName;
+        }
+
+        public void setDishName(String dishName) {
+            this.dishName = dishName;
+        }
+
+        public int getQuantitySold() {
+            return quantitySold;
+        }
+
+        public void setQuantitySold(int quantitySold) {
+            this.quantitySold = quantitySold;
         }
     }
 }
