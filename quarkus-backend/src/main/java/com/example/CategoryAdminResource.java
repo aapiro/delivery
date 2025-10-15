@@ -55,4 +55,15 @@ public class CategoryAdminResource {
     public Category toggleCategoryStatus(@PathParam("id") Long id) {
         return categoryService.toggleCategoryStatus(id);
     }
+    
+    /**
+     * Search categories by name (admin endpoint)
+     * GET /admin/categories/search?name={name}
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Category> searchCategories(@QueryParam("name") String name) {
+        return categoryService.searchCategories(name);
+    }
 }

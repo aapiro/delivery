@@ -100,4 +100,35 @@ public class DishService {
 
         dishRepository.delete(dish);
     }
+    
+    /**
+     * Search dishes by name or category
+     */
+    public List<Dish> searchDishes(String name, Long categoryId) {
+        List<Dish> dishes = dishRepository.listAll();
+        
+        // Apply filters if provided
+        if (name != null && !name.isEmpty()) {
+            dishes = dishes.stream()
+                .filter(d -> d.getName() != null && d.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        if (categoryId != null) {
+            dishes = dishes.stream()
+                .filter(d -> d.getCategory() != null && d.getCategory().getId() == categoryId)
+                .collect(Collectors.toList());
+        }
+        
+        return dishes;
+    }
+
+    /**
+     * Get dish categories for a specific restaurant
+     */
+    public List<Category> getRestaurantDishCategories(Long restaurantId) {
+        // This would typically query the database to find all categories associated with dishes of this restaurant
+        // For now, we'll just return an empty list or implement later if needed
+        return List.of();
+    }
 }

@@ -44,4 +44,28 @@ public class RestaurantResource {
     public void deleteRestaurant(@PathParam("id") Long id) {
         restaurantService.deleteRestaurant(id);
     }
+    
+    /**
+     * Get restaurant categories
+     * GET /restaurants/categories
+     */
+    @GET
+    @Path("/categories")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Category> getRestaurantCategories() {
+        return restaurantService.getAllCategories();
+    }
+
+    /**
+     * Search restaurants by name or cuisine
+     * GET /restaurants/search?name={name}&cuisine={cuisine}
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Restaurant> searchRestaurants(
+            @QueryParam("name") String name,
+            @QueryParam("cuisine") String cuisine) {
+        return restaurantService.searchRestaurants(name, cuisine);
+    }
 }

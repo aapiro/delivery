@@ -56,4 +56,17 @@ public class RestaurantAdminResource {
     public Restaurant toggleRestaurantStatus(@PathParam("id") Long id) {
         return restaurantService.toggleRestaurantStatus(id);
     }
+    
+    /**
+     * Search restaurants by name or cuisine (admin endpoint)
+     * GET /admin/restaurants/search?name={name}&cuisine={cuisine}
+     */
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Restaurant> searchRestaurants(
+            @QueryParam("name") String name,
+            @QueryParam("cuisine") String cuisine) {
+        return restaurantService.searchRestaurants(name, cuisine);
+    }
 }

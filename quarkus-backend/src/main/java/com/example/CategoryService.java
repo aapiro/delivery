@@ -88,4 +88,20 @@ public class CategoryService {
 
         categoryRepository.delete(category);
     }
+    
+    /**
+     * Search categories by name
+     */
+    public List<Category> searchCategories(String name) {
+        List<Category> categories = categoryRepository.listAll();
+        
+        // Apply filter if provided
+        if (name != null && !name.isEmpty()) {
+            categories = categories.stream()
+                .filter(c -> c.getName() != null && c.getName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
+        }
+        
+        return categories;
+    }
 }
