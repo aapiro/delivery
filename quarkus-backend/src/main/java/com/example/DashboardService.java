@@ -38,7 +38,7 @@ public class DashboardService {
         
         // Calculate revenue (sum of all completed orders)
         BigDecimal totalRevenue = orders.stream()
-                .filter(order -> order.getStatus() == OrderStatus.DELIVERED)
+                .filter(order -> order.getStatus() == Order.OrderStatus.DELIVERED)
                 .map(Order::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                 
@@ -49,7 +49,7 @@ public class DashboardService {
                 .count();
         
         // Order status distribution
-        Map<OrderStatus, Long> orderStatusDistribution = orders.stream()
+        Map<Order.OrderStatus, Long> orderStatusDistribution = orders.stream()
                 .collect(Collectors.groupingBy(Order::getStatus, Collectors.counting()));
                 
         // Get top selling dishes (top 5)
@@ -92,12 +92,12 @@ public class DashboardService {
         private long totalOrders;
         private long recentOrders; // Orders in last 7 days
         private BigDecimal totalRevenue;
-        private Map<OrderStatus, Long> orderStatusDistribution;
+        private Map<Order.OrderStatus, Long> orderStatusDistribution;
         private List<TopSellingDish> topSellingDishes;
 
         public DashboardStats(long totalRestaurants, long activeRestaurants, long totalDishes, 
                             long availableDishes, long totalOrders, long recentOrders, 
-                            BigDecimal totalRevenue, Map<OrderStatus, Long> orderStatusDistribution,
+                            BigDecimal totalRevenue, Map<Order.OrderStatus, Long> orderStatusDistribution,
                             List<TopSellingDish> topSellingDishes) {
             this.totalRestaurants = totalRestaurants;
             this.activeRestaurants = activeRestaurants;
@@ -167,11 +167,11 @@ public class DashboardService {
             this.totalRevenue = totalRevenue;
         }
 
-        public Map<OrderStatus, Long> getOrderStatusDistribution() {
+        public Map<Order.OrderStatus, Long> getOrderStatusDistribution() {
             return orderStatusDistribution;
         }
 
-        public void setOrderStatusDistribution(Map<OrderStatus, Long> orderStatusDistribution) {
+        public void setOrderStatusDistribution(Map<Order.OrderStatus, Long> orderStatusDistribution) {
             this.orderStatusDistribution = orderStatusDistribution;
         }
 
