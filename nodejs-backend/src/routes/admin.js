@@ -84,6 +84,7 @@ router.get('/restaurants', async (req, res) => {
         const limit = parseInt(req.query.limit) || 20;
         const offset = (page - 1) * limit;
 
+        // Búsqueda en la base de datos
         const { count, rows: restaurants } = await Restaurant.findAndCountAll({
             limit,
             offset,
@@ -91,37 +92,40 @@ router.get('/restaurants', async (req, res) => {
         });
 
         const totalPages = Math.ceil(count / limit);
-        
-        // Ensure numeric fields are properly formatted and create deliveryTime
+
+        // Formateo de datos
         const formattedRestaurants = restaurants.map(restaurant => {
+            const raw = restaurant.dataValues;
             const restaurantData = {
-                ...restaurant.dataValues,
-                rating: parseFloat(restaurant.rating) || 0.0,
-                delivery_fee: parseFloat(restaurant.delivery_fee) || 0.00,
-                review_count: parseInt(restaurant.review_count) || 0,
-                delivery_time_min: parseInt(restaurant.delivery_time_min) || 0,
-                delivery_time_max: parseInt(restaurant.delivery_time_max) || 0,
-                minimum_order: parseFloat(restaurant.minimum_order) || 0.00
+                ...raw,
+                rating: parseFloat(raw.rating) || 0.0,
+                delivery_fee: parseFloat(raw.delivery_fee) || 0.00,
+                review_count: parseInt(raw.review_count) || 0,
+                delivery_time_min: parseInt(raw.delivery_time_min) || 0,
+                delivery_time_max: parseInt(raw.delivery_time_max) || 0,
+                minimum_order: parseFloat(raw.minimum_order) || 0.00
             };
-            
-            // Create deliveryTime string from min and max values
-            let deliveryTime = '';
+
+            // Cálculo de deliveryTime
+            let deliveryTime = '30-45 min'; // valor por defecto
             if (restaurantData.delivery_time_min > 0 && restaurantData.delivery_time_max > 0) {
                 deliveryTime = `${restaurantData.delivery_time_min}-${restaurantData.delivery_time_max} min`;
             } else if (restaurantData.delivery_time_min > 0) {
                 deliveryTime = `${restaurantData.delivery_time_min} min`;
             }
-            
+
             return {
                 ...restaurantData,
-                deliveryTime: deliveryTime
+                deliveryTime
             };
         });
-        
-        res.json({
+
+        // RESPUESTA EXITOSA
+        return res.status(200).json({
             success: true,
+            message: 'Restaurants fetched successfully',
             data: {
-                data: formattedRestaurants,
+                data: formattedRestaurants, // La lista real
                 pagination: {
                     page,
                     limit,
@@ -130,15 +134,16 @@ router.get('/restaurants', async (req, res) => {
                     hasNext: page < totalPages,
                     hasPrev: page > 1
                 }
-            },
-            message: 'Restaurants fetched successfully'
+            }
         });
+
     } catch (error) {
         console.error('Error fetching restaurants:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            data: null,
-            errors: ['Failed to fetch restaurants']
+            message: 'Failed to fetch restaurants',
+            data: { data: [], pagination: {} }, // Enviamos estructura vacía en lugar de null
+            errors: [error.message]
         });
     }
 });

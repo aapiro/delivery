@@ -4,21 +4,25 @@ export interface Restaurant {
     id: number;
     name: string;
     description: string;
-    logo: string;
-    coverImage: string;
-    address: string;
-    phone: string;
-    email: string;
+    address?: string; // Opcional por si el backend no lo envía aún
+    phone?: string;
+    email?: string;
     rating: number;
     reviewCount: number;
-    deliveryTime: string;
+    deliveryTime: string; // "30-45 min"
     deliveryFee: number;
     minimumOrder: number;
+    deliveryTimeMin: number; // Cambiado: Quarkus envía esto
+    deliveryTimeMax: number; // Cambiado: Quarkus envía esto
     isActive: boolean;
     isOpen: boolean;
-    category: RestaurantCategory;
-    createdAt: string;
-    updatedAt: string;
+    open: boolean;
+    imageUrl?: string;    // Añadimos esta por si acaso
+    coverImage: string;   // La que usas en el front
+    logo?: string;
+    cuisine?: string;     // Lo que envía Quarkus
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface RestaurantCategory {

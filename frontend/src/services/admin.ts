@@ -68,34 +68,102 @@ export const adminDashboard = {
         const response = await api.get<ApiResponse<DashboardStats>>(
             API_ENDPOINTS.ADMIN.STATS
         );
-        return response.data.data;
+        // Forzamos el retorno del objeto 'data' o un objeto vacío si no existe
+        return response.data?.data || {} as DashboardStats;
     },
 };
 
 // ============= RESTAURANTS MANAGEMENT =============
 
 export const adminRestaurants = {
-    getAll: async (
-        filters?: AdminRestaurantFilters,
-        page = 1,
-        limit = 20
-    ): Promise<PaginatedResponse<Restaurant>> => {
-        const params = new URLSearchParams();
-        params.append('page', page.toString());
-        params.append('limit', limit.toString());
-        
-        if (filters) {
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value !== undefined && value !== null && value !== '') {
-                    params.append(key, value.toString());
-                }
-            });
-        }
+    getAll: async (filters?: AdminRestaurantFilters, page = 1, limit = 20): Promise<PaginatedResponse<Restaurant>> => {
+        try {
+            const response = await api.get<any>(API_ENDPOINTS.ADMIN.RESTAURANTS, { params: { ...filters, page, limit } });
 
-        const response = await api.get<PaginatedResponse<Restaurant>>(
-            `${API_ENDPOINTS.ADMIN.RESTAURANTS}?${params}`
-        );
-        return response.data;
+            // Logging detallado para investigar respuestas inesperadas
+            console.debug('adminRestaurants.getAll response:', {
+                status: (response as any)?.status,
+                headers: (response as any)?.headers,
+                data: (response as any)?.data,
+                rawResponse: response,
+            });
+
+            const payload: any = (response && response.data !== undefined) ? response.data : response;
+            const list = Array.isArray(payload) ? payload : (payload?.data ?? payload?.result ?? payload);
+
+            if (!Array.isArray(list)) {
+                console.error('Respuesta inesperada al obtener restaurantes:', payload);
+                return {
+                    data: [],
+                    pagination: {
+                        total: 0,
+                        totalPages: 0,
+                        page,
+                        limit,
+                        hasNext: false,
+                        hasPrev: false
+                    }
+                };
+            }
+
+            const mappedData: Restaurant[] = list.map((raw: any) => ({
+                id: Number(raw.id),
+                name: raw.name ?? '',
+                description: raw.description ?? '',
+                address: raw.address ?? 'Dirección no disponible',
+                phone: raw.phone ?? '',
+                email: raw.email ?? '',
+                imageUrl: raw.imageUrl ?? raw.coverImage ?? '',
+                coverImage: raw.imageUrl ?? raw.coverImage ?? '',
+                logo: raw.logo ?? '',
+                rating: Number(raw.rating ?? 0),
+                reviewCount: Number(raw.reviewCount ?? 0),
+                deliveryFee: Number(raw.deliveryFee ?? 0),
+                minimumOrder: Number(raw.minimumOrder ?? 0),
+                deliveryTimeMin: Number(raw.deliveryTimeMin ?? raw.delivery_min ?? 30),
+                deliveryTimeMax: Number(raw.deliveryTimeMax ?? raw.delivery_max ?? 45),
+                deliveryTime: (raw.deliveryTimeMin && raw.deliveryTimeMax)
+                    ? `${raw.deliveryTimeMin}-${raw.deliveryTimeMax} min`
+                    : (raw.deliveryTime ?? '30 min'),
+                isActive: Boolean(raw.isActive ?? raw.open ?? true),
+                isOpen: Boolean(raw.isOpen ?? raw.open ?? true),
+                open: Boolean(raw.open ?? raw.isOpen ?? raw.isActive ?? true),
+                cuisine: raw.cuisine ?? '',
+                createdAt: raw.createdAt ?? raw.created_at ?? '',
+                updatedAt: raw.updatedAt ?? raw.updated_at ?? '',
+            }));
+
+            const pagination = payload?.pagination ?? {
+                total: mappedData.length,
+                totalPages: 1,
+                page,
+                limit,
+                hasNext: false,
+                hasPrev: false
+            };
+
+            return { data: mappedData, pagination };
+        } catch (err: any) {
+            // Error de red / Axios: mostrar status y body si están disponibles
+            console.error('Error al solicitar restaurantes:', {
+                message: err?.message,
+                status: err?.response?.status,
+                responseData: err?.response?.data,
+                stack: err?.stack
+            });
+
+            return {
+                data: [],
+                pagination: {
+                    total: 0,
+                    totalPages: 0,
+                    page,
+                    limit,
+                    hasNext: false,
+                    hasPrev: false
+                }
+            };
+        }
     },
 
     getById: async (id: number): Promise<Restaurant> => {
