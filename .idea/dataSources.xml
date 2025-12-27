@@ -14,11 +14,11 @@
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@postgresql" uuid="fc84a11a-13ac-4286-8070-9f38d0ed7415">
+    <data-source source="LOCAL" name="testdb@localhost" uuid="fc84a11a-13ac-4286-8070-9f38d0ed7415">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://postgresql/</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5433/testdb</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
