@@ -67,7 +67,7 @@ const mockRestaurants = [
         id: 6,
         name: "Taco Fiesta",
         description: "Auténtica comida mexicana con sabores únicos",
-        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=250&fit=crop",
+        image: "https://images.unsplash.com/photo-1653795163901-0de102a3f1a2?w=400&h=250&fit=crop",
         rating: 4.4,
         reviewCount: 203,
         deliveryTime: "25-35 min",

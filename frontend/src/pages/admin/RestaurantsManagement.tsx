@@ -11,7 +11,6 @@ import {
     ToggleLeft, 
     ToggleRight,
     Star,
-    MapPin,
     Clock
 } from 'lucide-react';
 import { adminRestaurants } from '../../services/admin';
