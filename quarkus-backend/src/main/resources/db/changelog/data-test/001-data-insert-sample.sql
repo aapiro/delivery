@@ -1,12 +1,18 @@
--- Insert sample data for restaurants (Cambiado a plural: restaurants)
-INSERT INTO restaurants (name, cuisine_type, description, image_url, is_open, minimum_order, delivery_fee, delivery_time_min, delivery_time_max, rating, review_count) VALUES
-    ('Sample Restaurant', 'Italian', 'Sample restaurant description', 'https://example.com/sample.jpg', TRUE, 10.00, 2.99, 30, 45, 4.5, 120);
+-- 1. Insertar tipos de cocina globales
+INSERT INTO cuisine_types (name) VALUES ('Italian'); -- Asumimos que genera ID 1
 
--- Insert sample data for categories (Cambiado a plural: categories)
--- Usamos una subconsulta para obtener el ID del restaurante recién insertado o asumimos el 1
-INSERT INTO categories (restaurant_id, name, slug, icon, display_order, is_active) VALUES
-    (1, 'Italian', 'italian', 'italian', 1, TRUE);
+-- 2. Insertar restaurante (SIN cuisine_type)
+INSERT INTO restaurants (name, description, image_url, is_open, minimum_order, delivery_fee, delivery_time_min, delivery_time_max, rating, review_count)
+VALUES ('Sample Restaurant', 'Sample restaurant description', 'https://example.com/sample.jpg', TRUE, 10.00, 2.99, 30, 45, 4.5, 120), -- Asumimos que genera ID 1
+       ('Sample Restaurant 2', 'Sample restaurant description', 'https://example.com/sample.jpg', TRUE, 10.00, 2.99, 30, 45, 4.5, 120); -- Asumimos que genera ID 2
 
--- Insert sample data for dishes (Asegúrate de que los nombres de columnas coincidan)
-INSERT INTO dishes (restaurant_id, category_id, name, description, price, image, is_available, is_popular, preparation_time) VALUES
-    (1, 1, 'Spaghetti Carbonara', 'Classic Italian pasta dish', 12.99, 'https://example.com/spaghetti.jpg', TRUE, TRUE, 15);
+-- 3. Vincular el restaurante con su tipo de cocina (Muchos a Muchos)
+INSERT INTO restaurant_cuisines (restaurant_id, cuisine_id) VALUES (1, 1);
+
+-- 4. Insertar secciones del menú (Cambiado a menu_categories)
+INSERT INTO menu_categories (restaurant_id, name, slug, icon, display_order, is_active)
+VALUES (1, 'Pasta', 'pasta', 'pasta-icon', 1, TRUE); -- Asumimos que genera ID 1
+
+-- 5. Insertar platos vinculados a la categoría y al restaurante
+INSERT INTO dishes (restaurant_id, category_id, name, description, price, image_url, is_available, is_popular, preparation_time)
+VALUES (1, 1, 'Spaghetti Carbonara', 'Classic Italian pasta dish', 12.99, 'https://example.com/spaghetti.jpg', TRUE, TRUE, 15);

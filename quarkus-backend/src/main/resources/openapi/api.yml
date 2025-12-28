@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: Delivery API
+  version: 1.0.0
+  description: API para gestión de restaurantes
+
+servers:
+  - url: http://localhost:8080
+  - url: http://localhost:8081
+
+paths:
+  /restaurants:
+    get:
+      summary: Listar restaurantes
+      operationId: listRestaurants
+      responses:
+        '200':
+          description: Lista de restaurantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RestaurantSummary'
+
+    post:
+      summary: Crear restaurante
+      operationId: createRestaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRestaurantRequest'
+      responses:
+        '201':
+          description: Restaurante creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+
+  /restaurants/{id}:
+    get:
+      summary: Obtener restaurante por ID
+      operationId: getRestaurantById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Restaurante encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: Restaurante no encontrado
+
+components:
+  schemas:
+
+    Restaurant:
+      type: object
+      required:
+        - id
+        - name
+        - isOpen
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Pizza Palace
+        description:
+          type: string
+          example: Las mejores pizzas artesanales
+        cuisine:
+          type: string
+          example: Italiana
+        rating:
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 5
+          example: 4.5
+        reviewCount:
+          type: integer
+          example: 120
+        deliveryTimeMin:
+          type: integer
+          example: 20
+        deliveryTimeMax:
+          type: integer
+          example: 40
+        deliveryFee:
+          type: number
+          format: decimal
+          example: 2.99
+        minimumOrder:
+          type: number
+          format: decimal
+          example: 10.00
+        isOpen:
+          type: boolean
+          example: true
+        imageUrl:
+          type: string
+          format: uri
+          example: https://cdn.example.com/restaurants/pizza.png
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuCategory'
+        dishes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dish'
+
+    RestaurantSummary:
+      type: object
+      required:
+        - id
+        - name
+        - rating
+        - isOpen
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        cuisine:
+          type: string
+        rating:
+          type: number
+          format: decimal
+        isOpen:
+          type: boolean
+        deliveryTimeMin:
+          type: integer
+        deliveryTimeMax:
+          type: integer
+        deliveryFee:
+          type: number
+          format: decimal
+        imageUrl:
+          type: string
+          format: uri
+
+    CreateRestaurantRequest:
+      type: object
+      required:
+        - name
+        - cuisine
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        cuisine:
+          type: string
+        deliveryTimeMin:
+          type: integer
+        deliveryTimeMax:
+          type: integer
+        deliveryFee:
+          type: number
+          format: decimal
+        minimumOrder:
+          type: number
+          format: decimal
+        imageUrl:
+          type: string
+          format: uri
+
+    MenuCategory:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayOrder:
+          type: integer
+
+    Dish:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: decimal
+        imageUrl:
+          type: string
+          format: uri
+        available:
+          type: boolean

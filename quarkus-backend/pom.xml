@@ -119,6 +119,11 @@
             <artifactId>lombok</artifactId>
             <version>1.18.42</version>
         </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>2.2.15</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -175,6 +180,37 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.18.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-quarkus-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/api.yml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <apiPackage>com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.api</apiPackage>
+                            <modelPackage>com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model</modelPackage>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useJakartaEe>true</useJakartaEe>
+                                <generateSwaggerAnnotations>false</generateSwaggerAnnotations>
+                                <openApiNullable>false</openApiNullable>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSwaggerUI>true</useSwaggerUI>
+                                <swaggerAnnotations>false</swaggerAnnotations>
+                            </configOptions>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

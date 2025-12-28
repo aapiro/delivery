@@ -49,7 +49,7 @@ router.get('/dashboard', async (req, res) => {
             averageOrderValue: 29.76,
             popularRestaurants: [
                 { 
-                    restaurant: { id: 1, name: 'Pizza Palace', rating: 4.8 },
+                    restaurantEntity: { id: 1, name: 'Pizza Palace', rating: 4.8 },
                     orderCount: 45,
                     revenue: 2300.50
                 }

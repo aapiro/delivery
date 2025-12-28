@@ -1,6 +1,6 @@
 package com.ilimitech.delivery;
 
-import com.ilimitech.delivery.category.Category;
+import com.ilimitech.delivery.infrastructure.adapter.out.persistence.Category;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 

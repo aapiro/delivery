@@ -1,6 +1,6 @@
 package com.ilimitech.delivery;
 
-import com.ilimitech.delivery.dish.Dish;
+import com.ilimitech.delivery.infrastructure.adapter.out.persistence.DishEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
@@ -28,13 +28,13 @@ class DishAdminResourceTest {
 
     @Test
     void testCreateDish() {
-        Dish dish = new Dish();
-        dish.setName("Test Dish");
-        dish.setDescription("Test Description");
-        dish.setPrice(new java.math.BigDecimal("9.99"));
+        DishEntity dishEntity = new DishEntity();
+        dishEntity.setName("Test Dish");
+        dishEntity.setDescription("Test Description");
+        dishEntity.setPrice(new java.math.BigDecimal("9.99"));
         
         given()
-            .body(dish)
+            .body(dishEntity)
             .contentType("application/json")
             .when().post("/admin/dishes")
             .then()
@@ -43,13 +43,13 @@ class DishAdminResourceTest {
 
     @Test
     void testUpdateDish() {
-        Dish dish = new Dish();
-        dish.setName("Updated Test Dish");
-        dish.setDescription("Updated Description");
-        dish.setPrice(new java.math.BigDecimal("14.99"));
+        DishEntity dishEntity = new DishEntity();
+        dishEntity.setName("Updated Test Dish");
+        dishEntity.setDescription("Updated Description");
+        dishEntity.setPrice(new java.math.BigDecimal("14.99"));
         
         given()
-            .body(dish)
+            .body(dishEntity)
             .contentType("application/json")
             .when().put("/admin/dishes/1")
             .then()
