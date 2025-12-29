@@ -5,7 +5,7 @@ import { ApiResponse } from '../types';
 // ============= AXIOS INSTANCE =============
 
 class ApiService {
-    private api: AxiosInstance;
+    public api: AxiosInstance;
     private isRefreshing = false;
     private failedQueue: Array<{
         resolve: (value?: any) => void;

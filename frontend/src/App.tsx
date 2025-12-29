@@ -7,6 +7,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import RestaurantCreate from './pages/admin/RestaurantCreate'; // Ajusta la ruta si es necesario
+import RestaurantEdit from './pages/admin/RestaurantEdit';
 
 // Admin imports
 import AdminLogin from './pages/admin/AdminLogin';
@@ -71,7 +73,19 @@ function App() {
                                     <RestaurantsManagement />
                                 </ProtectedRoute>
                             } />
-                            
+
+                            <Route path="restaurants/create" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.CREATE_RESTAURANTS}>
+                                    <RestaurantCreate />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="restaurants/:id/edit" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.EDIT_RESTAURANTS}>
+                                    <RestaurantEdit />
+                                </ProtectedRoute>
+                            } />
+
                             <Route path="orders" element={
                                 <ProtectedRoute requiredPermission={AdminPermission.VIEW_ORDERS}>
                                     <OrdersManagement />

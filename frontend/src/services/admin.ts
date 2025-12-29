@@ -175,7 +175,7 @@ export const adminRestaurants = {
 
     create: async (data: RestaurantForm): Promise<Restaurant> => {
         const formData = new FormData();
-        
+
         Object.entries(data).forEach(([key, value]) => {
             if (value instanceof File) {
                 formData.append(key, value);
@@ -188,9 +188,7 @@ export const adminRestaurants = {
             API_ENDPOINTS.ADMIN.RESTAURANT_CREATE,
             formData,
             {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                headers: { 'Content-Type': 'multipart/form-data' },
             }
         );
         return response.data.data;

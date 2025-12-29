@@ -3,8 +3,8 @@ INSERT INTO cuisine_types (name) VALUES ('Italian'); -- Asumimos que genera ID 1
 
 -- 2. Insertar restaurante (SIN cuisine_type)
 INSERT INTO restaurants (name, description, image_url, is_open, minimum_order, delivery_fee, delivery_time_min, delivery_time_max, rating, review_count)
-VALUES ('Sample Restaurant', 'Sample restaurant description', 'https://example.com/sample.jpg', TRUE, 10.00, 2.99, 30, 45, 4.5, 120), -- Asumimos que genera ID 1
-       ('Sample Restaurant 2', 'Sample restaurant description', 'https://example.com/sample.jpg', TRUE, 10.00, 2.99, 30, 45, 4.5, 120); -- Asumimos que genera ID 2
+VALUES ('Sample Restaurant', 'Sample restaurant description', 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=250&fit=crop', TRUE, 10.00, 2.99, 30, 45, 4.5, 120), -- Asumimos que genera ID 1
+       ('Sample Restaurant 2', 'Sample restaurant description', 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400&h=250&fit=crop', TRUE, 10.00, 2.99, 30, 45, 4.5, 120); -- Asumimos que genera ID 2
 
 -- 3. Vincular el restaurante con su tipo de cocina (Muchos a Muchos)
 INSERT INTO restaurant_cuisines (restaurant_id, cuisine_id) VALUES (1, 1);

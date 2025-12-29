@@ -1,5 +1,7 @@
 package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
+import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.PagedRestaurantResponse;
+import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.Restaurant;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.RestaurantEntity;
 import com.ilimitech.delivery.application.usecase.RestaurantService;
 import jakarta.inject.Inject;
@@ -17,11 +19,14 @@ public class RestaurantAdminResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<RestaurantEntity> getAllRestaurants(
+    public Response getAllRestaurants(
             @QueryParam("name") String name,
             @QueryParam("cuisine") String cuisine,
-            @QueryParam("isOpen") Boolean isOpen) {
-        return restaurantService.getAllRestaurantsFiltered(name, cuisine, isOpen);
+            @QueryParam("isOpen") Boolean isOpen,
+            @QueryParam("page") @DefaultValue("0") int page,
+    @QueryParam("size") @DefaultValue("10") int size) {
+        PagedRestaurantResponse allRestaurantsFiltered = restaurantService.getAllRestaurantsFiltered(name, cuisine, isOpen, page, size);
+        return Response.ok(allRestaurantsFiltered).build();
     }
 
     @GET
@@ -49,8 +54,8 @@ public class RestaurantAdminResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateRestaurant(@PathParam("id") Long id, RestaurantEntity updatedRestaurantEntity) {
-        return Optional.ofNullable(restaurantService.updateRestaurant(id, updatedRestaurantEntity))
+    public Response updateRestaurant(@PathParam("id") Long id, Restaurant restaurant) {
+        return Optional.ofNullable(restaurantService.updateRestaurant(id , restaurant))
                 .map(entity -> Response.status(Response.Status.OK)
                         .entity(entity)
                         .build())
@@ -67,8 +72,12 @@ public class RestaurantAdminResource {
     @PATCH
     @Path("/{id}/toggle-status")
     @Produces(MediaType.APPLICATION_JSON)
-    public RestaurantEntity toggleRestaurantStatus(@PathParam("id") Long id) {
-        return restaurantService.toggleRestaurantStatus(id);
+    public Response toggleRestaurantStatus(@PathParam("id") Long id) {
+        return Optional.ofNullable(restaurantService.toggleRestaurantStatus(id))
+                .map(entity -> Response.status(Response.Status.OK)
+                        .entity(entity)
+                        .build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).build());
     }
     
     /**

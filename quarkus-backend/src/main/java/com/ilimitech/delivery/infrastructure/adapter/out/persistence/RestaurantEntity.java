@@ -32,7 +32,7 @@ public class RestaurantEntity {
     private String imageUrl;
 
     @Column(name = "is_open")
-    private boolean isOpen;
+    private Boolean isOpen;
 
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)

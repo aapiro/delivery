@@ -5,27 +5,49 @@ info:
   description: API para gestión de restaurantes
 
 servers:
-  - url: http://localhost:8080
-  - url: http://localhost:8081
+  - url: http://localhost:8080/api
+  - url: http://localhost:8081/api
+
+tags:
+  - name: Administrative API
+    description: Endpoints para gestión interna.
+  - name: Public API
+    description: Endpoints para clientes finales.
 
 paths:
-  /restaurants:
+  /admin/restaurants:
     get:
-      summary: Listar restaurantes
       operationId: listRestaurants
+      summary: Listar restaurantes
+      tags:
+        - Administrative API
+      # --- AGREGAMOS ESTO: Parámetros de búsqueda ---
+      parameters:
+        - name: page
+          in: query
+          description: Número de página (0-index)
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          description: Cantidad de registros por página
+          schema:
+            type: integer
+            default: 20
       responses:
         '200':
-          description: Lista de restaurantes
+          description: Lista paginada de restaurantes
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/RestaurantSummary'
-
+                # --- CAMBIAMOS ESTO: De array a objeto paginado ---
+                $ref: '#/components/schemas/PagedRestaurantResponse'
     post:
       summary: Crear restaurante
       operationId: createRestaurant
+      tags:
+        - Administrative API
       requestBody:
         required: true
         content:
@@ -39,11 +61,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Restaurant'
-
-  /restaurants/{id}:
+  /admin/restaurants/{id}:
     get:
       summary: Obtener restaurante por ID
       operationId: getRestaurantById
+      tags:
+        - Administrative API
       parameters:
         - name: id
           in: path
@@ -60,6 +83,25 @@ paths:
                 $ref: '#/components/schemas/Restaurant'
         '404':
           description: Restaurante no encontrado
+    put:
+      summary: Actualizar restaurante
+      operationId: updateRestaurant
+      tags:
+        - Administrative API
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Restaurant'
+      responses:
+        '200':
+          description: Actualizado
 
 components:
   schemas:
@@ -215,3 +257,27 @@ components:
           format: uri
         available:
           type: boolean
+    PagedRestaurantResponse:
+      type: object
+      required:
+        - content
+        - totalElements
+        - totalPages
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/RestaurantSummary'
+        totalElements:
+          type: integer
+          format: int64
+          example: 100
+        totalPages:
+          type: integer
+          example: 5
+        size:
+          type: integer
+          example: 20
+        number:
+          type: integer
+          example: 0

@@ -158,7 +158,7 @@ export const useAdminStore = create<AdminState>()(
             },
 
             // Permission helpers
-            hasPermission: (permission: AdminPermission): boolean => {
+            /*hasPermission: (permission: AdminPermission): boolean => { //todo descomentar este bloque cuando se programe la autorizacion
                 const { admin } = get();
                 if (!admin || !admin.isActive) return false;
                 
@@ -166,6 +166,10 @@ export const useAdminStore = create<AdminState>()(
                 if (admin.role === AdminRole.SUPER_ADMIN) return true;
                 
                 return admin.permissions.includes(permission);
+            },*/
+            hasPermission: (permission: AdminPermission) => {
+                // return state.permissions.includes(permission); // Lógica real
+                return true; // Lógica temporal para ver todo mientras programas
             },
 
             hasRole: (role: AdminRole): boolean => {

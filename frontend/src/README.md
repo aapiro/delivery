@@ -110,3 +110,26 @@ npm run lint:fix
 # or
 yarn lint:fix
 ```
+
+## Code generation
+
+orval.config.js
+```javascript 
+module.exports = {
+  deliveryApp: {
+    output: {
+      mode: 'tags-split',
+      target: 'src/api/generated/endpoints.ts',
+      schemas: 'src/api/generated/model',
+      client: 'react-query', // ¡Genera los useQuery y useMutation automáticamente!
+      httpClient: 'axios',
+    },
+    input: {
+      target: './openapi.yaml', // O la URL de tu Quarkus: http://localhost:8080/q/openapi
+    },
+  },
+};
+```
+```bash
+npx orval
+```

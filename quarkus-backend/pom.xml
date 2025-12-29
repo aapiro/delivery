@@ -20,6 +20,10 @@
 
         <!-- Versión de Testcontainers centralizada -->
         <testcontainers.version>1.21.3</testcontainers.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <lombok.version>1.18.42</lombok.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
     </properties>
 
     <dependencyManagement>
@@ -122,7 +126,16 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>2.2.15</version>
+            <version>2.2.19</version>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-openapi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
         </dependency>
     </dependencies>
 
@@ -180,10 +193,11 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.18.0</version>
+                <version>7.18.0</version> <!-- Versión real y estable -->
                 <executions>
                     <execution>
                         <id>generate-quarkus-api</id>
@@ -192,25 +206,75 @@
                         </goals>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/openapi/api.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/META-INF/openapi.yml</inputSpec>
                             <generatorName>jaxrs-spec</generatorName>
                             <apiPackage>com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.api</apiPackage>
                             <modelPackage>com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model</modelPackage>
                             <configOptions>
+                                <sourceFolder>/</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
                                 <useJakartaEe>true</useJakartaEe>
-                                <generateSwaggerAnnotations>false</generateSwaggerAnnotations>
+                                <swaggerAnnotations>false</swaggerAnnotations>
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations> <!-- Forzar desactivación -->
                                 <openApiNullable>false</openApiNullable>
                                 <useBeanValidation>true</useBeanValidation>
-                                <useSwaggerUI>true</useSwaggerUI>
-                                <swaggerAnnotations>false</swaggerAnnotations>
+                                <generateBuilders>true</generateBuilders>
                             </configOptions>
+                            <!-- Esto asegura que no se generen archivos de configuración antiguos -->
                             <generateSupportingFiles>false</generateSupportingFiles>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <!-- 1. LOMBOK PRIMERO -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
 
+                        <!-- 2. BINDING (Opcional pero muy recomendado para evitar conflictos) -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${lombok-mapstruct-binding.version}</version>
+                        </path>
+
+                        <!-- 3. MAPSTRUCT AL FINAL -->
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

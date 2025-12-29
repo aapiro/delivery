@@ -31,7 +31,7 @@ public class DashboardService {
         // Get counts for different entities
         long totalRestaurants = restaurantRepository.count();
         long activeRestaurants = restaurantRepository.listAll().stream()
-                .filter(RestaurantEntity::isOpen)
+                .filter(RestaurantEntity::getIsOpen)
                 .count();
         
         long totalDishes = dishRepository.count();

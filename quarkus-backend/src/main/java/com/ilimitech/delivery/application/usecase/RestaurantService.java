@@ -2,15 +2,20 @@ package com.ilimitech.delivery.application.usecase;
 
 import com.ilimitech.delivery.common.NotFoundException;
 import com.ilimitech.delivery.application.port.out.RestaurantRepository;
-import com.ilimitech.delivery.infrastructure.adapter.out.persistence.Category;
+import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.PagedRestaurantResponse;
+import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.Restaurant;
+import com.ilimitech.delivery.infrastructure.adapter.out.persistence.CuisineType;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.MenuCategory;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.RestaurantEntity;
+import com.ilimitech.delivery.infrastructure.mapper.RestaurantMapper;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -19,14 +24,40 @@ public class RestaurantService {
     @Inject
     RestaurantRepository restaurantRepository;
 
-    public List<RestaurantEntity> getAllRestaurants() {
-        return restaurantRepository.listAll();
+    @Inject
+    RestaurantMapper restaurantMapper;
+    
+    public PagedRestaurantResponse getRestaurants(int page, int size) {
+        // 1. Supongamos que usas Panache para la consulta
+        PanacheQuery<RestaurantEntity> query = restaurantRepository.findAll().page(page, size);
+
+        List<RestaurantEntity> entities = query.list();
+        long totalElements = query.count();
+        int totalPages = query.pageCount();
+
+        // 2. Creamos la respuesta de tu esquema OpenAPI
+        PagedRestaurantResponse response = new PagedRestaurantResponse();
+
+        // 3. Usamos MapStruct para convertir la lista de entidades a DTOs
+        response.setContent(restaurantMapper.toSummaryList(entities));
+
+        // 4. Llenamos los metadatos de paginación
+        response.setTotalElements(totalElements);
+        response.setTotalPages(totalPages);
+        response.setSize(size);
+        response.setNumber(page);
+
+        return response;
     }
 
-    public List<RestaurantEntity> getAllRestaurantsFiltered(String name, String cuisine, Boolean isOpen) {
+    public PagedRestaurantResponse getAllRestaurantsFiltered(String name, String cuisine, Boolean isOpen, int page, int size) {
         // Get all restaurants first
-        List<RestaurantEntity> restaurantEntities = restaurantRepository.listAll();
-        
+        PanacheQuery<RestaurantEntity> query = restaurantRepository.findAll().page(page, size);
+
+        long totalElements = query.count();
+        int totalPages = query.pageCount();
+
+        List<RestaurantEntity> restaurantEntities = query.list();
         // Apply filters if provided
         if (name != null && !name.isBlank()) {
             restaurantEntities = restaurantEntities.stream()
@@ -43,11 +74,22 @@ public class RestaurantService {
         
         if (isOpen != null) {
             restaurantEntities = restaurantEntities.stream()
-                .filter(r -> r.isOpen() == isOpen)
+                .filter(r -> r.getIsOpen() == isOpen)
                 .collect(Collectors.toList());
         }
-        
-        return restaurantEntities;
+
+        PagedRestaurantResponse response = new PagedRestaurantResponse();
+
+        // 3. Usamos MapStruct para convertir la lista de entidades a DTOs
+        response.setContent(restaurantMapper.toSummaryList(restaurantEntities));
+
+        // 4. Llenamos los metadatos de paginación
+        response.setTotalElements(totalElements);
+        response.setTotalPages(totalPages);
+        response.setSize(size);
+        response.setNumber(page);
+
+        return response;
     }
 
     @Transactional
@@ -57,22 +99,23 @@ public class RestaurantService {
         return restaurantEntity;
     }
 
-    public RestaurantEntity getRestaurantById(Long id) {
-        RestaurantEntity byId = restaurantRepository.findById(id);
-        return byId;
+    public Restaurant getRestaurantById(Long id) {
+        RestaurantEntity restaurantEntityById = restaurantRepository.findById(id);
+        return restaurantMapper.toRestaurant(restaurantEntityById);
     }
 
     @Transactional
-    public RestaurantEntity updateRestaurant(Long id, RestaurantEntity updatedRestaurantEntity) {
+    public RestaurantEntity updateRestaurant(Long id, Restaurant restaurant) {
         RestaurantEntity existing = restaurantRepository.findById(id);
         if (existing == null) {
             return null;
         }
 
-        existing.setName(updatedRestaurantEntity.getName());
-        existing.setCuisines(updatedRestaurantEntity.getCuisines());
+        existing.setName(restaurant.getName());
+//        CuisineType cuisineType = new CuisineType();
+//        existing.setCuisines(Set.of(cuisineType));
 
-        BigDecimal updatedRating = updatedRestaurantEntity.getRating();
+        BigDecimal updatedRating = restaurant.getRating();
         if (updatedRating != null) {
             if (updatedRating.compareTo(BigDecimal.ZERO) < 0 || updatedRating.compareTo(new BigDecimal("5.0")) > 0) {
                 throw new IllegalArgumentException("Rating must be between 0 and 5");
@@ -80,35 +123,35 @@ public class RestaurantService {
             existing.setRating(updatedRating.setScale(1, RoundingMode.HALF_UP));
         }
 
-        String description = updatedRestaurantEntity.getDescription();
+        String description = restaurant.getDescription();
         if (description != null) {
             existing.setDescription(description);
         }
 
-        Integer deliveryTimeMin = updatedRestaurantEntity.getDeliveryTimeMin();
+        Integer deliveryTimeMin = restaurant.getDeliveryTimeMin();
         if (deliveryTimeMin != null) {
             existing.setDeliveryTimeMin(deliveryTimeMin);
         }
 
-        Integer deliveryTimeMax = updatedRestaurantEntity.getDeliveryTimeMax();
+        Integer deliveryTimeMax = restaurant.getDeliveryTimeMax();
         if (deliveryTimeMax != null) {
             existing.setDeliveryTimeMax(deliveryTimeMax);
         }
 
-        BigDecimal deliveryFee = updatedRestaurantEntity.getDeliveryFee();
+        BigDecimal deliveryFee = restaurant.getDeliveryFee();
         if (deliveryFee != null) {
             existing.setDeliveryFee(deliveryFee);
         }
 
-        BigDecimal minimumOrder = updatedRestaurantEntity.getMinimumOrder();
+        BigDecimal minimumOrder = restaurant.getMinimumOrder();
         if (minimumOrder != null) {
             existing.setMinimumOrder(minimumOrder);
         }
 
-        boolean isOpen = updatedRestaurantEntity.isOpen();
-        existing.setOpen(isOpen);
+        boolean isOpen = restaurant.getIsOpen();
+        existing.setIsOpen(isOpen);
 
-        String imageUrl = updatedRestaurantEntity.getImageUrl();
+        String imageUrl = restaurant.getImageUrl().toString();
         if (imageUrl != null) {
             existing.setImageUrl(imageUrl);
         }
@@ -116,10 +159,10 @@ public class RestaurantService {
     }
 
     @Transactional
-    public RestaurantEntity toggleRestaurantStatus(Long id) {
-        RestaurantEntity restaurantEntity = getRestaurantById(id);
-        restaurantEntity.setOpen(!restaurantEntity.isOpen());
-        return restaurantEntity;
+    public Restaurant toggleRestaurantStatus(Long id) {
+        Restaurant restaurant = getRestaurantById(id);
+        restaurant.setIsOpen(!restaurant.getIsOpen());
+        return restaurant;
     }
 
     @Transactional
