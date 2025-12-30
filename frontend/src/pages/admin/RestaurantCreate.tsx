@@ -4,8 +4,9 @@ import { useCreateRestaurant , getListRestaurantsQueryKey} from '../../api/gener
 import RestaurantForm from './RestaurantForm';
 import { ROUTES } from '../../constants';
 import { useQueryClient } from '@tanstack/react-query';
-import {toast} from "sonner";
+//import {toast} from "sonner";
 import {ArrowLeft} from "lucide-react";
+import {useNotify} from "../../hooks/useNotify";
 
 const RestaurantCreate: React.FC = () => {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ const RestaurantCreate: React.FC = () => {
 
     const queryClient = useQueryClient();
 
+    const notify = useNotify();
     // 2. Definimos la función que se ejecutará al dar click en "Guardar"
     const handleCreate = (values: any, meta?: { stayOnPage?: boolean }) => {
         createMutation.mutate(
@@ -22,14 +24,14 @@ const RestaurantCreate: React.FC = () => {
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: getListRestaurantsQueryKey() });
-                    toast.success("¡Restaurante creado con éxito!");
+                    notify.success("¡Restaurante creado con éxito!");
 
                     if (!meta?.stayOnPage) {
                         navigate(ROUTES.ADMIN.RESTAURANTS);
                     }
                 },
                 onError: () => {
-                    toast.error("Hubo un error al crear el restaurante.");
+                    notify.error("Hubo un error al crear el restaurante.");
                 }
             }
         );

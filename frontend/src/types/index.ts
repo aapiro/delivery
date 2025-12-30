@@ -1,5 +1,20 @@
 // ============= ENTITIES =============
+export type FieldType = 'string' | 'number' | 'currency' | 'enum' | 'boolean' | 'date';
 
+export interface FieldSchema {
+    name: string;
+    label: string;
+    type: FieldType;
+    visible: boolean;
+    editable: boolean;
+    options?: string[];               // solo para enum
+    validation?: Record<string, any>; // pasará a Yup
+}
+
+export interface MetaSchema {
+    schemaVersion: number;
+    fields: FieldSchema[];
+}
 export interface Restaurant {
     id: number;
     name: string;

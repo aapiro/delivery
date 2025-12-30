@@ -7,7 +7,10 @@ import './index.css';
 import App from './App';
 import { queryClient } from './services/queryClient';
 import { AuthProvider } from './components/common/AuthProvider';
-import {Toaster} from "sonner";
+//import { Toaster } from 'sonner';
+import {Toaster} from "./components/ui/toaster";
+import { ChakraProvider , defaultSystem} from '@chakra-ui/react'
+/* ---------- Tema opcional ---------- */
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -15,17 +18,21 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <BrowserRouter>
-                <Toaster position="top-right" richColors /> {/* Añade esto */}
-                <AuthProvider>
-                    <App />
+        <ChakraProvider value={defaultSystem}>
+            <Toaster />
+            {/* Este script debe ir justo dentro de ChakraProvider */}
+            <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                    {/*<Toaster position="top-right" richColors />*/}
+                    <AuthProvider>
+                        <App />
                     {/* React Query DevTools - temporalmente deshabilitado por error de locale */}
-                    {/* {process.env.NODE_ENV === 'development' && (
+                    {/* {process.env.NODE_ENV === 'development' && */(
                         <ReactQueryDevtools initialIsOpen={false} />
-                    )} */}
-                </AuthProvider>
-            </BrowserRouter>
-        </QueryClientProvider>
+                    )}
+                    </AuthProvider>
+                </BrowserRouter>
+            </QueryClientProvider>
+        </ChakraProvider>
     </React.StrictMode>
 );
