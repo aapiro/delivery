@@ -151,8 +151,8 @@ public class RestaurantService {
         boolean isOpen = restaurant.getIsOpen();
         existing.setIsOpen(isOpen);
 
-        String imageUrl = restaurant.getImageUrl().toString();
-        if (imageUrl != null) {
+        if (restaurant.getImageUrl() != null) {
+            String imageUrl = restaurant.getImageUrl().toString();
             existing.setImageUrl(imageUrl);
         }
         return existing;
