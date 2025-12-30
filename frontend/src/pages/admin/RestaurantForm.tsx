@@ -5,16 +5,23 @@ import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import { Save, X, Utensils, Clock, Image as ImageIcon } from 'lucide-react';
 
+interface SubmitMeta {
+    stayOnPage?: boolean;
+}
+
 interface RestaurantFormProps {
     initialData?: Restaurant;
-    onSubmit: (data: any) => void;
+    onSubmit: (data: any, meta?: SubmitMeta) => void;
     isLoading: boolean;
     onCancel: () => void;
 }
 
+
 const RestaurantForm: React.FC<RestaurantFormProps> = ({ initialData, onSubmit, isLoading, onCancel }) => {
-    // 1. Estado simplificado: todo coincide con el YAML
-    const [formData, setFormData] = useState({
+
+    const [createAnother, setCreateAnother] = useState(false);
+    const isEditMode = !!initialData;
+    const emptyForm = {
         name: '',
         description: '',
         cuisine: '',
@@ -23,9 +30,11 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({ initialData, onSubmit, 
         deliveryTimeMax: 45,
         minimumOrder: 10,
         isOpen: true,
-        imageUrl: '', // Ahora es puramente un string
-    });
+        imageUrl: '',
+    };
 
+
+    const [formData, setFormData] = useState(emptyForm);
     useEffect(() => {
         if (initialData) {
             setFormData({
@@ -43,18 +52,25 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({ initialData, onSubmit, 
     }, [initialData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
         const { name, value, type } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'number' ? Number(value) : value
         }));
     };
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData); // Enviamos el objeto JSON tal cual
+
+        onSubmit(formData, {
+            stayOnPage: !isEditMode && createAnother
+        });
+
+        if (!isEditMode && createAnother) {
+            setFormData(emptyForm);
+            setCreateAnother(false);
+        }
     };
-    const isEditMode = !!initialData;
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -122,6 +138,18 @@ const RestaurantForm: React.FC<RestaurantFormProps> = ({ initialData, onSubmit, 
                     </Card>
 
                     <div className="flex flex-col gap-3">
+                        {!isEditMode && (
+                            <label className="flex items-center gap-2 text-sm text-gray-600">
+                                <input
+                                    type="checkbox"
+                                    checked={createAnother}
+                                    onChange={(e) => setCreateAnother(e.target.checked)}
+                                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                />
+                                Crear otro restaurante después de guardar
+                            </label>
+                        )}
+
                         <Button type="submit" disabled={isLoading} className="w-full justify-center">
                             <Save className="w-4 h-4 mr-2" />
                             {initialData ? 'Guardar Cambios' : 'Crear Restaurante'}

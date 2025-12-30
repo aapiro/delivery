@@ -21,6 +21,7 @@ const RestaurantDetailModal: React.FC<RestaurantDetailModalProps> = ({ restauran
             }
     });
 
+
     if (!isOpen) return null;
 
     return (
