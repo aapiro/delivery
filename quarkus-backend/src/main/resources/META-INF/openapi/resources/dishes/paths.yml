@@ -1,0 +1,70 @@
+dishes-collection:
+  get:
+    tags:
+      - AdminDishes
+    summary: Listar platos del restaurante
+    operationId: listDishes
+    parameters:
+      - name: restaurantId
+        in: query
+        required: true
+        schema: { type: integer }
+    responses:
+      '200':
+        description: Lista de platos
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: './schemas.yml#/Dish'
+  post:
+    tags:
+      - AdminDishes
+    summary: Crear un nuevo plato
+    operationId: createDish
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yml#/CreateDishRequest'
+    responses:
+      '201':
+        description: Creado
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yml#/Dish'
+
+dish-detail:
+  put:
+    tags:
+      - AdminDishes
+    summary: Actualizar plato
+    operationId: updateDish
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yml#/Dish'
+    responses:
+      '200':
+        description: Actualizado
+  delete:
+    tags:
+      - AdminDishes
+    summary: Eliminar plato
+    operationId: deleteDish
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    responses:
+      '204':
+        description: Eliminado

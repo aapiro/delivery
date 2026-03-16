@@ -22,7 +22,7 @@ public class TestContainerConfig {
     }
 
     public static String getPostgresImage() {
-        return properties.getProperty("testcontainer.postgres.image", "postgres:15");
+        return properties.getProperty("testcontainer.postgres.image", "postgres:17");
     }
 
     public static String getDatabaseName() {

@@ -8,11 +8,29 @@ servers:
   - url: http://localhost:8080/api
   - url: http://localhost:8081/api
 
+# Definición estándar de tags
 tags:
-  - name: Administrative API
+  - name: AdminRestaurants
+    description: Gestión de restaurantes para administradores
+  - name: AdminDishes
+    description: Gestión de platos para administradores
+  - name: AdminUsers
+    description: Gestión de usuarios
+  - name: PublicMenu
+    description: Acceso público al menú
+
+# 🚀 LA MAGIA: Agrupación visual (Soportado por Redoc)
+x-tagGroups:
+  - name: Administrative API  # 👈 El título del grupo "Padre"
     description: Endpoints para gestión interna.
+    tags:
+      - AdminRestaurants
+      - AdminDishes           # 👈 Los "Hijos"
+      - AdminUsers
   - name: Public API
     description: Endpoints para clientes finales.
+    tags:
+      - PublicMenu
 
 paths:
   /admin/restaurants:
@@ -20,7 +38,7 @@ paths:
       operationId: listRestaurants
       summary: Listar restaurantes
       tags:
-        - Administrative API
+        - AdminRestaurants
       # --- AGREGAMOS ESTO: Parámetros de búsqueda ---
       parameters:
         - name: page
@@ -47,7 +65,7 @@ paths:
       summary: Crear restaurante
       operationId: createRestaurant
       tags:
-        - Administrative API
+        - AdminRestaurants
       requestBody:
         required: true
         content:
@@ -66,7 +84,7 @@ paths:
       summary: Obtener restaurante por ID
       operationId: getRestaurantById
       tags:
-        - Administrative API
+        - AdminRestaurants
       parameters:
         - name: id
           in: path
@@ -87,7 +105,7 @@ paths:
       summary: Actualizar restaurante
       operationId: updateRestaurant
       tags:
-        - Administrative API
+        - AdminRestaurants
       parameters:
         - name: id
           in: path
@@ -102,7 +120,10 @@ paths:
       responses:
         '200':
           description: Actualizado
-
+  /admin/dishes:
+    $ref: './openapi/resources/dishes/paths.yml#/dishes-collection'
+  /admin/dishes/{id}:
+    $ref: './openapi/resources/dishes/paths.yml#/dish-detail'
 components:
   schemas:
 

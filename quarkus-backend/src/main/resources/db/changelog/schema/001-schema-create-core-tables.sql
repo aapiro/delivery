@@ -262,14 +262,6 @@ CREATE TABLE IF NOT EXISTS addresses (
      is_default BOOLEAN DEFAULT FALSE
 );
 
--- Geocoding y validación
-ALTER TABLE addresses ADD COLUMN is_verified BOOLEAN DEFAULT FALSE;
-ALTER TABLE addresses ADD COLUMN place_id VARCHAR(255); -- Google Places ID
-ALTER TABLE addresses ADD COLUMN formatted_address TEXT;
-ALTER TABLE addresses ADD COLUMN delivery_instructions TEXT;
-ALTER TABLE addresses ADD COLUMN address_type VARCHAR(20); -- HOME, WORK, OTHER
-ALTER TABLE addresses ADD COLUMN floor VARCHAR(10);
-ALTER TABLE addresses ADD COLUMN apartment VARCHAR(10);
 -- Precios distintos por zona
 -- Validación de pedidos
 CREATE TABLE IF NOT EXISTS restaurant_delivery_zones (

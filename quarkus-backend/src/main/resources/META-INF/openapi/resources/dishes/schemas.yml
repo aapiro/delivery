@@ -1,0 +1,47 @@
+Dish:
+  type: object
+  required:
+    - id
+    - name
+    - price
+    - active
+  properties:
+    id:
+      type: integer
+      format: int64
+    name:
+      type: string
+      example: "Pizza Margarita"
+    description:
+      type: string
+    price:
+      type: number
+      format: decimal
+      example: 12.50
+    imageUrl:
+      type: string
+      format: uri
+    active:
+      type: boolean
+      description: "Si el plato está disponible para pedir"
+    categoryId:
+      type: integer
+      format: int64
+
+CreateDishRequest:
+  type: object
+  required:
+    - name
+    - price
+    - categoryId
+  properties:
+    name:
+      type: string
+    description:
+      type: string
+    price:
+      type: number
+    imageUrl:
+      type: string
+    categoryId:
+      type: integer

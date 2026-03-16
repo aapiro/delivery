@@ -1,0 +1,579 @@
+openapi: 3.0.3
+info:
+  title: Delivery Platform API
+  description: API generada basada en el esquema de base de datos de Delivery (Usuarios, Restaurantes, Pedidos, Couriers).
+  version: 1.0.0
+  contact:
+    name: Equipo de Backend
+    email: dev@deliveryapp.com
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Servidor de Desarrollo
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ----------------------------------------------------------------
+    # ENUMS & COMMON TYPES
+    # ----------------------------------------------------------------
+    UserType:
+      type: string
+      enum: [CUSTOMER, RESTAURANT_OWNER, COURIER, ADMIN]
+
+    OrderStatus:
+      type: string
+      enum: [CREATED, CONFIRMED, PREPARING, READY, PICKED_UP, DELIVERED, CANCELLED]
+
+    DeliveryType:
+      type: string
+      enum: [DELIVERY, PICKUP]
+
+    PaymentMethodType:
+      type: string
+      enum: [CARD, PAYPAL, CASH, WALLET]
+
+    # ----------------------------------------------------------------
+    # PAGINATION WRAPPER
+    # ----------------------------------------------------------------
+    PagedResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+        size:
+          type: integer
+        number:
+          type: integer
+        content:
+          type: array
+          items:
+            type: object # Se sobrescribe en cada uso con allOf
+
+    # ----------------------------------------------------------------
+    # USER & ADDRESS
+    # ----------------------------------------------------------------
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        fullName:
+          type: string
+        userType:
+          $ref: '#/components/schemas/UserType'
+        isVerified:
+          type: boolean
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        street:
+          type: string
+        city:
+          type: string
+        zipCode:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        formattedAddress:
+          type: string
+        deliveryInstructions:
+          type: string
+        addressType:
+          type: string
+          enum: [HOME, WORK, OTHER]
+
+    # ----------------------------------------------------------------
+    # RESTAURANT DOMAIN
+    # ----------------------------------------------------------------
+    RestaurantSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+        isOpen:
+          type: boolean
+        rating:
+          type: number
+          format: float
+        deliveryTimeMin:
+          type: integer
+        deliveryTimeMax:
+          type: integer
+        deliveryFee:
+          type: number
+        minimumOrder:
+          type: number
+        cuisineTypes:
+          type: array
+          items:
+            type: string
+
+    RestaurantDetail:
+      allOf:
+        - $ref: '#/components/schemas/RestaurantSummary'
+        - type: object
+          properties:
+            reviewCount:
+              type: integer
+            avgPreparationTime:
+              type: integer
+            address: # Relacionado aunque no explícito en la tabla restaurants, suele venir de un join
+              type: string
+            categories:
+              type: array
+              items:
+                $ref: '#/components/schemas/MenuCategory'
+
+    MenuCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        displayOrder:
+          type: integer
+        dishes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dish'
+
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        imageUrl:
+          type: string
+        isAvailable:
+          type: boolean
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishOption'
+
+    DishOption:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        required:
+          type: boolean
+        values:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishOptionValue'
+
+    DishOptionValue:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        extraPrice:
+          type: number
+
+    # ----------------------------------------------------------------
+    # ORDER DOMAIN
+    # ----------------------------------------------------------------
+    OrderRequest:
+      type: object
+      required:
+        - restaurantId
+        - items
+        - deliveryAddressId
+      properties:
+        restaurantId:
+          type: integer
+          format: int64
+        deliveryAddressId:
+          type: integer
+          format: int64
+        deliveryType:
+          $ref: '#/components/schemas/DeliveryType'
+        specialInstructions:
+          type: string
+        items:
+          type: array
+          items:
+            type: object
+            required:
+              - dishId
+              - quantity
+            properties:
+              dishId:
+                type: integer
+                format: int64
+              quantity:
+                type: integer
+              options: # IDs de DishOptionValue seleccionados
+                type: array
+                items:
+                  type: integer
+                  format: int64
+
+    OrderResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        totalAmount:
+          type: number
+        subtotal:
+          type: number
+        deliveryFee:
+          type: number
+        orderDate:
+          type: string
+          format: date-time
+        estimatedDeliveryTime:
+          type: string
+          format: date-time
+        courier:
+          $ref: '#/components/schemas/CourierSummary'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+
+    OrderItem:
+      type: object
+      properties:
+        dishId:
+          type: integer
+          format: int64
+        dishName:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+
+    # ----------------------------------------------------------------
+    # COURIER
+    # ----------------------------------------------------------------
+    CourierSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        vehicleType:
+          type: string
+        currentLatitude:
+          type: number
+          format: double
+        currentLongitude:
+          type: number
+          format: double
+
+paths:
+  # ==============================
+  # RESTAURANTS
+  # ==============================
+  /restaurants:
+    get:
+      summary: Listar y buscar restaurantes
+      operationId: listRestaurants
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          description: Búsqueda por nombre o descripción (Full-text)
+          schema:
+            type: string
+        - name: cuisineId
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista paginada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PagedResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/RestaurantSummary'
+
+    post:
+      summary: Crear restaurante (Admin/Owner)
+      operationId: createRestaurant
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string}
+                description: {type: string}
+                # ... resto de campos
+      responses:
+        '201':
+          description: Creado
+
+  /restaurants/{id}:
+    get:
+      summary: Obtener detalle completo de restaurante
+      operationId: getRestaurantById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Detalle con menú y categorías
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantDetail'
+    put:
+      summary: Actualizar restaurante
+      operationId: updateRestaurant
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantSummary'
+      responses:
+        '200':
+          description: Actualizado
+
+  # ==============================
+  # ORDERS
+  # ==============================
+  /orders:
+    post:
+      summary: Crear un nuevo pedido
+      operationId: createOrder
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+      responses:
+        '201':
+          description: Pedido creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+    get:
+      summary: Historial de pedidos del usuario
+      operationId: getMyOrders
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema: {type: integer}
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PagedResponse'
+                  - type: object
+                    properties:
+                      content:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/OrderResponse'
+
+  /orders/{id}:
+    get:
+      summary: Obtener detalle de un pedido
+      operationId: getOrderById
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: {type: integer, format: int64}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+
+  /orders/{id}/status:
+    patch:
+      summary: Actualizar estado del pedido (Courier/Restaurant/System)
+      operationId: updateOrderStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: {type: integer, format: int64}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/OrderStatus'
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Estado actualizado
+
+  /orders/{id}/tracking:
+    get:
+      summary: Obtener tracking en tiempo real
+      operationId: getOrderTracking
+      parameters:
+        - name: id
+          in: path
+          schema: {type: integer, format: int64}
+      responses:
+        '200':
+          description: Coordenadas actuales
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  latitude: {type: number}
+                  longitude: {type: number}
+                  estimatedArrival: {type: string, format: date-time}
+
+  # ==============================
+  # USER & PROFILE
+  # ==============================
+  /users/addresses:
+    get:
+      summary: Listar direcciones del usuario
+      operationId: getUserAddresses
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+    post:
+      summary: Guardar nueva dirección
+      operationId: createAddress
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '201':
+          description: Creada
+
+  # ==============================
+  # COURIERS (Admin/App Courier)
+  # ==============================
+  /couriers/status:
+    patch:
+      summary: Cambiar estado online/offline del repartidor
+      operationId: toggleCourierStatus
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isOnline: {type: boolean}
+                latitude: {type: number}
+                longitude: {type: number}
+      responses:
+        '200':
+          description: Estado actualizado
