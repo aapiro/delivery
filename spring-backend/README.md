@@ -38,11 +38,12 @@ Inventario de entidades y endpoints
 Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla) detectada en `db/changelog/schema/001-schema-create-core-tables.sql` y los endpoints CRUD asociados. Marca la casilla cuando implementes la entidad completa (JPA entity, repository, service, controller, DTOs/mappers y endpoints CRUD).
 
 - [ ] addresses
-  - [ ] GET /addresses
-  - [ ] GET /addresses/{id}
-  - [ ] POST /addresses
-  - [ ] PUT /addresses/{id}
-  - [ ] DELETE /addresses/{id}
+ - [x] addresses
+  - [x] GET /addresses
+  - [x] GET /addresses/{id}
+  - [x] POST /addresses
+  - [x] PUT /addresses/{id}
+  - [x] DELETE /addresses/{id}
 - [ ] audit_logs
   - [ ] GET /audit-logs
 - [ ] courier_reviews
