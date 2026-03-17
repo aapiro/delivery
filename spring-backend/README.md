@@ -92,10 +92,10 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] GET /order-issues
   - [ ] POST /order-issues
   - [ ] DELETE /order-issues/{id}
-- [ ] order_items
-  - [ ] GET /order-items
-  - [ ] POST /order-items
-  - [ ] DELETE /order-items/{id}
+- [x] order_items
+  - [x] GET /order-items
+  - [x] POST /order-items
+  - [x] DELETE /order-items/{id}
 - [ ] order_status_history
   - [ ] GET /order-status-history
   - [ ] POST /order-status-history
