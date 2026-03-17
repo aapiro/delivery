@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/delivery.iml" filepath="$PROJECT_DIR$/.idea/delivery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/quarkus-backend/restaurantes-backend.iml" filepath="$PROJECT_DIR$/quarkus-backend/restaurantes-backend.iml" />
     </modules>
   </component>
 </project>

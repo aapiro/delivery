@@ -71,11 +71,11 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] GET /dish-reviews
   - [ ] POST /dish-reviews
 - [ ] dishes
-  - [ ] GET /dishes
-  - [ ] GET /dishes/{id}
-  - [ ] POST /dishes
-  - [ ] PUT /dishes/{id}
-  - [ ] DELETE /dishes/{id}
+  - [x] GET /dishes
+  - [x] GET /dishes/{id}
+  - [x] POST /dishes
+  - [x] PUT /dishes/{id}
+  - [x] DELETE /dishes/{id}
 - [ ] menu_categories
   - [ ] GET /menu-categories
   - [ ] GET /menu-categories/{id}
