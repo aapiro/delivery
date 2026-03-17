@@ -153,8 +153,9 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [x] PUT /restaurants/{id}
   - [x] DELETE /restaurants/{id}
 - [ ] transactions
-  - [ ] GET /transactions
-  - [ ] POST /transactions
+ - [x] transactions
+  - [x] GET /transactions
+  - [x] POST /transactions
 - [ ] tips
   - [ ] GET /tips
   - [ ] POST /tips
