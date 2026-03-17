@@ -102,12 +102,12 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
 - [ ] order_tracking
   - [ ] GET /order-tracking
   - [ ] POST /order-tracking
-- [ ] orders
-  - [ ] GET /orders
-  - [ ] GET /orders/{id}
-  - [ ] POST /orders
-  - [ ] PUT /orders/{id}
-  - [ ] DELETE /orders/{id}
+ - [x] orders
+  - [x] GET /orders
+  - [x] GET /orders/{id}
+  - [x] POST /orders
+  - [x] PUT /orders/{id}
+  - [x] DELETE /orders/{id}
 - [ ] payment_methods
   - [ ] GET /payment-methods
   - [ ] POST /payment-methods
