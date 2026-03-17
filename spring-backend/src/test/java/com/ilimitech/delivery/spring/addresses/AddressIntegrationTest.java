@@ -69,7 +69,7 @@ public class AddressIntegrationTest {
         // Get by id
         mockMvc.perform(get("/addresses/" + id).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(".id", is(id.intValue())));
+                .andExpect(jsonPath("$.id", is(id.intValue())));
 
         // Update
         UpdateAddressDto update = UpdateAddressDto.builder()
@@ -80,7 +80,7 @@ public class AddressIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath(".street", is("Calle Nueva 456")));
+                .andExpect(jsonPath("$.street", is("Calle Nueva 456")));
 
         // Delete
         mockMvc.perform(delete("/addresses/" + id))
