@@ -173,11 +173,12 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [x] PUT /users/{id}
   - [x] DELETE /users/{id}
 - [ ] user_wallets
-  - [ ] GET /user-wallets
-  - [ ] POST /user-wallets
+ - [x] user_wallets
+  - [x] GET /user-wallets
+  - [x] POST /user-wallets
 - [ ] wallet_transactions
-  - [ ] GET /wallet-transactions
-  - [ ] POST /wallet-transactions
+  - [x] GET /wallet-transactions
+  - [x] POST /wallet-transactions
 
 Notas:
 - Algunas entidades apuntadas son de soporte interno (ej. `audit_logs`, `order_tracking`, `restaurant_daily_stats`). Puedes decidir no exponer CRUD público para ellas; en ese caso mantendremos checkbox privados.
