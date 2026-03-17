@@ -23,3 +23,12 @@ http://localhost:8080/api/swagger-ui.html
 
 (Nota: el proyecto expone el OpenAPI estático en /api/v3/api-docs.yaml y Swagger UI carga ese documento)
 
+Liquibase
+---------
+
+El proyecto usa Liquibase para ejecutar migraciones al iniciar la aplicación (puedes deshabilitarlo con la variable LIQUIBASE_ENABLED=false).
+
+Los changelogs están en `src/main/resources/db/changelog/` y los scripts SQL en `src/main/resources/db/changelog/sql/`.
+
+Al levantar con `docker compose up --build` Liquibase ejecutará los scripts y creará la tabla `restaurants` con datos de prueba.
+

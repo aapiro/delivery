@@ -14,8 +14,8 @@ module.exports = {
             },
         },
         input: {
-            target: 'http://localhost:8080/q/openapi',
-            // target: './openapi.yaml',
+            // target: 'http://localhost:8080/q/openapi',
+            target: './openapi.yaml',
         },
     },
 };
