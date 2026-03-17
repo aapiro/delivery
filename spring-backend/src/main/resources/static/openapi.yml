@@ -121,9 +121,361 @@ paths:
         '200':
           description: Actualizado
   /admin/dishes:
-    $ref: './openapi/resources/dishes/paths.yml#/dishes-collection'
+    get:
+      summary: Listar platos
+      tags:
+        - AdminDishes
+      responses:
+        '200':
+          description: Lista de platos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+    post:
+      summary: Crear plato
+      tags:
+        - AdminDishes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+      responses:
+        '201':
+          description: Plato creado
   /admin/dishes/{id}:
-    $ref: './openapi/resources/dishes/paths.yml#/dish-detail'
+    get:
+      summary: Obtener plato por ID
+      tags:
+        - AdminDishes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Plato encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+        '404':
+          description: Plato no encontrado
+    put:
+      summary: Actualizar plato
+      tags:
+        - AdminDishes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Dish'
+      responses:
+        '200':
+          description: Plato actualizado
+    delete:
+      summary: Eliminar plato
+      tags:
+        - AdminDishes
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Plato eliminado
+  /users:
+    get:
+      summary: Listar usuarios
+      tags:
+        - AdminUsers
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Crear usuario
+      tags:
+        - AdminUsers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      summary: Obtener usuario por ID
+      tags:
+        - AdminUsers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuario no encontrado
+    put:
+      summary: Actualizar usuario
+      tags:
+        - AdminUsers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Usuario actualizado
+    delete:
+      summary: Eliminar usuario
+      tags:
+        - AdminUsers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Usuario eliminado
+
+  /orders:
+    get:
+      summary: Listar pedidos
+      tags:
+        - AdminRestaurants
+      responses:
+        '200':
+          description: Lista de pedidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Crear pedido
+      tags:
+        - AdminRestaurants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Pedido creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{id}:
+    get:
+      summary: Obtener pedido por ID
+      tags:
+        - AdminRestaurants
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Pedido encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Pedido no encontrado
+    put:
+      summary: Actualizar pedido
+      tags:
+        - AdminRestaurants
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Pedido actualizado
+    delete:
+      summary: Eliminar pedido
+      tags:
+        - AdminRestaurants
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Pedido eliminado
+
+  /menu-categories:
+    get:
+      summary: Listar categorías de menú
+      tags:
+        - AdminRestaurants
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuCategory'
+    post:
+      summary: Crear categoría
+      tags:
+        - AdminRestaurants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MenuCategory'
+      responses:
+        '201':
+          description: Categoría creada
+
+  /cuisine-types:
+    get:
+      summary: Listar tipos de cocina
+      tags:
+        - AdminRestaurants
+      responses:
+        '200':
+          description: Lista de tipos de cocina
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CuisineType'
+    post:
+      summary: Crear tipo de cocina
+      tags:
+        - AdminRestaurants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CuisineType'
+      responses:
+        '201':
+          description: Tipo de cocina creado
+
+  /couriers:
+    get:
+      summary: Listar repartidores
+      tags:
+        - AdminRestaurants
+      responses:
+        '200':
+          description: Lista de repartidores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Courier'
+    post:
+      summary: Crear repartidor
+      tags:
+        - AdminRestaurants
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Courier'
+      responses:
+        '201':
+          description: Repartidor creado
+
+  /addresses:
+    get:
+      summary: Listar direcciones
+      tags:
+        - AdminUsers
+      responses:
+        '200':
+          description: Lista de direcciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Address'
+    post:
+      summary: Crear dirección
+      tags:
+        - AdminUsers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+      responses:
+        '201':
+          description: Dirección creada
 components:
   schemas:
 
@@ -242,19 +594,6 @@ components:
           type: string
           format: uri
 
-    MenuCategory:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-        displayOrder:
-          type: integer
 
     Dish:
       type: object
@@ -302,4 +641,751 @@ components:
         number:
           type: integer
           example: 0
+
+    # --- Schemas derivados de db/changelog/schema/001-schema-create-core-tables.sql ---
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        fullName:
+          type: string
+        userType:
+          type: string
+          description: CUSTOMER, RESTAURANT_OWNER, COURIER, ADMIN
+        isVerified:
+          type: boolean
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateUserRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        fullName:
+          type: string
+        userType:
+          type: string
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        restaurantId:
+          type: integer
+          format: int64
+        totalAmount:
+          type: number
+          format: double
+        subtotal:
+          type: number
+          format: double
+        deliveryFee:
+          type: number
+          format: double
+        deliveryType:
+          type: string
+        status:
+          type: string
+        deliveryAddress:
+          type: string
+        orderDate:
+          type: string
+          format: date-time
+        courierId:
+          type: integer
+          format: int64
+
+    CreateOrderRequest:
+      type: object
+      required:
+        - userId
+        - restaurantId
+        - totalAmount
+      properties:
+        userId:
+          type: integer
+        restaurantId:
+          type: integer
+        totalAmount:
+          type: number
+        subtotal:
+          type: number
+        deliveryFee:
+          type: number
+        deliveryType:
+          type: string
+        deliveryAddress:
+          type: string
+
+    MenuCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        icon:
+          type: string
+        displayOrder:
+          type: integer
+        isActive:
+          type: boolean
+
+    CuisineType:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+
+    Courier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        vehicleType:
+          type: string
+        userId:
+          type: integer
+        licenseNumber:
+          type: string
+        licenseExpiry:
+          type: string
+          format: date
+        vehiclePlate:
+          type: string
+        currentLatitude:
+          type: number
+        currentLongitude:
+          type: number
+        isOnline:
+          type: boolean
+        currentOrdersCount:
+          type: integer
+        isActive:
+          type: boolean
+
+    Address:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        restaurantId:
+          type: integer
+        street:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        country:
+          type: string
+        addressLine:
+          type: string
+        city:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        isVerified:
+          type: boolean
+        placeId:
+          type: string
+        formattedAddress:
+          type: string
+        deliveryInstructions:
+          type: string
+        addressType:
+          type: string
+        floor:
+          type: string
+        apartment:
+          type: string
+        isDefault:
+          type: boolean
+
+    # SQL_ENTITIES_START
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        entityType:
+          type: string
+        entityId:
+          type: integer
+        eventType:
+          type: string
+        metadata:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+
+    RestaurantCommission:
+      type: object
+      properties:
+        restaurantId:
+          type: integer
+        commissionPercent:
+          type: number
+        fixedFee:
+          type: number
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+
+    SponsoredRestaurant:
+      type: object
+      properties:
+        restaurantId:
+          type: integer
+        priority:
+          type: integer
+        startDate:
+          type: string
+        endDate:
+          type: string
+        budget:
+          type: number
+
+    RestaurantStatus:
+      type: object
+      properties:
+        restaurantId:
+          type: integer
+        status:
+          type: string
+        reason:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+
+    DishAvailability:
+      type: object
+      properties:
+        dishId:
+          type: integer
+        dayOfWeek:
+          type: integer
+        startTime:
+          type: string
+        endTime:
+          type: string
+
+    RestaurantCuisine:
+      type: object
+      properties:
+        restaurantId:
+          type: integer
+        cuisineId:
+          type: integer
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        dishId:
+          type: integer
+        quantity:
+          type: integer
+        price:
+          type: number
+
+    RestaurantReview:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    RestaurantOpeningHour:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        dayOfWeek:
+          type: integer
+        openTime:
+          type: string
+        closeTime:
+          type: string
+        isClosed:
+          type: boolean
+
+    RestaurantClosure:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        startDatetime:
+          type: string
+        endDatetime:
+          type: string
+        reason:
+          type: string
+
+    OrderIssue:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    RestaurantDeliveryZone:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        radiusKm:
+          type: number
+        minimumOrder:
+          type: number
+        deliveryFee:
+          type: number
+
+    Promotion:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        code:
+          type: string
+        discountType:
+          type: string
+        discountValue:
+          type: number
+        minOrderAmount:
+          type: number
+        startDate:
+          type: string
+        endDate:
+          type: string
+        maxUses:
+          type: integer
+        timesUsed:
+          type: integer
+        isActive:
+          type: boolean
+
+    UserPromotionUsage:
+      type: object
+      properties:
+        userId:
+          type: integer
+        promotionId:
+          type: integer
+        orderId:
+          type: integer
+        usedAt:
+          type: string
+          format: date-time
+
+    SurgePricing:
+      type: object
+      properties:
+        id:
+          type: integer
+        restaurantId:
+          type: integer
+        zoneId:
+          type: integer
+        multiplier:
+          type: number
+        startTime:
+          type: string
+        endTime:
+          type: string
+        reason:
+          type: string
+
+    DishOption:
+      type: object
+      properties:
+        id:
+          type: integer
+        dishId:
+          type: integer
+        name:
+          type: string
+        required:
+          type: boolean
+
+    DishOptionValue:
+      type: object
+      properties:
+        id:
+          type: integer
+        optionId:
+          type: integer
+        name:
+          type: string
+        extraPrice:
+          type: number
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        tableName:
+          type: string
+        recordId:
+          type: integer
+        action:
+          type: string
+        oldData:
+          type: object
+        newData:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderTracking:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        courierId:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        status:
+          type: string
+        estimatedArrival:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    PaymentMethod:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        type:
+          type: string
+        provider:
+          type: string
+        token:
+          type: string
+        lastFour:
+          type: string
+        isDefault:
+          type: boolean
+        isActive:
+          type: boolean
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        paymentMethodId:
+          type: integer
+        amount:
+          type: number
+        status:
+          type: string
+        providerTransactionId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Payout:
+      type: object
+      properties:
+        id:
+          type: integer
+        recipientType:
+          type: string
+        recipientId:
+          type: integer
+        amount:
+          type: number
+        periodStart:
+          type: string
+        periodEnd:
+          type: string
+        status:
+          type: string
+        processedAt:
+          type: string
+          format: date-time
+
+    ReferralCode:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        code:
+          type: string
+        discountAmount:
+          type: number
+        timesUsed:
+          type: integer
+        maxUses:
+          type: integer
+
+    UserWallet:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        balance:
+          type: number
+        currency:
+          type: string
+
+    WalletTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        walletId:
+          type: integer
+        type:
+          type: string
+        amount:
+          type: number
+        orderId:
+          type: integer
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    NotificationToken:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        token:
+          type: string
+        platform:
+          type: string
+        isActive:
+          type: boolean
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        data:
+          type: object
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CourierReview:
+      type: object
+      properties:
+        id:
+          type: integer
+        courierId:
+          type: integer
+        orderId:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    DishReview:
+      type: object
+      properties:
+        id:
+          type: integer
+        dishId:
+          type: integer
+        orderId:
+          type: integer
+        userId:
+          type: integer
+        rating:
+          type: integer
+        comment:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    UserFavorite:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        restaurantId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    UserSavedDish:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        dishId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    OrderStatusHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        status:
+          type: string
+        changedByUserId:
+          type: integer
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Tip:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderId:
+          type: integer
+        courierId:
+          type: integer
+        amount:
+          type: number
+        tipType:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    RestaurantDailyStats:
+      type: object
+      properties:
+        restaurantId:
+          type: integer
+        date:
+          type: string
+          format: date
+        totalOrders:
+          type: integer
+        totalRevenue:
+          type: number
+        avgOrderValue:
+          type: number
+
+    # SQL_ENTITIES_END
 
