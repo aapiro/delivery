@@ -146,11 +146,12 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] POST /restaurant-reviews
   - [ ] DELETE /restaurant-reviews/{id}
 - [ ] restaurants
-  - [ ] GET /restaurants
-  - [ ] GET /restaurants/{id}
-  - [ ] POST /restaurants
-  - [ ] PUT /restaurants/{id}
-  - [ ] DELETE /restaurants/{id}
+ - [x] restaurants
+  - [x] GET /restaurants
+  - [x] GET /restaurants/{id}
+  - [x] POST /restaurants
+  - [x] PUT /restaurants/{id}
+  - [x] DELETE /restaurants/{id}
 - [ ] transactions
   - [ ] GET /transactions
   - [ ] POST /transactions
