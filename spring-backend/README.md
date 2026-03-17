@@ -46,9 +46,9 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [x] DELETE /addresses/{id}
 - [x] audit_logs
   - [x] GET /audit-logs
-- [ ] courier_reviews
-  - [ ] GET /courier-reviews
-  - [ ] POST /courier-reviews
+- [x] courier_reviews
+  - [x] GET /courier-reviews
+  - [x] POST /courier-reviews
 - [ ] couriers
   - [ ] GET /couriers
   - [ ] GET /couriers/{id}
