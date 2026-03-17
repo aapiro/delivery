@@ -156,9 +156,9 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
  - [x] transactions
   - [x] GET /transactions
   - [x] POST /transactions
-- [ ] tips
-  - [ ] GET /tips
-  - [ ] POST /tips
+ - [x] tips
+  - [x] GET /tips
+  - [x] POST /tips
 - [ ] user_favorites
   - [ ] GET /user-favorites
   - [ ] POST /user-favorites
