@@ -55,10 +55,10 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] POST /couriers
   - [ ] PUT /couriers/{id}
   - [ ] DELETE /couriers/{id}
-- [ ] dish_availability
-  - [ ] GET /dish-availability
-  - [ ] POST /dish-availability
-  - [ ] DELETE /dish-availability/{id}
+- [x] dish_availability
+  - [x] GET /dish-availability
+  - [x] POST /dish-availability
+  - [x] DELETE /dish-availability/{id}
 - [ ] dish_option_values
   - [ ] GET /dish-option-values
   - [ ] POST /dish-option-values
