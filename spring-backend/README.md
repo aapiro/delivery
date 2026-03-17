@@ -166,11 +166,12 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] GET /user-saved-dishes
   - [ ] POST /user-saved-dishes
 - [ ] users
-  - [ ] GET /users
-  - [ ] GET /users/{id}
-  - [ ] POST /users
-  - [ ] PUT /users/{id}
-  - [ ] DELETE /users/{id}
+ - [x] users
+  - [x] GET /users
+  - [x] GET /users/{id}
+  - [x] POST /users
+  - [x] PUT /users/{id}
+  - [x] DELETE /users/{id}
 - [ ] user_wallets
   - [ ] GET /user-wallets
   - [ ] POST /user-wallets
