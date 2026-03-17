@@ -49,12 +49,12 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
 - [x] courier_reviews
   - [x] GET /courier-reviews
   - [x] POST /courier-reviews
-- [ ] couriers
-  - [ ] GET /couriers
-  - [ ] GET /couriers/{id}
-  - [ ] POST /couriers
-  - [ ] PUT /couriers/{id}
-  - [ ] DELETE /couriers/{id}
+- [x] couriers
+  - [x] GET /couriers
+  - [x] GET /couriers/{id}
+  - [x] POST /couriers
+  - [x] PUT /couriers/{id}
+  - [x] DELETE /couriers/{id}
 - [x] dish_availability
   - [x] GET /dish-availability
   - [x] POST /dish-availability
