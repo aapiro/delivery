@@ -37,8 +37,7 @@ Inventario de entidades y endpoints
 
 Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla) detectada en `db/changelog/schema/001-schema-create-core-tables.sql` y los endpoints CRUD asociados. Marca la casilla cuando implementes la entidad completa (JPA entity, repository, service, controller, DTOs/mappers y endpoints CRUD).
 
-- [ ] addresses
- - [x] addresses
+- [x] addresses
   - [x] GET /addresses
   - [x] GET /addresses/{id}
   - [x] POST /addresses
@@ -102,27 +101,30 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
 - [x] order_tracking
   - [x] GET /order-tracking
   - [x] POST /order-tracking
- - [x] orders
+- [x] orders
   - [x] GET /orders
   - [x] GET /orders/{id}
   - [x] POST /orders
   - [x] PUT /orders/{id}
   - [x] DELETE /orders/{id}
-- [ ] payment_methods
-  - [ ] GET /payment-methods
-  - [ ] POST /payment-methods
-  - [ ] DELETE /payment-methods/{id}
-- [ ] payouts
-  - [ ] GET /payouts
-  - [ ] POST /payouts
+- [x] payment_methods
+  - [x] GET /payment-methods
+  - [x] POST /payment-methods
+  - [x] DELETE /payment-methods/{id}
+- [x] payouts
+  - [x] GET /payouts
+  - [x] POST /payouts
 - [ ] promotions
   - [ ] GET /promotions
   - [ ] POST /promotions
   - [ ] PUT /promotions/{id}
   - [ ] DELETE /promotions/{id}
-- [ ] referral_codes
-  - [ ] GET /referral-codes
-  - [ ] POST /referral-codes
+- [x] referral_codes
+  - [x] GET /referral-codes
+  - [x] GET /referral-codes/{id}
+  - [x] POST /referral-codes
+  - [x] PUT /referral-codes/{id}
+  - [x] DELETE /referral-codes/{id}
 - [ ] restaurant_closures
   - [ ] GET /restaurant-closures
   - [ ] POST /restaurant-closures
@@ -145,38 +147,34 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [ ] GET /restaurant-reviews
   - [ ] POST /restaurant-reviews
   - [ ] DELETE /restaurant-reviews/{id}
-- [ ] restaurants
- - [x] restaurants
+- [x] restaurants
   - [x] GET /restaurants
   - [x] GET /restaurants/{id}
   - [x] POST /restaurants
   - [x] PUT /restaurants/{id}
   - [x] DELETE /restaurants/{id}
-- [ ] transactions
- - [x] transactions
-  - [x] GET /transactions
-  - [x] POST /transactions
- - [x] tips
+- [x] tips
   - [x] GET /tips
   - [x] POST /tips
+- [x] transactions
+  - [x] GET /transactions
+  - [x] POST /transactions
 - [ ] user_favorites
   - [ ] GET /user-favorites
   - [ ] POST /user-favorites
 - [ ] user_saved_dishes
   - [ ] GET /user-saved-dishes
   - [ ] POST /user-saved-dishes
-- [ ] users
- - [x] users
+- [x] users
   - [x] GET /users
   - [x] GET /users/{id}
   - [x] POST /users
   - [x] PUT /users/{id}
   - [x] DELETE /users/{id}
-- [ ] user_wallets
- - [x] user_wallets
+- [x] user_wallets
   - [x] GET /user-wallets
   - [x] POST /user-wallets
-- [ ] wallet_transactions
+- [x] wallet_transactions
   - [x] GET /wallet-transactions
   - [x] POST /wallet-transactions
 
