@@ -67,9 +67,9 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [x] GET /dish-options
   - [x] POST /dish-options
   - [x] DELETE /dish-options/{id}
-- [ ] dish_reviews
-  - [ ] GET /dish-reviews
-  - [ ] POST /dish-reviews
+- [x] dish_reviews
+  - [x] GET /dish-reviews
+  - [x] POST /dish-reviews
 - [x] dishes
   - [x] GET /dishes
   - [x] GET /dishes/{id}
