@@ -88,20 +88,20 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
 - [x] notification_tokens
   - [x] GET /notification-tokens
   - [x] POST /notification-tokens
-- [ ] order_issues
-  - [ ] GET /order-issues
-  - [ ] POST /order-issues
-  - [ ] DELETE /order-issues/{id}
+- [x] order_issues
+  - [x] GET /order-issues
+  - [x] POST /order-issues
+  - [x] DELETE /order-issues/{id}
 - [x] order_items
   - [x] GET /order-items
   - [x] POST /order-items
   - [x] DELETE /order-items/{id}
-- [ ] order_status_history
-  - [ ] GET /order-status-history
-  - [ ] POST /order-status-history
-- [ ] order_tracking
-  - [ ] GET /order-tracking
-  - [ ] POST /order-tracking
+- [x] order_status_history
+  - [x] GET /order-status-history
+  - [x] POST /order-status-history
+- [x] order_tracking
+  - [x] GET /order-tracking
+  - [x] POST /order-tracking
  - [x] orders
   - [x] GET /orders
   - [x] GET /orders/{id}
