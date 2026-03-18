@@ -76,18 +76,18 @@ Usa esta lista como checklist maestro. Cada ítem representa una entidad (tabla)
   - [x] POST /dishes
   - [x] PUT /dishes/{id}
   - [x] DELETE /dishes/{id}
-- [ ] menu_categories
-  - [ ] GET /menu-categories
-  - [ ] GET /menu-categories/{id}
-  - [ ] POST /menu-categories
-  - [ ] PUT /menu-categories/{id}
-  - [ ] DELETE /menu-categories/{id}
-- [ ] notifications
-  - [ ] GET /notifications
-  - [ ] POST /notifications
-- [ ] notification_tokens
-  - [ ] GET /notification-tokens
-  - [ ] POST /notification-tokens
+- [x] menu_categories
+  - [x] GET /menu-categories
+  - [x] GET /menu-categories/{id}
+  - [x] POST /menu-categories
+  - [x] PUT /menu-categories/{id}
+  - [x] DELETE /menu-categories/{id}
+- [x] notifications
+  - [x] GET /notifications
+  - [x] POST /notifications
+- [x] notification_tokens
+  - [x] GET /notification-tokens
+  - [x] POST /notification-tokens
 - [ ] order_issues
   - [ ] GET /order-issues
   - [ ] POST /order-issues
