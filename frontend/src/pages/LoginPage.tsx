@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { CACHE_KEYS } from '../constants';
 import { loginUser } from '../services/api';
 
 const LoginPage: React.FC = () => {
@@ -19,9 +20,11 @@ const LoginPage: React.FC = () => {
       const response = await loginUser({ email, password });
       
       if (response.user && response.token) {
-        // Guardar el token en localStorage
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem(CACHE_KEYS.TOKEN, response.token);
+        if (response.refreshToken) {
+          localStorage.setItem(CACHE_KEYS.REFRESH_TOKEN, response.refreshToken);
+        }
+        localStorage.setItem(CACHE_KEYS.USER, JSON.stringify(response.user));
         
         // Redirigir al usuario a la página principal
         navigate('/');

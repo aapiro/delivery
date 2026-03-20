@@ -584,6 +584,8 @@ For detailed API documentation, visit [http://localhost:59806/q/swagger](http://
 ### API Authentication
 All protected endpoints require a valid JWT token, which can be obtained by authenticating at `/api/auth/login`.
 
+For local development, JWT keys are loaded from `src/main/resources/jwt/`. Commit only the public key. Keep `privateKey.pem` local/secret and rotate keys per environment (staging/production) through secure secret management.
+
 ### API Versioning
 The API follows semantic versioning principles with version numbers included in the URL path (e.g., `/v1/restaurants`).
 

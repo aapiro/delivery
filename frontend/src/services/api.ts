@@ -2,6 +2,17 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { API_CONFIG, CACHE_KEYS, ERROR_MESSAGES } from '../constants';
 import { ApiResponse } from '../types';
 
+/** Quarkus devuelve `{ user, token, refreshToken }`; otros backends pueden envolver en `{ data: ... }`. */
+function normalizeAuthPayload(body: any): { user: any; token: string; refreshToken: string } {
+    if (!body || typeof body !== 'object') {
+        return body;
+    }
+    if ('data' in body && body.data != null && typeof body.data === 'object') {
+        return body.data as { user: any; token: string; refreshToken: string };
+    }
+    return body as { user: any; token: string; refreshToken: string };
+}
+
 // ============= AXIOS INSTANCE =============
 
 class ApiService {
@@ -234,8 +245,8 @@ export const registerUser = async ({ name, email, password }: { name: string; em
             email,
             password
         });
-        
-        return response.data;
+
+        return normalizeAuthPayload(response as any);
     } catch (error) {
         throw error;
     }
@@ -247,8 +258,8 @@ export const loginUser = async ({ email, password }: { email: string; password: 
             email,
             password
         });
-        
-        return response.data;
+
+        return normalizeAuthPayload(response as any);
     } catch (error) {
         throw error;
     }
@@ -256,13 +267,16 @@ export const loginUser = async ({ email, password }: { email: string; password: 
 
 export const logoutUser = async () => {
     try {
-        // En una implementación real, aquí se haría la llamada al endpoint de logout
+        const token = localStorage.getItem(CACHE_KEYS.TOKEN);
+        if (token) {
+            await axios
+                .post(`${API_CONFIG.BASE_URL}/auth/logout`, {}, { headers: { Authorization: `Bearer ${token}` } })
+                .catch(() => undefined);
+        }
+    } finally {
         localStorage.removeItem(CACHE_KEYS.TOKEN);
         localStorage.removeItem(CACHE_KEYS.REFRESH_TOKEN);
         localStorage.removeItem(CACHE_KEYS.USER);
-        
-        return { success: true };
-    } catch (error) {
-        throw error;
     }
+    return { success: true };
 };

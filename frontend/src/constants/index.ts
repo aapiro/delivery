@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
     DISHES: {
         LIST: '/dishes',
         DETAIL: (id: number) => `/dishes/${id}`,
-        CATEGORIES: (restaurantId: number) => `/restaurants/${restaurantId}/dish-categories`,
+        CATEGORIES: (restaurantId: number) => `/dishes/restaurants/${restaurantId}/dish-categories`,
         SEARCH: '/dishes/search',
     },
 

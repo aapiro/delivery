@@ -26,13 +26,20 @@ export interface GetOrdersParams {
   offset?: number;
 }
 
+const unwrapResponse = <T>(payload: any): T => {
+  if (payload && typeof payload === 'object' && 'data' in payload && payload.data !== undefined) {
+    return payload.data as T;
+  }
+  return payload as T;
+};
+
 /**
  * Create a new order
  */
 export const createOrder = async (orderData: CreateOrderRequest): Promise<Order> => {
   try {
-    const response = await api.post<{ data: Order }>('/orders', orderData);
-    return response.data.data;
+    const response = await api.post<any>('/orders', orderData);
+    return unwrapResponse<Order>(response.data);
   } catch (error) {
     throw new Error(`Failed to create order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -46,13 +53,12 @@ export const getOrders = async (params?: GetOrdersParams): Promise<Order[]> => {
     const queryParams = new URLSearchParams();
     
     if (params?.status) queryParams.append('status', params.status);
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.limit) queryParams.append('size', params.limit.toString());
     if (params?.offset) queryParams.append('offset', params.offset.toString());
 
     const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
-    const response = await api.get<{ data: Order[] }>(`/orders${queryString}`);
-    
-    return response.data.data;
+    const response = await api.get<any>(`/orders${queryString}`);
+    return unwrapResponse<Order[]>(response.data);
   } catch (error) {
     throw new Error(`Failed to fetch orders: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -63,8 +69,8 @@ export const getOrders = async (params?: GetOrdersParams): Promise<Order[]> => {
  */
 export const getOrderById = async (orderId: number): Promise<Order> => {
   try {
-    const response = await api.get<{ data: Order }>(`/orders/${orderId}`);
-    return response.data.data;
+    const response = await api.get<any>(`/orders/${orderId}`);
+    return unwrapResponse<Order>(response.data);
   } catch (error) {
     throw new Error(`Failed to fetch order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -78,8 +84,8 @@ export const updateOrderStatus = async (
   statusData: UpdateOrderStatusRequest
 ): Promise<Order> => {
   try {
-    const response = await api.put<{ data: Order }>(`/orders/${orderId}`, statusData);
-    return response.data.data;
+    const response = await api.put<any>(`/orders/${orderId}`, statusData);
+    return unwrapResponse<Order>(response.data);
   } catch (error) {
     throw new Error(`Failed to update order status: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -90,8 +96,8 @@ export const updateOrderStatus = async (
  */
 export const cancelOrder = async (orderId: number): Promise<Order> => {
   try {
-    const response = await api.delete<{ data: Order }>(`/orders/${orderId}`);
-    return response.data.data;
+    const response = await api.delete<any>(`/orders/${orderId}`);
+    return unwrapResponse<Order>(response.data);
   } catch (error) {
     throw new Error(`Failed to cancel order: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }

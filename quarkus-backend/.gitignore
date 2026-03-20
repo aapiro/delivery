@@ -38,6 +38,8 @@ nb-configuration.xml
 
 # Local environment
 .env
+# Local JWT signing key (never commit private keys)
+src/main/resources/jwt/privateKey.pem
 
 # Plugin directory
 /.quarkus/cli/plugins/

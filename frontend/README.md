@@ -1,5 +1,12 @@
 # 🚚 DeliveryApp - Multi-Restaurant Delivery Platform
 
+## Contexto de este módulo
+
+Este frontend corresponde al flujo cliente y consume `quarkus-backend`.
+
+- Frontend local: `http://localhost:3000`
+- API esperada: `http://localhost:8080/api`
+
 A comprehensive delivery platform for multiple restaurants developed with modern web technologies. This repository contains both the frontend and backend components of the application.
 
 ![Project Architecture](https://via.placeholder.com/600x300.png?text=DeliveryApp+Architecture)

@@ -4,6 +4,59 @@
 
 Este proyecto implementa un sistema completo de registro y autenticación de usuarios desde el frontend hasta el backend en Node.js.
 
+## Arquitectura vigente (oficial)
+
+- `frontend` consume `quarkus-backend`
+- `admin-frontend` consume `spring-backend`
+
+> Nota: `nodejs-backend` queda como módulo alternativo/legacy y no forma parte del flujo principal actual.
+
+## Arranque rápido por flujo
+
+### Flujo cliente: `frontend` + `quarkus-backend`
+
+```bash
+# terminal 1
+cd quarkus-backend
+./mvnw quarkus:dev
+
+# terminal 2
+cd frontend
+npm install
+npm start
+```
+
+### Flujo administración: `admin-frontend` + `spring-backend`
+
+```bash
+# terminal 1
+cd spring-backend
+mvn spring-boot:run
+
+# terminal 2
+cd admin-frontend
+npm install
+npm run dev
+```
+
+## Variables de entorno (base)
+
+| Módulo | Archivo base | Variables principales |
+|---|---|---|
+| `frontend` | `.env.example` | `REACT_APP_API_URL` |
+| `admin-frontend` | `.env.example` | `VITE_API_BASE_URL` |
+| `quarkus-backend` | `.env.example` | `QUARKUS_HTTP_PORT`, `SUPABASE_DB_*` |
+| `spring-backend` | `.env.example` | `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `LIQUIBASE_ENABLED` |
+
+## Dokploy (Docker Compose)
+
+Archivo recomendado para despliegue: `docker/docker-compose-dokploy.yml`
+
+- Flujo cliente (`frontend + quarkus-backend`)
+  - `docker compose -f docker/docker-compose-dokploy.yml --profile client up -d --build`
+- Flujo admin (`admin-frontend + spring-backend`)
+  - `docker compose -f docker/docker-compose-dokploy.yml --profile admin up -d --build`
+
 ## Estructura del Proyecto
 
 ### Backend (Node.js)

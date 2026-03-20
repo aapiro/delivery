@@ -22,7 +22,6 @@ public class UserService {
     }
     
     public User getCurrentUser() {
-        // This would typically get the current authenticated user from JWT or session
-        return new User("John Doe", "john@example.com");
+        return userRepository.listAll().stream().findFirst().orElse(null);
     }
 }

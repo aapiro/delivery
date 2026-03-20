@@ -2,6 +2,11 @@
 
 Panel de administración construido con **React Admin 5** + **Vite** + **TypeScript** que consume la API REST del `spring-backend`.
 
+Configuración base local:
+
+- Frontend admin: `http://localhost:3001`
+- API backend esperada: `http://localhost:8080/api`
+
 ---
 
 ## Índice

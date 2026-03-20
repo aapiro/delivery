@@ -1,0 +1,60 @@
+services:
+  quarkus-backend:
+    profiles: ["client"]
+    build:
+      context: ../quarkus-backend
+      dockerfile: Dockerfile
+    container_name: delivery-quarkus-backend
+    restart: unless-stopped
+    environment:
+      QUARKUS_HTTP_PORT: 8080
+      SUPABASE_DB_HOST: ${SUPABASE_DB_HOST}
+      SUPABASE_DB_PORT: ${SUPABASE_DB_PORT}
+      SUPABASE_DB_NAME: ${SUPABASE_DB_NAME}
+      SUPABASE_DB_USER: ${SUPABASE_DB_USER}
+      SUPABASE_DB_PASSWORD: ${SUPABASE_DB_PASSWORD}
+    ports:
+      - "${QUARKUS_BACKEND_PORT:-8080}:8080"
+
+  frontend:
+    profiles: ["client"]
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8080/api}
+    container_name: delivery-frontend
+    restart: unless-stopped
+    depends_on:
+      - quarkus-backend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+
+  spring-backend:
+    profiles: ["admin"]
+    build:
+      context: ../spring-backend
+      dockerfile: Dockerfile.dokploy
+    container_name: delivery-spring-backend
+    restart: unless-stopped
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      LIQUIBASE_ENABLED: ${LIQUIBASE_ENABLED:-true}
+    ports:
+      - "${SPRING_BACKEND_PORT:-8080}:8080"
+
+  admin-frontend:
+    profiles: ["admin"]
+    build:
+      context: ../admin-frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080/api}
+    container_name: delivery-admin-frontend
+    restart: unless-stopped
+    depends_on:
+      - spring-backend
+    ports:
+      - "${ADMIN_FRONTEND_PORT:-3001}:80"

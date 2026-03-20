@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  frontend:
+    name: frontend (react)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: CI=true npm test -- --watch=false
+      - run: npm run build
+
+  admin-frontend:
+    name: admin-frontend (vite)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: admin-frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: admin-frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  quarkus-backend:
+    name: quarkus-backend (maven)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: quarkus-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - run: ./mvnw test
+      - run: ./mvnw -DskipTests package
+
+  spring-backend:
+    name: spring-backend (maven)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: spring-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - run: mvn test
+      - run: mvn -DskipTests package
