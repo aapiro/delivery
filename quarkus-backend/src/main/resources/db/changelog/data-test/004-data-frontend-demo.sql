@@ -56,7 +56,7 @@ WHERE r.name = 'Sushi Zen'
 
 INSERT INTO dishes (restaurant_id, category_id, name, description, price, image_url, is_available, is_popular, preparation_time)
 SELECT r.id, mc.id, 'California Roll', 'Cangrejo, aguacate y pepino envueltos en alga nori.', 9.95,
-       'https://images.unsplash.com/photo-1617196034184-9e8d8b5c6c0d?w=800&q=80', TRUE, TRUE, 12
+       'https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=800&q=80', TRUE, TRUE, 12
 FROM restaurants r
 JOIN menu_categories mc ON mc.restaurant_id = r.id AND mc.slug = 'rolls'
 WHERE r.name = 'Sushi Zen'
@@ -72,7 +72,7 @@ WHERE r.name = 'Sushi Zen'
 
 INSERT INTO dishes (restaurant_id, category_id, name, description, price, image_url, is_available, is_popular, preparation_time)
 SELECT r.id, mc.id, 'Salmón Nigiri', 'Dos piezas de nigiri de salmón.', 7.50,
-       'https://images.unsplash.com/photo-1617196034796-73a7b6040a84?w=800&q=80', TRUE, FALSE, 10
+       'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=800&q=80', TRUE, FALSE, 10
 FROM restaurants r
 JOIN menu_categories mc ON mc.restaurant_id = r.id AND mc.slug = 'nigiri'
 WHERE r.name = 'Sushi Zen'
@@ -139,7 +139,7 @@ WHERE r.name = 'Burger House'
 
 INSERT INTO dishes (restaurant_id, category_id, name, description, price, image_url, is_available, is_popular, preparation_time)
 SELECT r.id, mc.id, 'Patatas caseras', 'Patatas con piel y salsa a elegir.', 4.50,
-       'https://images.unsplash.com/photo-1573080496219-bb080dd4d626?w=800&q=80', TRUE, FALSE, 10
+       'https://images.unsplash.com/photo-1550547660-d9450f859349?w=800&q=80', TRUE, FALSE, 10
 FROM restaurants r
 JOIN menu_categories mc ON mc.restaurant_id = r.id AND mc.slug = 'sides'
 WHERE r.name = 'Burger House'
@@ -269,7 +269,7 @@ WHERE r.name = 'Curry House'
 
 INSERT INTO dishes (restaurant_id, category_id, name, description, price, image_url, is_available, is_popular, preparation_time)
 SELECT r.id, mc.id, 'Pollo tikka masala', 'Pollo en salsa cremosa de tomate y especias.', 11.50,
-       'https://images.unsplash.com/photo-1618449840615-9d1e0e7d0e0e?w=800&q=80', TRUE, TRUE, 22
+       'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=800&q=80', TRUE, TRUE, 22
 FROM restaurants r
 JOIN menu_categories mc ON mc.restaurant_id = r.id AND mc.slug = 'currys'
 WHERE r.name = 'Curry House'
