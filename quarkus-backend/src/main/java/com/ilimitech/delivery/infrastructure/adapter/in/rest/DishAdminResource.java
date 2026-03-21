@@ -3,6 +3,7 @@ package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 import com.ilimitech.delivery.application.usecase.DishService;
 import com.ilimitech.delivery.infrastructure.adapter.in.rest.dto.AdminDishWriteDto;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.DishEntity;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/admin/dishes")
+@RolesAllowed("admin")
 public class DishAdminResource {
 
     @Inject

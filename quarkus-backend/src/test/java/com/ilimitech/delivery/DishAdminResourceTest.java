@@ -1,18 +1,22 @@
 package com.ilimitech.delivery;
 
+import com.ilimitech.delivery.config.IntegrationTestResource;
 import com.ilimitech.delivery.infrastructure.adapter.in.rest.dto.AdminDishWriteDto;
+import com.ilimitech.delivery.support.AdminTestAuth;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
+@QuarkusTestResource(IntegrationTestResource.class)
 class DishAdminResourceTest {
 
     @Test
     void testGetAllDishes() {
         given()
+          .header("Authorization", AdminTestAuth.bearerToken())
           .when().get("/admin/dishes")
           .then()
              .statusCode(200);
@@ -35,6 +39,7 @@ class DishAdminResourceTest {
         dto.restaurantId = 1L;
 
         given()
+            .header("Authorization", AdminTestAuth.bearerToken())
             .body(dto)
             .contentType("application/json")
             .when().post("/admin/dishes")
@@ -50,6 +55,7 @@ class DishAdminResourceTest {
         dto.price = new java.math.BigDecimal("14.99");
 
         given()
+            .header("Authorization", AdminTestAuth.bearerToken())
             .body(dto)
             .contentType("application/json")
             .when().put("/admin/dishes/1")
@@ -60,6 +66,7 @@ class DishAdminResourceTest {
     @Test
     void testDeleteDish() {
         given()
+          .header("Authorization", AdminTestAuth.bearerToken())
           .when().delete("/admin/dishes/1")
           .then()
              .statusCode(204); // No content for successful deletion
