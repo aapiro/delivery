@@ -1,8 +1,8 @@
 package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
-import com.ilimitech.delivery.infrastructure.adapter.out.persistence.Category;
 import com.ilimitech.delivery.application.usecase.DishService;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.DishEntity;
+import com.ilimitech.delivery.infrastructure.adapter.out.persistence.MenuCategory;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -68,7 +68,7 @@ public class DishResource {
     @GET
     @Path("/restaurants/{restaurantId}/dish-categories")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Category> getRestaurantDishCategories(@PathParam("restaurantId") Long restaurantId) {
-        return dishService.getRestaurantDishCategories(restaurantId);
+    public List<MenuCategory> getRestaurantDishCategories(@PathParam("restaurantId") Long restaurantId) {
+        return dishService.getMenuCategoriesForRestaurant(restaurantId);
     }
 }

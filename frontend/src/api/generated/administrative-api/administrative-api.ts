@@ -162,10 +162,10 @@ const {mutation: mutationOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRestaurant>>, {data: CreateRestaurantRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRestaurant>>, {data: CreateRestaurantRequest}> = async (props) => {
           const {data} = props ?? {};
 
-          return  createRestaurant(data,)
+          return await createRestaurant(data,)
         }
 
         

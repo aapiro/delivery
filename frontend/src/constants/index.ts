@@ -85,7 +85,12 @@ export const API_ENDPOINTS = {
         RESTAURANT_UPDATE: (id: number) => `/admin/restaurants/${id}`,
         RESTAURANT_DELETE: (id: number) => `/admin/restaurants/${id}`,
         RESTAURANT_TOGGLE_STATUS: (id: number) => `/admin/restaurants/${id}/toggle-status`,
-        
+        /** Categorías de menú (MenuCategory) por restaurante */
+        RESTAURANT_MENU_CATEGORIES: (restaurantId: number) =>
+            `/admin/restaurants/${restaurantId}/menu-categories`,
+        RESTAURANT_MENU_CATEGORY_DETAIL: (restaurantId: number, categoryId: number) =>
+            `/admin/restaurants/${restaurantId}/menu-categories/${categoryId}`,
+
         // Dishes Management
         DISHES: '/admin/dishes',
         DISH_DETAIL: (id: number) => `/admin/dishes/${id}`,
@@ -298,6 +303,9 @@ export const ROUTES = {
         CATEGORY_DETAIL: (id: number) => `/admin/categories/${id}`,
         CATEGORY_CREATE: '/admin/categories/create',
         CATEGORY_EDIT: (id: number) => `/admin/categories/${id}/edit`,
+
+        /** Categorías de menú (por restaurante) */
+        MENU_CATEGORIES_BY_RESTAURANT: '/admin/restaurant-menu-categories',
         
         // Orders
         ORDERS: '/admin/orders',

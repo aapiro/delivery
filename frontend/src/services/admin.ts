@@ -19,7 +19,8 @@ import {
     PaginatedResponse,
     Dish,
     RestaurantCategory,
-    DishCategory
+    DishCategory,
+    AdminMenuCategoryRow
 } from '../types';
 
 // --- Normalización respuestas Quarkus (listas planas) → contratos del admin SPA ---
@@ -117,6 +118,28 @@ function mapMenuCategoryRow(raw: Record<string, unknown>): DishCategory {
         displayOrder: Number(raw.displayOrder ?? 0),
         isActive: true,
         restaurantId: Number(rest?.id ?? 0),
+    };
+}
+
+function parseAdminMenuCategoryRow(o: unknown): AdminMenuCategoryRow {
+    const r = pickData(o) as Record<string, unknown>;
+    return {
+        id: Number(r.id),
+        restaurantId: Number(r.restaurantId),
+        name: String(r.name ?? ''),
+        slug: String(r.slug ?? ''),
+        displayOrder: Number(r.displayOrder ?? 0),
+    };
+}
+
+function adminMenuRowToDishCategory(row: AdminMenuCategoryRow): DishCategory {
+    return {
+        id: row.id,
+        restaurantId: row.restaurantId,
+        name: row.name,
+        slug: row.slug,
+        displayOrder: row.displayOrder,
+        isActive: true,
     };
 }
 
@@ -361,12 +384,50 @@ export const adminDishes = {
     },
 };
 
-/** Categorías de menú por restaurante (MenuCategory), GET público bajo `/dishes/...`. */
+/**
+ * CRUD categorías de menú por restaurante (API admin JWT).
+ */
+export const adminRestaurantMenuCategories = {
+    list: async (restaurantId: number): Promise<AdminMenuCategoryRow[]> => {
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_MENU_CATEGORIES(restaurantId));
+        const rawList = Array.isArray(body) ? body : [];
+        return rawList.map((x) => parseAdminMenuCategoryRow(x));
+    },
+
+    create: async (
+        restaurantId: number,
+        data: { name: string; slug?: string; displayOrder?: number }
+    ): Promise<AdminMenuCategoryRow> => {
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_MENU_CATEGORIES(restaurantId), {
+            name: data.name,
+            slug: data.slug,
+            displayOrder: data.displayOrder,
+        });
+        return parseAdminMenuCategoryRow(pickData(body));
+    },
+
+    update: async (
+        restaurantId: number,
+        categoryId: number,
+        data: { name?: string; slug?: string; displayOrder?: number }
+    ): Promise<AdminMenuCategoryRow> => {
+        const body = await adminHttp.put<unknown>(
+            API_ENDPOINTS.ADMIN.RESTAURANT_MENU_CATEGORY_DETAIL(restaurantId, categoryId),
+            data
+        );
+        return parseAdminMenuCategoryRow(pickData(body));
+    },
+
+    delete: async (restaurantId: number, categoryId: number): Promise<void> => {
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.RESTAURANT_MENU_CATEGORY_DETAIL(restaurantId, categoryId));
+    },
+};
+
+/** Para formularios de platos: mismas filas mapeadas a `DishCategory`. */
 export const adminMenuCategories = {
     getByRestaurant: async (restaurantId: number): Promise<DishCategory[]> => {
-        const body = await adminHttp.get<unknown>(API_ENDPOINTS.DISHES.CATEGORIES(restaurantId));
-        const rawList = Array.isArray(body) ? body : [];
-        return rawList.map((x) => mapMenuCategoryRow(x as Record<string, unknown>));
+        const rows = await adminRestaurantMenuCategories.list(restaurantId);
+        return rows.map(adminMenuRowToDishCategory);
     },
 };
 

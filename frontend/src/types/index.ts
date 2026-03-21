@@ -78,6 +78,15 @@ export interface DishCategory {
     isActive: boolean;
 }
 
+/** Fila de categoría de menú (`menu_categories`) desde API admin. */
+export interface AdminMenuCategoryRow {
+    id: number;
+    restaurantId: number;
+    name: string;
+    slug: string;
+    displayOrder: number;
+}
+
 export interface NutritionalInfo {
     calories: number;
     proteins: number;

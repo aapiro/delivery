@@ -1,6 +1,7 @@
 package com.ilimitech.delivery.infrastructure.adapter.out.persistence;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "menu_categories")
 @Data
+@JsonIgnoreProperties({ "dishEntities" })
 public class MenuCategory extends PanacheEntityBase {
 
     @Id

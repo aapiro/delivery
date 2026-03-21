@@ -1,6 +1,7 @@
 package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
 import com.ilimitech.delivery.application.usecase.DishService;
+import com.ilimitech.delivery.infrastructure.adapter.in.rest.dto.AdminDishWriteDto;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.DishEntity;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -19,8 +20,9 @@ public class DishAdminResource {
     public List<DishEntity> getAllDishes(
             @QueryParam("name") String name,
             @QueryParam("categoryId") Long categoryId,
-            @QueryParam("isAvailable") Boolean isAvailable) {
-        return dishService.getAllDishesFiltered(name, categoryId, isAvailable);
+            @QueryParam("isAvailable") Boolean isAvailable,
+            @QueryParam("restaurantId") Long restaurantId) {
+        return dishService.getAllDishesFiltered(name, categoryId, isAvailable, restaurantId);
     }
 
     @GET
@@ -33,16 +35,16 @@ public class DishAdminResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DishEntity addDish(DishEntity dishEntity) {
-        return dishService.addDish(dishEntity);
+    public DishEntity addDish(AdminDishWriteDto dto) {
+        return dishService.addDishFromDto(dto);
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public DishEntity updateDish(@PathParam("id") Long id, DishEntity updatedDishEntity) {
-        return dishService.updateDish(id, updatedDishEntity);
+    public DishEntity updateDish(@PathParam("id") Long id, AdminDishWriteDto dto) {
+        return dishService.updateDishFromDto(id, dto);
     }
 
     @DELETE

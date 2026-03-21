@@ -7,6 +7,7 @@ import {
     ShoppingBag, 
     Users, 
     Tags, 
+    Layers,
     BarChart3, 
     Settings, 
     LogOut,
@@ -59,6 +60,12 @@ const sidebarItems: SidebarItem[] = [
         label: 'Categorías',
         path: ROUTES.ADMIN.CATEGORIES,
         icon: Tags,
+        permission: AdminPermission.VIEW_CATEGORIES,
+    },
+    {
+        label: 'Categorías de menú',
+        path: ROUTES.ADMIN.MENU_CATEGORIES_BY_RESTAURANT,
+        icon: Layers,
         permission: AdminPermission.VIEW_CATEGORIES,
     },
     {

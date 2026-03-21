@@ -23,6 +23,7 @@ import DishEdit from './pages/admin/DishEdit';
 import CategoriesManagement from './pages/admin/CategoriesManagement';
 import CategoryCreate from './pages/admin/CategoryCreate';
 import CategoryEdit from './pages/admin/CategoryEdit';
+import RestaurantMenuCategoriesPage from './pages/admin/RestaurantMenuCategoriesPage';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import ProtectedRoute from './components/admin/common/ProtectedRoute';
 
@@ -141,6 +142,12 @@ function App() {
                             <Route path="categories/:id/edit" element={
                                 <ProtectedRoute requiredPermission={AdminPermission.EDIT_CATEGORIES}>
                                     <CategoryEdit />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="restaurant-menu-categories" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.VIEW_CATEGORIES}>
+                                    <RestaurantMenuCategoriesPage />
                                 </ProtectedRoute>
                             } />
                             
