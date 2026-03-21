@@ -144,19 +144,13 @@ export const useAdminStore = create<AdminState>()(
                 set({ error: null });
             },
 
-            // Permission helpers
-            /*hasPermission: (permission: AdminPermission): boolean => { //todo descomentar este bloque cuando se programe la autorizacion
+            // Permission helpers: super_admin tiene todo; si el backend no envía lista, se permite acceso (compat demo).
+            hasPermission: (permission: AdminPermission): boolean => {
                 const { admin } = get();
                 if (!admin || !admin.isActive) return false;
-                
-                // Super admin has all permissions
                 if (admin.role === AdminRole.SUPER_ADMIN) return true;
-                
+                if (!admin.permissions || admin.permissions.length === 0) return true;
                 return admin.permissions.includes(permission);
-            },*/
-            hasPermission: (permission: AdminPermission) => {
-                // return state.permissions.includes(permission); // Lógica real
-                return true; // Lógica temporal para ver todo mientras programas
             },
 
             hasRole: (role: AdminRole): boolean => {

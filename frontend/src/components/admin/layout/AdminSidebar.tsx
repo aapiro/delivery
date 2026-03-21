@@ -1,21 +1,23 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { 
-    LayoutDashboard, 
-    Store, 
-    UtensilsCrossed, 
-    ShoppingBag, 
-    Users, 
-    Tags, 
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import {
+    LayoutDashboard,
+    Store,
+    UtensilsCrossed,
+    ShoppingBag,
+    Users,
+    Tags,
     Layers,
-    BarChart3, 
-    Settings, 
+    BarChart3,
+    Settings,
     LogOut,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    UserCircle,
 } from 'lucide-react';
 import { ROUTES } from '../../../constants';
 import { useAdminStore } from '../../../store/adminStore';
+import { useNotify } from '../../../hooks/useNotify';
 import { AdminPermission } from '../../../types';
 
 interface SidebarItem {
@@ -75,6 +77,11 @@ const sidebarItems: SidebarItem[] = [
         permission: AdminPermission.VIEW_ANALYTICS,
     },
     {
+        label: 'Mi perfil',
+        path: ROUTES.ADMIN.PROFILE,
+        icon: UserCircle,
+    },
+    {
         label: 'Sistema',
         path: ROUTES.ADMIN.SETTINGS,
         icon: Settings,
@@ -89,13 +96,19 @@ interface AdminSidebarProps {
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggleCollapse }) => {
     const location = useLocation();
+    const navigate = useNavigate();
+    const notify = useNotify();
     const { hasPermission, logout, admin } = useAdminStore();
 
     const handleLogout = async () => {
         try {
             await logout();
+            notify.success('Sesión cerrada');
+            navigate(ROUTES.ADMIN.LOGIN, { replace: true });
         } catch (error) {
             console.error('Error during logout:', error);
+            notify.error('No se pudo cerrar sesión');
+            navigate(ROUTES.ADMIN.LOGIN, { replace: true });
         }
     };
 
@@ -106,8 +119,9 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({ isCollapsed, onToggleCollap
         return location.pathname.startsWith(path);
     };
 
-    // TEMPORAL: Mostrar todos los elementos para demostración
-    const filteredItems = sidebarItems; // .filter(item => !item.permission || hasPermission(item.permission));
+    const filteredItems = sidebarItems.filter(
+        (item) => item.permission == null || hasPermission(item.permission)
+    );
 
     return (
         <div className={`bg-gray-900 text-white transition-all duration-300 ${

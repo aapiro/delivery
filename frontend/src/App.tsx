@@ -24,6 +24,9 @@ import CategoriesManagement from './pages/admin/CategoriesManagement';
 import CategoryCreate from './pages/admin/CategoryCreate';
 import CategoryEdit from './pages/admin/CategoryEdit';
 import RestaurantMenuCategoriesPage from './pages/admin/RestaurantMenuCategoriesPage';
+import AdminProfilePage from './pages/admin/AdminProfilePage';
+import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import AdminNotFoundPage from './pages/admin/AdminNotFoundPage';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import ProtectedRoute from './components/admin/common/ProtectedRoute';
 
@@ -153,14 +156,18 @@ function App() {
                             
                             <Route path="settings" element={
                                 <ProtectedRoute requiredPermission={AdminPermission.SYSTEM_SETTINGS}>
-                                    <PlaceholderPage title="Configuración del Sistema" />
+                                    <AdminSettingsPage />
                                 </ProtectedRoute>
                             } />
                             
-                            <Route path="profile" element={<PlaceholderPage title="Perfil de Administrador" />} />
+                            <Route path="profile" element={
+                                <ProtectedRoute>
+                                    <AdminProfilePage />
+                                </ProtectedRoute>
+                            } />
                             
                             {/* Admin 404 */}
-                            <Route path="*" element={<PlaceholderPage title="Página de administración no encontrada" />} />
+                            <Route path="*" element={<AdminNotFoundPage />} />
                         </Routes>
                     </AdminLayout>
                 } />

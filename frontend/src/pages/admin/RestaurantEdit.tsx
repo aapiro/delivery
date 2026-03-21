@@ -12,9 +12,11 @@ import { Restaurant } from '../../api/generated/model';
 import RestaurantForm from './RestaurantForm';
 import { ROUTES } from '../../constants';
 import Button from '../../components/ui/Button';
-import { AdminPageHeader, AdminErrorState, AdminListPageSkeleton } from '../../components/admin/common';
+import { AdminPageHeader, AdminErrorState, AdminListPageSkeleton, getAdminErrorMessage } from '../../components/admin/common';
+import { useNotify } from '../../hooks/useNotify';
 
 const RestaurantEdit: React.FC = () => {
+    const notify = useNotify();
     const queryClient = useQueryClient();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -127,16 +129,20 @@ const RestaurantEdit: React.FC = () => {
                                     await queryClient.invalidateQueries({
                                         queryKey: getGetRestaurantByIdQueryKey(restaurantId),
                                     });
-                                    alert('¡Restaurante actualizado con éxito!');
+                                    notify.success('Restaurante actualizado', 'Los cambios se guardaron correctamente.');
                                     navigate(ROUTES.ADMIN.RESTAURANTS);
                                 } catch (err) {
                                     console.error('Error al invalidar caché:', err);
+                                    notify.error('Actualizado con avisos', 'No se pudo refrescar la caché; la lista puede estar desactualizada.');
                                     navigate(ROUTES.ADMIN.RESTAURANTS);
                                 }
                             },
                             onError: (err) => {
                                 console.error('Error en el PUT:', err);
-                                alert('No se pudo guardar la información.');
+                                notify.error(
+                                    'No se pudo guardar',
+                                    getAdminErrorMessage(err, 'Revisa los datos o tu conexión.')
+                                );
                             },
                         }
                     );
