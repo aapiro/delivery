@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Trash2, Edit3, Plus, Search } from 'lucide-react';
-import { adminDishes, adminRestaurants, adminDishCategories } from '../../services/admin';
-import { Dish } from '../../types';
+import { adminDishes, adminRestaurants, adminMenuCategories } from '../../services/admin';
+import { Dish, AdminPermission } from '../../types';
+import { ROUTES } from '../../constants';
+import { useAdminStore } from '../../store/adminStore';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
@@ -17,6 +20,7 @@ const PAGE_SIZE = 20;
 
 const DishesManagement: React.FC = () => {
     const queryClient = useQueryClient();
+    const { hasPermission } = useAdminStore();
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRestaurant, setSelectedRestaurant] = useState<number | undefined>();
@@ -27,10 +31,15 @@ const DishesManagement: React.FC = () => {
         queryFn: () => adminRestaurants.getAll(undefined, 1, 100),
     });
 
-    const { data: categoriesPage } = useQuery({
-        queryKey: ['admin-dish-categories', 'options'],
-        queryFn: () => adminDishCategories.getAll(undefined, 1, 200),
+    const { data: menuCategories = [], isLoading: loadingMenuCats } = useQuery({
+        queryKey: ['admin-menu-categories', 'filter', selectedRestaurant],
+        queryFn: () => adminMenuCategories.getByRestaurant(selectedRestaurant!),
+        enabled: selectedRestaurant != null && selectedRestaurant > 0,
     });
+
+    useEffect(() => {
+        setSelectedCategory(undefined);
+    }, [selectedRestaurant]);
 
     const {
         data,
@@ -68,7 +77,7 @@ const DishesManagement: React.FC = () => {
     const total = pagination?.total ?? 0;
 
     const restaurantOptions = restaurantsPage?.data ?? [];
-    const categoryOptions = categoriesPage?.data ?? [];
+    const categoryOptions = menuCategories;
 
     return (
         <AdminQueryBoundary
@@ -82,10 +91,14 @@ const DishesManagement: React.FC = () => {
                     title="Gestión de platos"
                     description={`${total} plato${total === 1 ? '' : 's'} en esta vista`}
                     actions={
-                        <Button type="button" variant="outline" disabled title="Alta de plato pendiente de enrutar">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Nuevo plato
-                        </Button>
+                        hasPermission(AdminPermission.CREATE_DISHES) ? (
+                            <Link to={ROUTES.ADMIN.DISH_CREATE}>
+                                <Button type="button" className="bg-indigo-600 hover:bg-indigo-700">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Nuevo plato
+                                </Button>
+                            </Link>
+                        ) : undefined
                     }
                 />
 
@@ -126,16 +139,21 @@ const DishesManagement: React.FC = () => {
                             </select>
                         </div>
                         <div>
-                            <label className="mb-2 block text-sm font-medium text-gray-700">Categoría</label>
+                            <label className="mb-2 block text-sm font-medium text-gray-700">
+                                Categoría de menú
+                            </label>
                             <select
                                 value={selectedCategory ?? ''}
                                 onChange={(e) => {
                                     setSelectedCategory(e.target.value ? Number(e.target.value) : undefined);
                                     setPage(1);
                                 }}
-                                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                disabled={!selectedRestaurant || loadingMenuCats}
+                                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                             >
-                                <option value="">Todas las categorías</option>
+                                <option value="">
+                                    {selectedRestaurant ? 'Todas las categorías' : 'Elija restaurante'}
+                                </option>
                                 {categoryOptions.map((c) => (
                                     <option key={c.id} value={c.id}>
                                         {c.name}
@@ -202,22 +220,33 @@ const DishesManagement: React.FC = () => {
                                             </td>
                                             <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
                                                 <div className="flex space-x-2">
-                                                    <button
-                                                        type="button"
-                                                        disabled
-                                                        title="Edición pendiente"
-                                                        className="text-gray-400"
-                                                    >
-                                                        <Edit3 className="h-4 w-4" />
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleDelete(dish)}
-                                                        disabled={deleteMutation.isPending}
-                                                        className="text-red-600 hover:text-red-900"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </button>
+                                                    {hasPermission(AdminPermission.EDIT_DISHES) ? (
+                                                        <Link
+                                                            to={ROUTES.ADMIN.DISH_EDIT(dish.id)}
+                                                            className="text-indigo-600 hover:text-indigo-900"
+                                                            title="Editar"
+                                                        >
+                                                            <Edit3 className="h-4 w-4" />
+                                                        </Link>
+                                                    ) : (
+                                                        <span className="text-gray-300">
+                                                            <Edit3 className="h-4 w-4" />
+                                                        </span>
+                                                    )}
+                                                    {hasPermission(AdminPermission.DELETE_DISHES) ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDelete(dish)}
+                                                            disabled={deleteMutation.isPending}
+                                                            className="text-red-600 hover:text-red-900"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-gray-300">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                         </tr>

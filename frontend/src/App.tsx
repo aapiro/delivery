@@ -18,7 +18,11 @@ import OrdersManagement from './pages/admin/OrdersManagement';
 import UsersManagement from './pages/admin/UsersManagement';
 import ReportsPage from './pages/admin/ReportsPage';
 import DishesManagement from './pages/admin/DishesManagement';
+import DishCreate from './pages/admin/DishCreate';
+import DishEdit from './pages/admin/DishEdit';
 import CategoriesManagement from './pages/admin/CategoriesManagement';
+import CategoryCreate from './pages/admin/CategoryCreate';
+import CategoryEdit from './pages/admin/CategoryEdit';
 import AdminLayout from './components/admin/layout/AdminLayout';
 import ProtectedRoute from './components/admin/common/ProtectedRoute';
 
@@ -109,10 +113,34 @@ function App() {
                                     <DishesManagement />
                                 </ProtectedRoute>
                             } />
+
+                            <Route path="dishes/create" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.CREATE_DISHES}>
+                                    <DishCreate />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="dishes/:id/edit" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.EDIT_DISHES}>
+                                    <DishEdit />
+                                </ProtectedRoute>
+                            } />
                             
                             <Route path="categories" element={
                                 <ProtectedRoute requiredPermission={AdminPermission.VIEW_CATEGORIES}>
                                     <CategoriesManagement />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="categories/create" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.CREATE_CATEGORIES}>
+                                    <CategoryCreate />
+                                </ProtectedRoute>
+                            } />
+
+                            <Route path="categories/:id/edit" element={
+                                <ProtectedRoute requiredPermission={AdminPermission.EDIT_CATEGORIES}>
+                                    <CategoryEdit />
                                 </ProtectedRoute>
                             } />
                             

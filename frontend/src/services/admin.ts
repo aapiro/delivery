@@ -12,7 +12,7 @@ import {
     Order,
     User,
     RestaurantForm,
-    DishForm,
+    AdminDishWritePayload,
     CategoryForm,
     SalesReport,
     UserReport,
@@ -21,6 +21,104 @@ import {
     RestaurantCategory,
     DishCategory
 } from '../types';
+
+// --- Normalización respuestas Quarkus (listas planas) → contratos del admin SPA ---
+
+function paginateLocally<T>(items: T[], page: number, limit: number): PaginatedResponse<T> {
+    const total = items.length;
+    const totalPages = Math.max(1, Math.ceil(total / limit) || 1);
+    const safePage = Math.min(Math.max(1, page), totalPages);
+    const start = (safePage - 1) * limit;
+    const data = items.slice(start, start + limit);
+    return {
+        data,
+        pagination: {
+            page: safePage,
+            limit,
+            total,
+            totalPages,
+            hasNext: safePage < totalPages,
+            hasPrev: safePage > 1,
+        },
+    };
+}
+
+function mapBackendCategory(raw: Record<string, unknown>): DishCategory {
+    const id = Number(raw.id);
+    const name = String(raw.name ?? '');
+    const active =
+        raw.active !== undefined
+            ? Boolean(raw.active)
+            : raw.isActive !== undefined
+              ? Boolean(raw.isActive)
+              : true;
+    return {
+        id,
+        name,
+        slug: String(raw.slug ?? ''),
+        displayOrder: Number(raw.displayOrder ?? 0),
+        isActive: active,
+        restaurantId: Number(raw.restaurantId ?? 0),
+    };
+}
+
+function mapBackendDish(raw: Record<string, unknown>): Dish {
+    const restaurant = raw.restaurant as Record<string, unknown> | undefined;
+    const category = raw.category as Record<string, unknown> | undefined;
+    const price = raw.price;
+    const available = raw.available !== undefined ? raw.available : raw.isAvailable;
+    const emptyCategory: DishCategory = {
+        id: 0,
+        name: '',
+        slug: '',
+        displayOrder: 0,
+        isActive: true,
+        restaurantId: 0,
+    };
+    return {
+        id: Number(raw.id),
+        restaurantId: Number(restaurant?.id ?? raw.restaurantId ?? 0),
+        categoryId: Number(category?.id ?? raw.categoryId ?? 0),
+        name: String(raw.name ?? ''),
+        description: String(raw.description ?? ''),
+        price: typeof price === 'number' ? price : Number(price ?? 0),
+        image: String(raw.imageUrl ?? raw.image ?? ''),
+        isAvailable: Boolean(available ?? true),
+        isPopular: Boolean(raw.isPopular ?? false),
+        preparationTime: Number(raw.preparationTime ?? 0),
+        ingredients: Array.isArray(raw.ingredients) ? (raw.ingredients as string[]) : [],
+        allergens: Array.isArray(raw.allergens) ? (raw.allergens as string[]) : [],
+        category: category
+            ? {
+                  id: Number(category.id),
+                  name: String(category.name ?? ''),
+                  slug: String(category.slug ?? ''),
+                  displayOrder: Number(category.displayOrder ?? 0),
+                  isActive: true,
+                  restaurantId: Number(
+                      (category.restaurant as Record<string, unknown> | undefined)?.id ??
+                          restaurant?.id ??
+                          0
+                  ),
+              }
+            : emptyCategory,
+        restaurant: restaurant as Dish['restaurant'],
+        createdAt: String(raw.createdAt ?? ''),
+        updatedAt: String(raw.updatedAt ?? ''),
+    };
+}
+
+function mapMenuCategoryRow(raw: Record<string, unknown>): DishCategory {
+    const rest = raw.restaurant as Record<string, unknown> | undefined;
+    return {
+        id: Number(raw.id),
+        name: String(raw.name ?? ''),
+        slug: String(raw.slug ?? ''),
+        displayOrder: Number(raw.displayOrder ?? 0),
+        isActive: true,
+        restaurantId: Number(rest?.id ?? 0),
+    };
+}
 
 // ============= AUTHENTICATION =============
 
@@ -199,76 +297,58 @@ export const adminRestaurants = {
 // ============= DISHES MANAGEMENT =============
 
 export const adminDishes = {
+    /**
+     * Quarkus devuelve un array; paginamos en cliente. Query params: name, categoryId, restaurantId, isAvailable.
+     */
     getAll: async (
         filters?: { restaurantId?: number; search?: string; categoryId?: number },
         page = 1,
         limit = 20
     ): Promise<PaginatedResponse<Dish>> => {
         const params = new URLSearchParams();
-        params.append('page', page.toString());
-        params.append('limit', limit.toString());
-        
-        if (filters) {
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value !== undefined && value !== null && value !== '') {
-                    params.append(key, value.toString());
-                }
-            });
-        }
-
-        const body = await adminHttp.get<PaginatedResponse<Dish>>(`${API_ENDPOINTS.ADMIN.DISHES}?${params}`);
-        return body;
+        if (filters?.search?.trim()) params.append('name', filters.search.trim());
+        if (filters?.categoryId != null) params.append('categoryId', String(filters.categoryId));
+        if (filters?.restaurantId != null) params.append('restaurantId', String(filters.restaurantId));
+        const qs = params.toString();
+        const body = await adminHttp.get<unknown>(`${API_ENDPOINTS.ADMIN.DISHES}${qs ? `?${qs}` : ''}`);
+        const rawList = Array.isArray(body) ? body : [];
+        const mapped = rawList.map((x) => mapBackendDish(x as Record<string, unknown>));
+        return paginateLocally(mapped, page, limit);
     },
 
     getById: async (id: number): Promise<Dish> => {
         const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.DISH_DETAIL(id));
-        return pickData<Dish>(body) as Dish;
+        return mapBackendDish(pickData(body) as Record<string, unknown>);
     },
 
-    create: async (data: DishForm): Promise<Dish> => {
-        const formData = new FormData();
-        
-        Object.entries(data).forEach(([key, value]) => {
-            if (value instanceof File) {
-                formData.append(key, value);
-            } else if (Array.isArray(value)) {
-                if ((value as any[]).every(item => item instanceof File)) {
-                    (value as File[]).forEach(file => formData.append(`${key}[]`, file));
-                } else {
-                    formData.append(key, JSON.stringify(value));
-                }
-            } else if (value !== undefined && value !== null) {
-                formData.append(key, value.toString());
-            }
-        });
-
-        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.DISH_CREATE, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return pickData<Dish>(body) as Dish;
+    /** POST JSON (AdminDishWriteDto en backend). */
+    create: async (data: AdminDishWritePayload): Promise<Dish> => {
+        const payload = {
+            name: data.name,
+            description: data.description ?? '',
+            price: data.price,
+            imageUrl: data.imageUrl ?? '',
+            isAvailable: data.isAvailable ?? true,
+            restaurantId: data.restaurantId,
+            categoryId: data.categoryId ?? undefined,
+        };
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.DISH_CREATE, payload);
+        return mapBackendDish(pickData(body) as Record<string, unknown>);
     },
 
-    update: async (id: number, data: Partial<DishForm>): Promise<Dish> => {
-        const formData = new FormData();
-        
-        Object.entries(data).forEach(([key, value]) => {
-            if (value instanceof File) {
-                formData.append(key, value);
-            } else if (Array.isArray(value)) {
-                if ((value as any[]).every(item => item instanceof File)) {
-                    (value as File[]).forEach(file => formData.append(`${key}[]`, file));
-                } else {
-                    formData.append(key, JSON.stringify(value));
-                }
-            } else if (value !== undefined && value !== null) {
-                formData.append(key, value.toString());
-            }
-        });
-
-        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.DISH_UPDATE(id), formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        return pickData<Dish>(body) as Dish;
+    /** PUT JSON; envía todos los campos editables. */
+    update: async (id: number, data: AdminDishWritePayload): Promise<Dish> => {
+        const payload = {
+            name: data.name,
+            description: data.description ?? '',
+            price: data.price,
+            imageUrl: data.imageUrl ?? '',
+            isAvailable: data.isAvailable ?? true,
+            restaurantId: data.restaurantId,
+            categoryId: data.categoryId ?? undefined,
+        };
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.DISH_UPDATE(id), payload);
+        return mapBackendDish(pickData(body) as Record<string, unknown>);
     },
 
     delete: async (id: number): Promise<void> => {
@@ -277,47 +357,51 @@ export const adminDishes = {
 
     toggleAvailability: async (id: number): Promise<Dish> => {
         const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.DISH_TOGGLE_AVAILABILITY(id));
-        return pickData<Dish>(body) as Dish;
+        return mapBackendDish(pickData(body) as Record<string, unknown>);
+    },
+};
+
+/** Categorías de menú por restaurante (MenuCategory), GET público bajo `/dishes/...`. */
+export const adminMenuCategories = {
+    getByRestaurant: async (restaurantId: number): Promise<DishCategory[]> => {
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.DISHES.CATEGORIES(restaurantId));
+        const rawList = Array.isArray(body) ? body : [];
+        return rawList.map((x) => mapMenuCategoryRow(x as Record<string, unknown>));
     },
 };
 
 // ============= DISH CATEGORIES MANAGEMENT =============
 
 export const adminDishCategories = {
+    /** Quarkus: lista plana; query `name`, `isActive`. Paginación en cliente. */
     getAll: async (
         filters?: { search?: string },
         page = 1,
         limit = 20
     ): Promise<PaginatedResponse<DishCategory>> => {
         const params = new URLSearchParams();
-        params.append('page', page.toString());
-        params.append('limit', limit.toString());
-        
-        if (filters) {
-            Object.entries(filters).forEach(([key, value]) => {
-                if (value !== undefined && value !== null && value !== '') {
-                    params.append(key, value.toString());
-                }
-            });
-        }
-
-        const body = await adminHttp.get<PaginatedResponse<DishCategory>>(`${API_ENDPOINTS.ADMIN.CATEGORIES}?${params}`);
-        return body;
+        if (filters?.search?.trim()) params.append('name', filters.search.trim());
+        const qs = params.toString();
+        const body = await adminHttp.get<unknown>(`${API_ENDPOINTS.ADMIN.CATEGORIES}${qs ? `?${qs}` : ''}`);
+        const rawList = Array.isArray(body) ? body : [];
+        const mapped = rawList.map((x) => mapBackendCategory(x as Record<string, unknown>));
+        return paginateLocally(mapped, page, limit);
     },
 
     getById: async (id: number): Promise<DishCategory> => {
         const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_DETAIL(id));
-        return pickData<DishCategory>(body) as DishCategory;
+        return mapBackendCategory(pickData(body) as Record<string, unknown>);
     },
 
-    create: async (data: CategoryForm): Promise<DishCategory> => {
-        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_CREATE, data);
-        return pickData<DishCategory>(body) as DishCategory;
+    /** El backend solo persiste `name` (entidad Category). */
+    create: async (data: Pick<CategoryForm, 'name'> | { name: string }): Promise<DishCategory> => {
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_CREATE, { name: data.name });
+        return mapBackendCategory(pickData(body) as Record<string, unknown>);
     },
 
-    update: async (id: number, data: Partial<CategoryForm>): Promise<DishCategory> => {
-        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id), data);
-        return pickData<DishCategory>(body) as DishCategory;
+    update: async (id: number, data: Pick<CategoryForm, 'name'> | { name: string }): Promise<DishCategory> => {
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id), { name: data.name });
+        return mapBackendCategory(pickData(body) as Record<string, unknown>);
     },
 
     delete: async (id: number): Promise<void> => {
@@ -326,7 +410,7 @@ export const adminDishCategories = {
 
     toggleStatus: async (id: number): Promise<DishCategory> => {
         const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_TOGGLE_STATUS(id));
-        return pickData<DishCategory>(body) as DishCategory;
+        return mapBackendCategory(pickData(body) as Record<string, unknown>);
     },
 };
 

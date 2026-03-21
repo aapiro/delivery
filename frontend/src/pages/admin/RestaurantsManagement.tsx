@@ -7,7 +7,7 @@ import {
 
 // 1. Hooks generados por Orval
 import { useListRestaurants, useUpdateRestaurant } from '../../api/generated/administrative-api/administrative-api';
-import { RestaurantSummary } from '../../api/generated/model';
+import { RestaurantSummary, PagedRestaurantResponse } from '../../api/generated/model';
 
 // 2. Componentes y Constantes
 import { ROUTES } from '../../constants';
@@ -43,7 +43,7 @@ const RestaurantsManagement: React.FC = () => {
 
     const updateMutation = useUpdateRestaurant();
 
-    const pagedData = response;
+    const pagedData = response as PagedRestaurantResponse | undefined;
     const restaurants = pagedData?.content || [];
 
     const [selectedId, setSelectedId] = useState<number | null>(null);

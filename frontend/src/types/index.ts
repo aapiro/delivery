@@ -493,6 +493,18 @@ export interface RestaurantForm {
     coverImage?: File;
 }
 
+/** Payload JSON para POST/PUT `/admin/dishes` (contrato Quarkus `AdminDishWriteDto`). */
+export interface AdminDishWritePayload {
+    name: string;
+    description?: string;
+    price: number;
+    imageUrl?: string;
+    isAvailable?: boolean;
+    restaurantId: number;
+    /** Omitir o null si el plato no tiene categoría de menú */
+    categoryId?: number | null;
+}
+
 export interface DishForm {
     restaurantId: number;
     categoryId: number;

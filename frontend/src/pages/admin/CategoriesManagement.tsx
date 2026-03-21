@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { adminDishCategories } from '../../services/admin';
-import { DishCategory } from '../../types';
+import { DishCategory, AdminPermission } from '../../types';
+import { ROUTES } from '../../constants';
+import { useAdminStore } from '../../store/adminStore';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
@@ -18,6 +21,7 @@ const PAGE_SIZE = 20;
 
 const CategoriesManagement: React.FC = () => {
     const queryClient = useQueryClient();
+    const { hasPermission } = useAdminStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -89,10 +93,14 @@ const CategoriesManagement: React.FC = () => {
                     title="Gestión de Categorías"
                     description="Administra las categorías de platos"
                     actions={
-                        <Button type="button" variant="outline" disabled title="Formulario de alta pendiente de enrutar">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Nueva categoría
-                        </Button>
+                        hasPermission(AdminPermission.CREATE_CATEGORIES) ? (
+                            <Link to={ROUTES.ADMIN.CATEGORY_CREATE}>
+                                <Button type="button" className="bg-indigo-600 hover:bg-indigo-700">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Nueva categoría
+                                </Button>
+                            </Link>
+                        ) : undefined
                     }
                 />
 
@@ -139,7 +147,9 @@ const CategoriesManagement: React.FC = () => {
                                     {getStatusBadge(category.isActive)}
                                 </div>
 
-                                <p className="mb-4 text-sm text-gray-600">Slug: {category.slug}</p>
+                                <p className="mb-4 text-sm text-gray-600">
+                                Slug: {category.slug || '—'}
+                            </p>
 
                                 <div className="flex items-center justify-between border-t border-gray-100 pt-4">
                                     <div className="text-xs text-gray-500">ID: {category.id}</div>
@@ -157,14 +167,19 @@ const CategoriesManagement: React.FC = () => {
                                                 <Eye className="h-4 w-4" />
                                             )}
                                         </button>
-                                        <button
-                                            type="button"
-                                            className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
-                                            title="Editar (pendiente)"
-                                            disabled
-                                        >
-                                            <Edit className="h-4 w-4" />
-                                        </button>
+                                        {hasPermission(AdminPermission.EDIT_CATEGORIES) ? (
+                                            <Link
+                                                to={ROUTES.ADMIN.CATEGORY_EDIT(category.id)}
+                                                className="rounded-lg p-2 text-indigo-600 transition-colors hover:bg-indigo-50 hover:text-indigo-900"
+                                                title="Editar nombre"
+                                            >
+                                                <Edit className="h-4 w-4" />
+                                            </Link>
+                                        ) : (
+                                            <span className="rounded-lg p-2 text-gray-300">
+                                                <Edit className="h-4 w-4" />
+                                            </span>
+                                        )}
                                         <button
                                             type="button"
                                             onClick={() => handleDelete(category.id)}

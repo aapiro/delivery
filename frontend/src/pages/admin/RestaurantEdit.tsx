@@ -68,6 +68,31 @@ const RestaurantEdit: React.FC = () => {
         );
     }
 
+    if (restaurant == null) {
+        return (
+            <div className="mx-auto max-w-6xl space-y-6">
+                <button
+                    type="button"
+                    onClick={() => navigate(-1)}
+                    className="mb-2 flex items-center text-gray-500 hover:text-indigo-600"
+                >
+                    <ArrowLeft className="mr-1 h-4 w-4" /> Volver
+                </button>
+                <AdminErrorState
+                    title="Sin datos"
+                    message="No se recibió el restaurante."
+                    onRetry={() =>
+                        queryClient.invalidateQueries({
+                            queryKey: getGetRestaurantByIdQueryKey(restaurantId),
+                        })
+                    }
+                />
+            </div>
+        );
+    }
+
+    const restaurantData = restaurant as Restaurant;
+
     return (
         <div className="mx-auto max-w-6xl space-y-6">
             <button
@@ -79,11 +104,11 @@ const RestaurantEdit: React.FC = () => {
             </button>
             <AdminPageHeader
                 title="Editar restaurante"
-                description={restaurant?.name ?? `ID ${restaurantId}`}
+                description={restaurantData.name ?? `ID ${restaurantId}`}
             />
 
             <RestaurantForm
-                initialData={restaurant as Restaurant}
+                initialData={restaurantData}
                 onSubmit={(values) => {
                     updateMutation.mutate(
                         {
