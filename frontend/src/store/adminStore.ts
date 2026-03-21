@@ -53,11 +53,7 @@ export const useAdminStore = create<AdminState>()(
                         isLoading: false,
                         error: null,
                     });
-
-                    // Set token in axios defaults for future requests
-                    const { api } = await import('../services/api');
-                    api.setAuthToken(response.token);
-                    
+                    // El token queda en persist Zustand; `adminApiClient` lo lee del localStorage en cada request.
                 } catch (error: any) {
                     set({
                         admin: null,
@@ -88,10 +84,6 @@ export const useAdminStore = create<AdminState>()(
                         isLoading: false,
                         error: null,
                     });
-
-                    // Remove token from axios defaults
-                    const { api } = await import('../services/api');
-                    api.removeAuthToken();
                 }
             },
 
@@ -115,11 +107,6 @@ export const useAdminStore = create<AdminState>()(
                         isLoading: false,
                         error: null,
                     });
-
-                    // Update token in axios defaults
-                    const { api } = await import('../services/api');
-                    api.setAuthToken(response.token);
-                    
                 } catch (error: any) {
                     set({
                         admin: null,
@@ -210,16 +197,5 @@ export const useAdminStore = create<AdminState>()(
         }
     )
 );
-
-// Initialize auth token on store creation
-const initializeAuth = async () => {
-    const { token } = useAdminStore.getState();
-    if (token) {
-        const { api } = await import('../services/api');
-        api.setAuthToken(token);
-    }
-};
-
-initializeAuth();
 
 export default useAdminStore;

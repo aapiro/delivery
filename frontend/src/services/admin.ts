@@ -1,4 +1,4 @@
-import { api } from './api';
+import { adminHttp, pickData } from './adminHttp';
 import { API_ENDPOINTS } from '../constants';
 import {
     Admin,
@@ -17,7 +17,6 @@ import {
     SalesReport,
     UserReport,
     PaginatedResponse,
-    ApiResponse,
     Dish,
     RestaurantCategory,
     DishCategory
@@ -27,37 +26,27 @@ import {
 
 export const adminAuth = {
     login: async (credentials: AdminLoginForm): Promise<AdminLoginResponse> => {
-        const response = await api.post<AdminLoginResponse>(
-            API_ENDPOINTS.ADMIN.LOGIN,
-            credentials
-        );
-        return response.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.LOGIN, credentials);
+        return pickData<AdminLoginResponse>(body) ?? (body as AdminLoginResponse);
     },
 
     logout: async (): Promise<void> => {
-        await api.post(API_ENDPOINTS.ADMIN.LOGOUT);
+        await adminHttp.post(API_ENDPOINTS.ADMIN.LOGOUT);
     },
 
     refreshToken: async (): Promise<AdminLoginResponse> => {
-        const response = await api.post<AdminLoginResponse>(
-            API_ENDPOINTS.ADMIN.REFRESH
-        );
-        return response.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.REFRESH);
+        return pickData<AdminLoginResponse>(body) ?? (body as AdminLoginResponse);
     },
 
     getProfile: async (): Promise<Admin> => {
-        const response = await api.get<ApiResponse<Admin>>(
-            API_ENDPOINTS.ADMIN.PROFILE
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.PROFILE);
+        return pickData<Admin>(body) as Admin;
     },
 
     updateProfile: async (data: Partial<Admin>): Promise<Admin> => {
-        const response = await api.put<ApiResponse<Admin>>(
-            API_ENDPOINTS.ADMIN.PROFILE,
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.PROFILE, data);
+        return pickData<Admin>(body) as Admin;
     },
 };
 
@@ -65,11 +54,9 @@ export const adminAuth = {
 
 export const adminDashboard = {
     getStats: async (): Promise<DashboardStats> => {
-        const response = await api.get<ApiResponse<DashboardStats>>(
-            API_ENDPOINTS.ADMIN.STATS
-        );
-        // Forzamos el retorno del objeto 'data' o un objeto vacío si no existe
-        return response.data?.data || {} as DashboardStats;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.STATS);
+        const stats = pickData<DashboardStats>(body);
+        return stats && typeof stats === 'object' ? stats : ({} as DashboardStats);
     },
 };
 
@@ -78,17 +65,11 @@ export const adminDashboard = {
 export const adminRestaurants = {
     getAll: async (filters?: AdminRestaurantFilters, page = 1, limit = 20): Promise<PaginatedResponse<Restaurant>> => {
         try {
-            const response = await api.get<any>(API_ENDPOINTS.ADMIN.RESTAURANTS, { params: { ...filters, page, limit } });
+            const response = await adminHttp.get<any>(API_ENDPOINTS.ADMIN.RESTAURANTS, { params: { ...filters, page, limit } });
 
-            // Logging detallado para investigar respuestas inesperadas
-            console.debug('adminRestaurants.getAll response:', {
-                status: (response as any)?.status,
-                headers: (response as any)?.headers,
-                data: (response as any)?.data,
-                rawResponse: response,
-            });
+            console.debug('adminRestaurants.getAll body:', response);
 
-            const payload: any = (response && response.data !== undefined) ? response.data : response;
+            const payload: any = response;
             const list = Array.isArray(payload) ? payload : (payload?.data ?? payload?.result ?? payload);
 
             if (!Array.isArray(list)) {
@@ -167,10 +148,8 @@ export const adminRestaurants = {
     },
 
     getById: async (id: number): Promise<Restaurant> => {
-        const response = await api.get<ApiResponse<Restaurant>>(
-            API_ENDPOINTS.ADMIN.RESTAURANT_DETAIL(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_DETAIL(id));
+        return pickData<Restaurant>(body) as Restaurant;
     },
 
     create: async (data: RestaurantForm): Promise<Restaurant> => {
@@ -184,14 +163,10 @@ export const adminRestaurants = {
             }
         });
 
-        const response = await api.post<ApiResponse<Restaurant>>(
-            API_ENDPOINTS.ADMIN.RESTAURANT_CREATE,
-            formData,
-            {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            }
-        );
-        return response.data.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_CREATE, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return pickData<Restaurant>(body) as Restaurant;
     },
 
     update: async (id: number, data: Partial<RestaurantForm>): Promise<Restaurant> => {
@@ -205,27 +180,19 @@ export const adminRestaurants = {
             }
         });
 
-        const response = await api.put<ApiResponse<Restaurant>>(
-            API_ENDPOINTS.ADMIN.RESTAURANT_UPDATE(id),
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_UPDATE(id), formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return pickData<Restaurant>(body) as Restaurant;
     },
 
     delete: async (id: number): Promise<void> => {
-        await api.delete(API_ENDPOINTS.ADMIN.RESTAURANT_DELETE(id));
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.RESTAURANT_DELETE(id));
     },
 
     toggleStatus: async (id: number): Promise<Restaurant> => {
-        const response = await api.patch<ApiResponse<Restaurant>>(
-            API_ENDPOINTS.ADMIN.RESTAURANT_TOGGLE_STATUS(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.RESTAURANT_TOGGLE_STATUS(id));
+        return pickData<Restaurant>(body) as Restaurant;
     },
 };
 
@@ -249,17 +216,13 @@ export const adminDishes = {
             });
         }
 
-        const response = await api.get<PaginatedResponse<Dish>>(
-            `${API_ENDPOINTS.ADMIN.DISHES}?${params}`
-        );
-        return response.data;
+        const body = await adminHttp.get<PaginatedResponse<Dish>>(`${API_ENDPOINTS.ADMIN.DISHES}?${params}`);
+        return body;
     },
 
     getById: async (id: number): Promise<Dish> => {
-        const response = await api.get<ApiResponse<Dish>>(
-            API_ENDPOINTS.ADMIN.DISH_DETAIL(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.DISH_DETAIL(id));
+        return pickData<Dish>(body) as Dish;
     },
 
     create: async (data: DishForm): Promise<Dish> => {
@@ -279,16 +242,10 @@ export const adminDishes = {
             }
         });
 
-        const response = await api.post<ApiResponse<Dish>>(
-            API_ENDPOINTS.ADMIN.DISH_CREATE,
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        return response.data.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.DISH_CREATE, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return pickData<Dish>(body) as Dish;
     },
 
     update: async (id: number, data: Partial<DishForm>): Promise<Dish> => {
@@ -308,27 +265,19 @@ export const adminDishes = {
             }
         });
 
-        const response = await api.put<ApiResponse<Dish>>(
-            API_ENDPOINTS.ADMIN.DISH_UPDATE(id),
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            }
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.DISH_UPDATE(id), formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return pickData<Dish>(body) as Dish;
     },
 
     delete: async (id: number): Promise<void> => {
-        await api.delete(API_ENDPOINTS.ADMIN.DISH_DELETE(id));
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.DISH_DELETE(id));
     },
 
     toggleAvailability: async (id: number): Promise<Dish> => {
-        const response = await api.patch<ApiResponse<Dish>>(
-            API_ENDPOINTS.ADMIN.DISH_TOGGLE_AVAILABILITY(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.DISH_TOGGLE_AVAILABILITY(id));
+        return pickData<Dish>(body) as Dish;
     },
 };
 
@@ -352,44 +301,32 @@ export const adminDishCategories = {
             });
         }
 
-        const response = await api.get<PaginatedResponse<DishCategory>>(
-            `${API_ENDPOINTS.ADMIN.CATEGORIES}?${params}`
-        );
-        return response.data;
+        const body = await adminHttp.get<PaginatedResponse<DishCategory>>(`${API_ENDPOINTS.ADMIN.CATEGORIES}?${params}`);
+        return body;
     },
 
     getById: async (id: number): Promise<DishCategory> => {
-        const response = await api.get<ApiResponse<DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_DETAIL(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_DETAIL(id));
+        return pickData<DishCategory>(body) as DishCategory;
     },
 
     create: async (data: CategoryForm): Promise<DishCategory> => {
-        const response = await api.post<ApiResponse<DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_CREATE,
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_CREATE, data);
+        return pickData<DishCategory>(body) as DishCategory;
     },
 
     update: async (id: number, data: Partial<CategoryForm>): Promise<DishCategory> => {
-        const response = await api.put<ApiResponse<DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id),
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id), data);
+        return pickData<DishCategory>(body) as DishCategory;
     },
 
     delete: async (id: number): Promise<void> => {
-        await api.delete(API_ENDPOINTS.ADMIN.CATEGORY_DELETE(id));
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.CATEGORY_DELETE(id));
     },
 
     toggleStatus: async (id: number): Promise<DishCategory> => {
-        const response = await api.patch<ApiResponse<DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_TOGGLE_STATUS(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_TOGGLE_STATUS(id));
+        return pickData<DishCategory>(body) as DishCategory;
     },
 };
 
@@ -413,41 +350,28 @@ export const adminOrders = {
             });
         }
 
-        const response = await api.get<PaginatedResponse<Order>>(
-            `${API_ENDPOINTS.ADMIN.ORDERS}?${params}`
-        );
-        return response.data;
+        const body = await adminHttp.get<PaginatedResponse<Order>>(`${API_ENDPOINTS.ADMIN.ORDERS}?${params}`);
+        return body;
     },
 
     getById: async (id: number): Promise<Order> => {
-        const response = await api.get<ApiResponse<Order>>(
-            API_ENDPOINTS.ADMIN.ORDER_DETAIL(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.ORDER_DETAIL(id));
+        return pickData<Order>(body) as Order;
     },
 
     updateStatus: async (id: number, status: string): Promise<Order> => {
-        const response = await api.patch<ApiResponse<Order>>(
-            API_ENDPOINTS.ADMIN.ORDER_UPDATE_STATUS(id),
-            { status }
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.ORDER_UPDATE_STATUS(id), { status });
+        return pickData<Order>(body) as Order;
     },
 
     cancel: async (id: number, reason?: string): Promise<Order> => {
-        const response = await api.patch<ApiResponse<Order>>(
-            API_ENDPOINTS.ADMIN.ORDER_CANCEL(id),
-            { reason }
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.ORDER_CANCEL(id), { reason });
+        return pickData<Order>(body) as Order;
     },
 
     refund: async (id: number, amount?: number, reason?: string): Promise<Order> => {
-        const response = await api.patch<ApiResponse<Order>>(
-            API_ENDPOINTS.ADMIN.ORDER_REFUND(id),
-            { amount, reason }
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.ORDER_REFUND(id), { amount, reason });
+        return pickData<Order>(body) as Order;
     },
 };
 
@@ -471,36 +395,27 @@ export const adminUsers = {
             });
         }
 
-        const response = await api.get<PaginatedResponse<User>>(
-            `${API_ENDPOINTS.ADMIN.USERS}?${params}`
-        );
-        return response.data;
+        const body = await adminHttp.get<PaginatedResponse<User>>(`${API_ENDPOINTS.ADMIN.USERS}?${params}`);
+        return body;
     },
 
     getById: async (id: number): Promise<User> => {
-        const response = await api.get<ApiResponse<User>>(
-            API_ENDPOINTS.ADMIN.USER_DETAIL(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.USER_DETAIL(id));
+        return pickData<User>(body) as User;
     },
 
     update: async (id: number, data: Partial<User>): Promise<User> => {
-        const response = await api.put<ApiResponse<User>>(
-            API_ENDPOINTS.ADMIN.USER_UPDATE(id),
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.USER_UPDATE(id), data);
+        return pickData<User>(body) as User;
     },
 
     toggleStatus: async (id: number): Promise<User> => {
-        const response = await api.patch<ApiResponse<User>>(
-            API_ENDPOINTS.ADMIN.USER_TOGGLE_STATUS(id)
-        );
-        return response.data.data;
+        const body = await adminHttp.patch<unknown>(API_ENDPOINTS.ADMIN.USER_TOGGLE_STATUS(id));
+        return pickData<User>(body) as User;
     },
 
     delete: async (id: number): Promise<void> => {
-        await api.delete(API_ENDPOINTS.ADMIN.USER_DELETE(id));
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.USER_DELETE(id));
     },
 };
 
@@ -508,41 +423,31 @@ export const adminUsers = {
 
 export const adminCategories = {
     getRestaurantCategories: async (): Promise<RestaurantCategory[]> => {
-        const response = await api.get<ApiResponse<RestaurantCategory[]>>(
-            API_ENDPOINTS.ADMIN.CATEGORIES
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.CATEGORIES);
+        return pickData<RestaurantCategory[]>(body) as RestaurantCategory[];
     },
 
     getDishCategories: async (restaurantId?: number): Promise<DishCategory[]> => {
         const params = restaurantId ? `?restaurantId=${restaurantId}` : '';
-        const response = await api.get<ApiResponse<DishCategory[]>>(
-            `${API_ENDPOINTS.ADMIN.CATEGORIES}${params}`
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(`${API_ENDPOINTS.ADMIN.CATEGORIES}${params}`);
+        return pickData<DishCategory[]>(body) as DishCategory[];
     },
 
     create: async (data: CategoryForm): Promise<RestaurantCategory | DishCategory> => {
-        const response = await api.post<ApiResponse<RestaurantCategory | DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_CREATE,
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.post<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_CREATE, data);
+        return pickData<RestaurantCategory | DishCategory>(body) as RestaurantCategory | DishCategory;
     },
 
     update: async (
         id: number,
         data: Partial<CategoryForm>
     ): Promise<RestaurantCategory | DishCategory> => {
-        const response = await api.put<ApiResponse<RestaurantCategory | DishCategory>>(
-            API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id),
-            data
-        );
-        return response.data.data;
+        const body = await adminHttp.put<unknown>(API_ENDPOINTS.ADMIN.CATEGORY_UPDATE(id), data);
+        return pickData<RestaurantCategory | DishCategory>(body) as RestaurantCategory | DishCategory;
     },
 
     delete: async (id: number): Promise<void> => {
-        await api.delete(API_ENDPOINTS.ADMIN.CATEGORY_DELETE(id));
+        await adminHttp.delete(API_ENDPOINTS.ADMIN.CATEGORY_DELETE(id));
     },
 };
 
@@ -559,17 +464,13 @@ export const adminReports = {
         if (startDate) params.append('startDate', startDate);
         if (endDate) params.append('endDate', endDate);
 
-        const response = await api.get<ApiResponse<SalesReport>>(
-            `${API_ENDPOINTS.ADMIN.SALES_REPORT}?${params}`
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(`${API_ENDPOINTS.ADMIN.SALES_REPORT}?${params}`);
+        return pickData<SalesReport>(body) as SalesReport;
     },
 
     getUsersReport: async (): Promise<UserReport> => {
-        const response = await api.get<ApiResponse<UserReport>>(
-            API_ENDPOINTS.ADMIN.USERS_REPORT
-        );
-        return response.data.data;
+        const body = await adminHttp.get<unknown>(API_ENDPOINTS.ADMIN.USERS_REPORT);
+        return pickData<UserReport>(body) as UserReport;
     },
 
     exportReport: async (
@@ -580,7 +481,7 @@ export const adminReports = {
         const params = new URLSearchParams();
         params.append('type', type);
         params.append('format', format);
-        
+
         if (filters) {
             Object.entries(filters).forEach(([key, value]) => {
                 if (value !== undefined && value !== null && value !== '') {
@@ -589,12 +490,8 @@ export const adminReports = {
             });
         }
 
-        const response = await api.get(
-            `${API_ENDPOINTS.ADMIN.EXPORT_REPORT}?${params}`,
-            {
-                responseType: 'blob',
-            }
-        );
-        return response.data as Blob;
+        return adminHttp.get<Blob>(`${API_ENDPOINTS.ADMIN.EXPORT_REPORT}?${params}`, {
+            responseType: 'blob',
+        });
     },
 };
