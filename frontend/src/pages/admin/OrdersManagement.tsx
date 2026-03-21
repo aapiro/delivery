@@ -19,6 +19,11 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import ProtectedRoute from '../../components/admin/common/ProtectedRoute';
+import {
+    AdminPageHeader,
+    AdminSectionCard,
+    AdminQueryBoundary,
+} from '../../components/admin/common';
 import { useAdminStore } from '../../store/adminStore';
 
 const OrdersManagement: React.FC = () => {
@@ -76,50 +81,26 @@ const OrdersManagement: React.FC = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="space-y-6">
-                <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-                <Card className="p-6">
-                    <div className="animate-pulse space-y-4">
-                        <div className="h-4 bg-gray-200 rounded w-full"></div>
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                </Card>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="text-center py-12">
-                <div className="text-red-600 mb-4">Error al cargar los pedidos</div>
-                <Button onClick={() => window.location.reload()}>
-                    Reintentar
-                </Button>
-            </div>
-        );
-    }
-
     return (
+        <AdminQueryBoundary
+            isLoading={isLoading}
+            error={error}
+            errorTitle="Error al cargar los pedidos"
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['admin-orders'] })}
+        >
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Gestión de Pedidos</h1>
-                    <p className="text-gray-600">
-                        {data?.pagination.total || 0} pedidos registrados
-                    </p>
-                </div>
-                <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-orders'] })}>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Actualizar
-                </Button>
-            </div>
+            <AdminPageHeader
+                title="Gestión de Pedidos"
+                description={`${data?.pagination.total ?? 0} pedidos registrados`}
+                actions={
+                    <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-orders'] })}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Actualizar
+                    </Button>
+                }
+            />
 
-            {/* Filters */}
-            <Card className="p-6">
+            <AdminSectionCard title="Filtros">
                 <form onSubmit={handleSearch} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="relative">
@@ -168,7 +149,7 @@ const OrdersManagement: React.FC = () => {
                         </Button>
                     </div>
                 </form>
-            </Card>
+            </AdminSectionCard>
 
             {/* Orders Table */}
             <Card className="overflow-hidden">
@@ -238,6 +219,7 @@ const OrdersManagement: React.FC = () => {
                 </div>
             )}
         </div>
+        </AdminQueryBoundary>
     );
 };
 

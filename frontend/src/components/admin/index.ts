@@ -3,8 +3,18 @@ export { default as AdminLayout } from './layout/AdminLayout';
 export { default as AdminSidebar } from './layout/AdminSidebar';
 export { default as AdminHeader } from './layout/AdminHeader';
 
-// Common components
-export { default as ProtectedRoute } from './common/ProtectedRoute';
+// Common components (layout de página, estados, tarjetas)
+export {
+    ProtectedRoute,
+    AdminPageHeader,
+    AdminSectionCard,
+    AdminErrorState,
+    AdminEmptyState,
+    AdminListPageSkeleton,
+    AdminStatsGridSkeleton,
+    AdminQueryBoundary,
+    getAdminErrorMessage,
+} from './common';
 
 // Admin pages
 export { default as AdminLogin } from '../../pages/admin/AdminLogin';

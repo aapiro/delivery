@@ -15,6 +15,7 @@ import { SalesReport, UserReport, AdminPermission } from '../../types';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import ProtectedRoute from '../../components/admin/common/ProtectedRoute';
+import { AdminPageHeader } from '../../components/admin/common';
 
 const ReportsPage: React.FC = () => {
     const [selectedPeriod, setSelectedPeriod] = useState<'day' | 'week' | 'month' | 'year'>('month');
@@ -50,38 +51,28 @@ const ReportsPage: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Reportes y Analytics</h1>
-                    <p className="text-gray-600">Análisis detallado de la plataforma</p>
-                </div>
-                <ProtectedRoute requiredPermission={AdminPermission.EXPORT_REPORTS}>
-                    <div className="flex space-x-2">
-                        <Button
-                            variant="outline"
-                            onClick={() => handleExportReport(activeTab, 'csv')}
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            CSV
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleExportReport(activeTab, 'excel')}
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            Excel
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={() => handleExportReport(activeTab, 'pdf')}
-                        >
-                            <Download className="w-4 h-4 mr-2" />
-                            PDF
-                        </Button>
-                    </div>
-                </ProtectedRoute>
-            </div>
+            <AdminPageHeader
+                title="Reportes y Analytics"
+                description="Análisis detallado de la plataforma"
+                actions={
+                    <ProtectedRoute requiredPermission={AdminPermission.EXPORT_REPORTS}>
+                        <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" onClick={() => handleExportReport(activeTab, 'csv')}>
+                                <Download className="mr-2 h-4 w-4" />
+                                CSV
+                            </Button>
+                            <Button variant="outline" onClick={() => handleExportReport(activeTab, 'excel')}>
+                                <Download className="mr-2 h-4 w-4" />
+                                Excel
+                            </Button>
+                            <Button variant="outline" onClick={() => handleExportReport(activeTab, 'pdf')}>
+                                <Download className="mr-2 h-4 w-4" />
+                                PDF
+                            </Button>
+                        </div>
+                    </ProtectedRoute>
+                }
+            />
 
             {/* Tabs */}
             <div className="border-b border-gray-200">

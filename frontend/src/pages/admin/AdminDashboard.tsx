@@ -13,6 +13,12 @@ import {
 import { adminDashboard } from '../../services/admin';
 import { DashboardStats, OrderStatus } from '../../types';
 import Card from '../../components/ui/Card';
+import {
+    AdminPageHeader,
+    AdminSectionCard,
+    AdminStatsGridSkeleton,
+    AdminErrorState,
+} from '../../components/admin/common';
 
 const AdminDashboard: React.FC = () => {
     const { data: stats, isLoading, error } = useQuery({
@@ -24,41 +30,28 @@ const AdminDashboard: React.FC = () => {
     if (isLoading) {
         return (
             <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[...Array(4)].map((_, i) => (
-                        <Card key={i} className="p-6">
-                            <div className="animate-pulse">
-                                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                            </div>
-                        </Card>
-                    ))}
-                </div>
+                <AdminPageHeader title="Dashboard" description="Resumen general de la plataforma" />
+                <AdminStatsGridSkeleton count={4} />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="text-center py-12">
-                <div className="text-red-600 mb-4">Error al cargar las estadísticas</div>
-                <button 
-                    onClick={() => window.location.reload()}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                    Reintentar
-                </button>
+            <div className="space-y-6">
+                <AdminPageHeader title="Dashboard" description="Resumen general de la plataforma" />
+                <AdminErrorState
+                    title="Error al cargar las estadísticas"
+                    error={error}
+                    fallbackMessage="No se pudo obtener el resumen del panel."
+                />
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-gray-600">Resumen general de la plataforma</p>
-            </div>
+            <AdminPageHeader title="Dashboard" description="Resumen general de la plataforma" />
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -94,11 +87,7 @@ const AdminDashboard: React.FC = () => {
 
             {/* Charts and Tables Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Order Status Chart */}
-                <Card className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Estado de Pedidos
-                    </h3>
+                <AdminSectionCard title="Estado de Pedidos">
                     <div className="space-y-3">
                         {stats?.ordersByStatus?.map((item) => (
                             <div key={item.status} className="flex items-center justify-between">
@@ -117,13 +106,9 @@ const AdminDashboard: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                </Card>
+                </AdminSectionCard>
 
-                {/* Popular Restaurants */}
-                <Card className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                        Restaurantes Populares
-                    </h3>
+                <AdminSectionCard title="Restaurantes Populares">
                     <div className="space-y-4">
                         {stats?.popularRestaurants?.slice(0, 5).map((item, index) => (
                             <div key={item.restaurant.id} className="flex items-center space-x-3">
@@ -153,14 +138,10 @@ const AdminDashboard: React.FC = () => {
                             </div>
                         ))}
                     </div>
-                </Card>
+                </AdminSectionCard>
             </div>
 
-            {/* Recent Orders */}
-            <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    Pedidos Recientes
-                </h3>
+            <AdminSectionCard title="Pedidos Recientes">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
@@ -218,7 +199,7 @@ const AdminDashboard: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
-            </Card>
+            </AdminSectionCard>
         </div>
     );
 };

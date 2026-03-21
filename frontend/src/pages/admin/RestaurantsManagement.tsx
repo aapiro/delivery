@@ -17,10 +17,15 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import Pagination from '../../components/ui/Pagination';
-import RestaurantDetailModal from "./RestaurantDetailModal";
-// ... (imports iguales)
-import { useQueryClient } from '@tanstack/react-query'; // Añade este import
-import { getListRestaurantsQueryKey } from '../../api/generated/administrative-api/administrative-api'; // Y este
+import RestaurantDetailModal from './RestaurantDetailModal';
+import { useQueryClient } from '@tanstack/react-query';
+import { getListRestaurantsQueryKey } from '../../api/generated/administrative-api/administrative-api';
+import {
+    AdminPageHeader,
+    AdminSectionCard,
+    AdminQueryBoundary,
+    AdminEmptyState,
+} from '../../components/admin/common';
 
 const RestaurantsManagement: React.FC = () => {
     const queryClient = useQueryClient();
@@ -69,29 +74,36 @@ const RestaurantsManagement: React.FC = () => {
         }
     };
 
-    // ... (Manejo de loading y error igual)
-
     return (
-        <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-            {/* Cabecera */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Panel de Restaurantes</h1>
-                    <p className="text-sm text-gray-500">
-                        Total: <span className="font-bold">{pagedData?.totalElements || 0}</span> locales
-                    </p>
-                </div>
-                {hasPermission(AdminPermission.CREATE_RESTAURANTS) && (
-                    <Link to={ROUTES.ADMIN.RESTAURANT_CREATE}>
-                        <Button className="bg-indigo-600 hover:bg-indigo-700 shadow-sm">
-                            <Plus className="w-4 h-4 mr-2" /> Nuevo Restaurante
-                        </Button>
-                    </Link>
-                )}
-            </div>
+        <AdminQueryBoundary
+            isLoading={isLoading}
+            error={error}
+            errorTitle="Error al cargar restaurantes"
+            onRetry={() =>
+                queryClient.invalidateQueries({ queryKey: getListRestaurantsQueryKey() })
+            }
+        >
+        <div className="space-y-6">
+            <AdminPageHeader
+                title="Panel de Restaurantes"
+                description={
+                    <>
+                        Total: <span className="font-semibold text-gray-800">{pagedData?.totalElements ?? 0}</span>{' '}
+                        locales
+                    </>
+                }
+                actions={
+                    hasPermission(AdminPermission.CREATE_RESTAURANTS) ? (
+                        <Link to={ROUTES.ADMIN.RESTAURANT_CREATE}>
+                            <Button className="bg-indigo-600 shadow-sm hover:bg-indigo-700">
+                                <Plus className="mr-2 h-4 w-4" /> Nuevo Restaurante
+                            </Button>
+                        </Link>
+                    ) : undefined
+                }
+            />
 
-            {/* Barra de Búsqueda */}
-            <Card className="p-4">
+            <AdminSectionCard padding="md" title="Búsqueda">
                 <form onSubmit={(e) => { e.preventDefault(); setPage(0); }} className="relative max-w-md">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
@@ -101,7 +113,7 @@ const RestaurantsManagement: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </form>
-            </Card>
+            </AdminSectionCard>
 
             {/* Lista de Restaurantes */}
             <div className="space-y-4">
@@ -178,9 +190,7 @@ const RestaurantsManagement: React.FC = () => {
                         </Card>
                     ))
                 ) : (
-                    <div className="py-20 text-center bg-white rounded-xl border border-dashed border-gray-300 font-medium text-gray-400">
-                        No se encontraron restaurantes.
-                    </div>
+                    <AdminEmptyState message="No se encontraron restaurantes." />
                 )}
             </div>
 
@@ -202,6 +212,7 @@ const RestaurantsManagement: React.FC = () => {
                 }}
             />
         </div>
+        </AdminQueryBoundary>
     );
 };
 

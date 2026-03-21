@@ -22,6 +22,11 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import ProtectedRoute from '../../components/admin/common/ProtectedRoute';
+import {
+    AdminPageHeader,
+    AdminSectionCard,
+    AdminQueryBoundary,
+} from '../../components/admin/common';
 import { useAdminStore } from '../../store/adminStore';
 
 const UsersManagement: React.FC = () => {
@@ -76,46 +81,20 @@ const UsersManagement: React.FC = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="space-y-6">
-                <div className="h-8 bg-gray-200 rounded w-48 animate-pulse"></div>
-                <Card className="p-6">
-                    <div className="animate-pulse space-y-4">
-                        <div className="h-4 bg-gray-200 rounded w-full"></div>
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    </div>
-                </Card>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="text-center py-12">
-                <div className="text-red-600 mb-4">Error al cargar los usuarios</div>
-                <Button onClick={() => window.location.reload()}>
-                    Reintentar
-                </Button>
-            </div>
-        );
-    }
-
     return (
+        <AdminQueryBoundary
+            isLoading={isLoading}
+            error={error}
+            errorTitle="Error al cargar los usuarios"
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ['admin-users'] })}
+        >
         <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
-                    <p className="text-gray-600">
-                        {data?.pagination?.total || 0} usuarios registrados
-                    </p>
-                </div>
-            </div>
+            <AdminPageHeader
+                title="Gestión de Usuarios"
+                description={`${data?.pagination?.total ?? 0} usuarios registrados`}
+            />
 
-            {/* Filters */}
-            <Card className="p-6">
+            <AdminSectionCard title="Filtros">
                 <form onSubmit={handleSearch} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="relative">
@@ -171,7 +150,7 @@ const UsersManagement: React.FC = () => {
                         </Button>
                     </div>
                 </form>
-            </Card>
+            </AdminSectionCard>
 
             {/* Users Table */}
             <Card className="overflow-hidden">
@@ -239,6 +218,7 @@ const UsersManagement: React.FC = () => {
                 </div>
             )}
         </div>
+        </AdminQueryBoundary>
     );
 };
 
