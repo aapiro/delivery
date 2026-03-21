@@ -64,6 +64,10 @@ public class AuthService {
                 || !BCrypt.verifyer().verify(password.toCharArray(), user.getPasswordHash()).verified) {
             throw unauthorized("Invalid credentials");
         }
+        // Cuentas de panel: solo /admin/auth/login (JWT con rol admin).
+        if (AdminAuthService.isAdminUserType(user.getUserType())) {
+            throw unauthorized("Invalid credentials");
+        }
         return issueTokens(user);
     }
 

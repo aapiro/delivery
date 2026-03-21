@@ -2,6 +2,7 @@ package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
 import com.ilimitech.delivery.domain.model.DashboardOverview;
 import com.ilimitech.delivery.application.usecase.DashboardService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/admin/dashboard")
+@RolesAllowed("admin")
 public class AdminDashboardResource {
 
     @Inject

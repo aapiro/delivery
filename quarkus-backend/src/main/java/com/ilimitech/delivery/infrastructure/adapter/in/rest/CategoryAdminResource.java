@@ -2,6 +2,7 @@ package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
 import com.ilimitech.delivery.application.usecase.CategoryService;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.Category;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -9,6 +10,7 @@ import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/admin/categories")
+@RolesAllowed("admin")
 public class CategoryAdminResource {
 
     @Inject

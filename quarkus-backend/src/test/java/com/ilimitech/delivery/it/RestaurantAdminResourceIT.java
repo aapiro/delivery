@@ -2,6 +2,7 @@ package com.ilimitech.delivery.it;
 
 import com.ilimitech.delivery.config.IntegrationTestResource;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.RestaurantEntity;
+import com.ilimitech.delivery.support.AdminTestAuth;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -33,6 +34,7 @@ public class RestaurantAdminResourceIT {
     @Test
     public void testGetRestaurantById() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .when().get("/admin/restaurants/1")
                 .then()
                 .statusCode(200)
@@ -42,6 +44,7 @@ public class RestaurantAdminResourceIT {
     @Test
     public void testAddRestaurant() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .contentType("application/json")
                 .body("{\"name\":\"Test Restaurant\",\"cuisine\":\"Italian\"}")
                 .when().post("/admin/restaurants")
@@ -54,6 +57,7 @@ public class RestaurantAdminResourceIT {
     @Test
     public void testUpdateRestaurantJson() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .contentType("application/json")
                 .body("{\"name\":\"Updated Restaurant\",\"cuisine\":\"Chinese\"}")
                 .when().put("/admin/restaurants/1")
@@ -65,6 +69,7 @@ public class RestaurantAdminResourceIT {
     @Test
     public void testDeleteRestaurant() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .when().delete("/admin/restaurants/2")
                 .then()
                 .statusCode(204);
@@ -73,6 +78,7 @@ public class RestaurantAdminResourceIT {
     @Test
     public void testToggleRestaurantStatus() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .when().patch("/admin/restaurants/1/toggle-status")
                 .then()
                 .statusCode(200)
@@ -82,6 +88,7 @@ public class RestaurantAdminResourceIT {
     @Test
     void testGetRestaurantByIdNotFound() {
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .when().get("/admin/restaurants/999")
                 .then()
                 .statusCode(HttpStatus.SC_NOT_FOUND); // Assuming no restaurant with ID 1 exists yet
@@ -94,6 +101,7 @@ public class RestaurantAdminResourceIT {
         restaurantEntity.setCuisines(Set.of());
 
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .body(restaurantEntity)
                 .contentType("application/json")
                 .when().post("/admin/restaurants")
@@ -108,6 +116,7 @@ public class RestaurantAdminResourceIT {
         restaurantEntity.setCuisines(Set.of());
 
         given()
+                .header("Authorization", AdminTestAuth.bearerToken())
                 .body(restaurantEntity)
                 .contentType("application/json")
                 .when().put("/admin/restaurants/999")

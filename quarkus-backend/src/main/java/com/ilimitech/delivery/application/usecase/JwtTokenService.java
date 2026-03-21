@@ -28,4 +28,21 @@ public class JwtTokenService {
                 .expiresAt(expiresAt)
                 .sign();
     }
+
+    /**
+     * JWT para rutas {@code /admin/**}: el claim {@code groups} incluye {@code admin} para {@code @RolesAllowed("admin")}.
+     */
+    public String createAdminAccessToken(Long userId, String email, String fullName, String adminRole) {
+        Instant expiresAt = Instant.now().plus(Duration.ofMinutes(accessTokenTtlMinutes));
+        String role = adminRole != null ? adminRole : "ADMIN";
+        return Jwt.issuer(issuer)
+                .subject(String.valueOf(userId))
+                .upn(email)
+                .groups(Set.of("admin"))
+                .claim("email", email)
+                .claim("fullName", fullName != null ? fullName : "")
+                .claim("adminRole", role)
+                .expiresAt(expiresAt)
+                .sign();
+    }
 }

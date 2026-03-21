@@ -4,6 +4,7 @@ import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.Pag
 import com.ilimitech.delivery.infrastructure.adapter.in.rest.generated.model.Restaurant;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.RestaurantEntity;
 import com.ilimitech.delivery.application.usecase.RestaurantService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Path("/admin/restaurants")
+@RolesAllowed("admin")
 public class RestaurantAdminResource {
 
     @Inject
