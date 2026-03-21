@@ -1,59 +1,64 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCreateRestaurant , getListRestaurantsQueryKey} from '../../api/generated/administrative-api/administrative-api'; // Tu hook de Orval
+import { ArrowLeft } from 'lucide-react';
+import {
+    useCreateRestaurant,
+    getListRestaurantsQueryKey,
+} from '../../api/generated/administrative-api/administrative-api';
+import { CreateRestaurantRequest } from '../../api/generated/model';
+
+/** El formulario envía campos extra (p. ej. isOpen); el API solo persiste los del contrato OpenAPI. */
+type RestaurantFormPayload = CreateRestaurantRequest & { isOpen?: boolean };
 import RestaurantForm from './RestaurantForm';
 import { ROUTES } from '../../constants';
 import { useQueryClient } from '@tanstack/react-query';
-//import {toast} from "sonner";
-import {ArrowLeft} from "lucide-react";
-import {useNotify} from "../../hooks/useNotify";
+import { useNotify } from '../../hooks/useNotify';
+import { AdminPageHeader } from '../../components/admin/common';
 
 const RestaurantCreate: React.FC = () => {
     const navigate = useNavigate();
-
-    // 1. Inicializamos la mutación de Orval
     const createMutation = useCreateRestaurant();
-
     const queryClient = useQueryClient();
-
     const notify = useNotify();
-    // 2. Definimos la función que se ejecutará al dar click en "Guardar"
-    const handleCreate = (values: any, meta?: { stayOnPage?: boolean }) => {
+
+    const handleCreate = (values: RestaurantFormPayload, meta?: { stayOnPage?: boolean }) => {
+        const { isOpen: _omit, ...apiBody } = values;
         createMutation.mutate(
-            { data: values },
+            { data: apiBody as CreateRestaurantRequest },
             {
                 onSuccess: () => {
                     queryClient.invalidateQueries({ queryKey: getListRestaurantsQueryKey() });
-                    notify.success("¡Restaurante creado con éxito!");
+                    notify.success('¡Restaurante creado con éxito!');
 
                     if (!meta?.stayOnPage) {
                         navigate(ROUTES.ADMIN.RESTAURANTS);
                     }
                 },
                 onError: () => {
-                    notify.error("Hubo un error al crear el restaurante.");
-                }
+                    notify.error('Hubo un error al crear el restaurante.');
+                },
             }
         );
     };
 
-
     return (
-        <div className="p-6 space-y-6">
-            <button onClick={() => navigate(-1)} className="text-gray-500 hover:text-indigo-600 flex items-center mb-2">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Gestión de Restaurantes
+        <div className="space-y-6">
+            <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="mb-2 flex items-center text-gray-500 hover:text-indigo-600"
+            >
+                <ArrowLeft className="mr-1 h-4 w-4" /> Volver
             </button>
-            <h1 className="text-2xl font-bold">Nuevo Restaurante</h1>
-
-            {/* 3. AQUÍ es donde usas la constante. Al pasarla como prop, el error desaparece */}
+            <AdminPageHeader
+                title="Nuevo restaurante"
+                description="Completa los datos del local. El backend validará los campos requeridos."
+            />
             <RestaurantForm
                 onSubmit={(values, meta) => handleCreate(values, meta)}
                 isLoading={createMutation.isPending}
                 onCancel={() => navigate(-1)}
             />
-
-
-
         </div>
     );
 };
