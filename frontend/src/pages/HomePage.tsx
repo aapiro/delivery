@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Clock, Truck } from 'lucide-react';
 import Layout from '../components/layout/Layout';
@@ -8,20 +8,35 @@ import { ROUTES } from '../constants';
 import { useRestaurants } from '../services/restaurants';
 import { isMockEnabled } from '../mocks/config';
 
-const categories = [
-    { name: 'Pizza', emoji: '🍕', count: 12 },
-    { name: 'Hamburguesas', emoji: '🍔', count: 8 },
-    { name: 'Italiana', emoji: '🍝', count: 15 },
-    { name: 'Japonesa', emoji: '🍱', count: 6 },
-    { name: 'Mexicana', emoji: '🌮', count: 9 },
-    { name: 'Parrilla', emoji: '🥩', count: 7 },
-    { name: 'Postres', emoji: '🍰', count: 11 },
-    { name: 'Saludable', emoji: '🥗', count: 5 },
-];
-
 const HomePage: React.FC = () => {
-    const { data, isLoading, isError, error, refetch } = useRestaurants(undefined, 1, 6);
+    const { data, isLoading, isError, error, refetch } = useRestaurants(undefined, 1, 24);
     const restaurants = data?.data ?? [];
+
+    const cuisineChips = useMemo(() => {
+        const emojiByCuisine: Record<string, string> = {
+            Japanese: '🍱',
+            American: '🍔',
+            Mexican: '🌮',
+            Mediterranean: '🥗',
+            Indian: '🍛',
+            'Fast Food': '🍟',
+            Italian: '🍝',
+        };
+
+        const map = new Map<string, number>();
+        for (const r of restaurants) {
+            const raw = (r.cuisine || 'General').split(',')[0]?.trim() || 'General';
+            map.set(raw, (map.get(raw) || 0) + 1);
+        }
+
+        const sorted = Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+        return sorted.slice(0, 8).map(([name, count]) => ({
+            name,
+            count,
+            emoji: emojiByCuisine[name] ?? '🍽️',
+            slug: name.toLowerCase(),
+        }));
+    }, [restaurants]);
 
     return (
         <Layout>
@@ -59,10 +74,10 @@ const HomePage: React.FC = () => {
                 <section className="mb-12">
                     <h2 className="text-2xl font-bold text-gray-900 mb-6">Explora por categorías</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-                        {categories.map((category, index) => (
+                        {cuisineChips.map((category) => (
                             <Link
-                                key={index}
-                                to={`${ROUTES.RESTAURANTS}?category=${encodeURIComponent(category.name.toLowerCase())}`}
+                                key={category.slug}
+                                to={`${ROUTES.RESTAURANTS}?category=${encodeURIComponent(category.slug)}`}
                                 className="group"
                             >
                                 <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100 hover:shadow-md hover:border-primary-200 transition-all duration-200 group-hover:scale-105">

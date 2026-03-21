@@ -5,10 +5,15 @@ import RestaurantsPage from './pages/RestaurantsPage';
 import RestaurantDetailPage from './pages/RestaurantDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderDetailPage from './pages/OrderDetailPage';
+import CartPage from './pages/CartPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import RestaurantCreate from './pages/admin/RestaurantCreate'; // Ajusta la ruta si es necesario
 import RestaurantEdit from './pages/admin/RestaurantEdit';
+import ProfilePage from './pages/ProfilePage';
+import AddressesPage from './pages/AddressesPage';
+import SearchPage from './pages/SearchPage';
 
 // Admin imports
 import AdminLogin from './pages/admin/AdminLogin';
@@ -62,10 +67,11 @@ function App() {
                 <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
 
                 {/* Páginas temporales */}
-                <Route path={ROUTES.CART} element={<PlaceholderPage title="Carrito" />} />
-                <Route path={ROUTES.ORDERS} element={<PlaceholderPage title="Mis Pedidos" />} />
-                <Route path={ROUTES.PROFILE} element={<PlaceholderPage title="Mi Perfil" />} />
-                <Route path={ROUTES.SEARCH} element={<PlaceholderPage title="Búsqueda" />} />
+                <Route path={ROUTES.CART} element={<CartPage />} />
+                <Route path={ROUTES.ORDERS} element={<MyOrdersPage />} />
+                <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+                <Route path={ROUTES.ADDRESSES} element={<AddressesPage />} />
+                <Route path={ROUTES.SEARCH} element={<SearchPage />} />
 
                 {/* Admin Routes */}
                 <Route path={ROUTES.ADMIN.LOGIN} element={<AdminLogin />} />

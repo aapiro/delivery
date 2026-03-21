@@ -3,21 +3,20 @@ import { Link } from 'react-router-dom';
 import { X, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
 import Button from '../ui/Button';
 import { useCartStore } from '../../store';
+import { useCart } from '../../hooks/useCart';
 import { ROUTES, ORDER_CONFIG } from '../../constants';
 
 const CartSidebar: React.FC = () => {
+    const { updateQuantity, removeFromCart, clearCart } = useCart();
     const {
         items,
         isOpen,
         closeCart,
-        updateQuantity,
-        removeItem, // Cambiar de removeFromCart a removeItem
         getSubtotal,
         getDeliveryFee,
         getTax,
         getTotal,
         getItemCount,
-        clearCart
     } = useCartStore();
 
     const subtotal = getSubtotal();
@@ -94,7 +93,7 @@ const CartSidebar: React.FC = () => {
                                                 </div>
                                             </div>
                                             <button
-                                                onClick={clearCart}
+                                                onClick={() => void clearCart()}
                                                 className="text-primary-600 hover:text-primary-800 p-1"
                                                 title="Limpiar carrito"
                                             >
@@ -131,7 +130,7 @@ const CartSidebar: React.FC = () => {
                                                     {/* Controles de cantidad */}
                                                     <div className="flex items-center gap-2">
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                            onClick={() => void updateQuantity(item.id, item.quantity - 1)}
                                                             className="w-8 h-8 rounded-full border-2 border-primary-500 flex items-center justify-center text-primary-500 hover:bg-primary-500 hover:text-white transition-colors"
                                                         >
                                                             <Minus className="w-3 h-3" />
@@ -140,7 +139,7 @@ const CartSidebar: React.FC = () => {
                               {item.quantity}
                             </span>
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                            onClick={() => void updateQuantity(item.id, item.quantity + 1)}
                                                             className="w-8 h-8 rounded-full border-2 border-primary-500 flex items-center justify-center text-primary-500 hover:bg-primary-500 hover:text-white transition-colors"
                                                         >
                                                             <Plus className="w-3 h-3" />
@@ -153,7 +152,7 @@ const CartSidebar: React.FC = () => {
                                                             ${item.totalPrice.toFixed(2)}
                                                         </div>
                                                         <button
-                                                            onClick={() => removeItem(item.id)} // Usar removeItem
+                                                            onClick={() => void removeFromCart(item.id)}
                                                             className="text-xs text-red-500 hover:text-red-700 underline"
                                                         >
                                                             Eliminar

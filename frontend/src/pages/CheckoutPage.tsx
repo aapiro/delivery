@@ -5,14 +5,17 @@ import Layout from '../components/layout/Layout';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import { useCartStore, useNotificationStore } from '../store';
+import { useAuthStore, useCartStore, useNotificationStore } from '../store';
 import { ROUTES, ORDER_CONFIG, SUCCESS_MESSAGES } from '../constants';
 import { PaymentMethod } from '../types';
+import { api } from '../services/api';
+import { cartService } from '../services/cart';
 
 const CheckoutPage: React.FC = () => {
     const navigate = useNavigate();
     const cartStore = useCartStore();
     const { addNotification } = useNotificationStore();
+    const { isAuthenticated } = useAuthStore();
 
     const [deliveryAddress, setDeliveryAddress] = useState({
         street: '',
@@ -40,6 +43,22 @@ const CheckoutPage: React.FC = () => {
                     </p>
                     <Link to={ROUTES.RESTAURANTS}>
                         <Button variant="primary">Explorar Restaurantes</Button>
+                    </Link>
+                </div>
+            </Layout>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return (
+            <Layout>
+                <div className="max-w-2xl mx-auto px-4 py-12 text-center">
+                    <h1 className="text-2xl font-bold text-gray-900 mb-4">Inicia sesión</h1>
+                    <p className="text-gray-600 mb-6">
+                        Necesitas estar autenticado para finalizar tu pedido.
+                    </p>
+                    <Link to={ROUTES.LOGIN}>
+                        <Button variant="primary">Ir a login</Button>
                     </Link>
                 </div>
             </Layout>
@@ -78,16 +97,50 @@ const CheckoutPage: React.FC = () => {
         setIsProcessing(true);
 
         try {
-            // Simular llamada a API
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            if (!cartStore.restaurantId) {
+                addNotification({
+                    type: 'error',
+                    title: 'Carrito inválido',
+                    message: 'No se pudo determinar el restaurante del pedido.',
+                    duration: 5000,
+                });
+                return;
+            }
 
-            // Simular creación de orden
-            const orderId = Math.floor(Math.random() * 10000);
+            const restaurantId = cartStore.restaurantId;
 
-            // Limpiar carrito
+            const instructions = deliveryAddress.instructions?.trim();
+            const deliveryAddressStr = instructions
+                ? `${deliveryAddress.street}, ${deliveryAddress.city} ${deliveryAddress.zipCode} - ${instructions}`
+                : `${deliveryAddress.street}, ${deliveryAddress.city} ${deliveryAddress.zipCode}`;
+
+            // Quarkus usa LocalDateTime (sin zona horaria): enviamos YYYY-MM-DDTHH:mm:ss
+            const estimatedDate = new Date(Date.now() + 35 * 60 * 1000);
+            const estimatedDeliveryTime = estimatedDate.toISOString().slice(0, 19);
+
+            const payload = {
+                restaurant: { id: restaurantId },
+                totalAmount: total,
+                deliveryAddress: deliveryAddressStr,
+                estimatedDeliveryTime,
+                items: items.map((item) => ({
+                    dish: { id: item.dishId },
+                    quantity: item.quantity,
+                    price: item.unitPrice,
+                })),
+            };
+
+            const response = await api.post<any>('/orders', payload);
+            const createdOrder = response?.data ?? response;
+            const orderId = createdOrder?.id as number | undefined;
+
+            if (!orderId) {
+                throw new Error('El backend no devolvió el id del pedido.');
+            }
+
+            await cartService.clearCart();
             cartStore.clearCart();
 
-            // Notificación de éxito
             addNotification({
                 type: 'success',
                 title: SUCCESS_MESSAGES.ORDER_PLACED,
@@ -95,11 +148,10 @@ const CheckoutPage: React.FC = () => {
                 duration: 6000,
                 action: {
                     label: 'Ver pedido',
-                    onClick: () => navigate(`/orders/${orderId}`)
-                }
+                    onClick: () => navigate(`/orders/${orderId}`),
+                },
             });
 
-            // Redirigir a página de confirmación
             navigate(`/orders/${orderId}`);
 
         } catch (error) {

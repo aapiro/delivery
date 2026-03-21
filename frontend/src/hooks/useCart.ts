@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useCartStore, useNotificationStore } from '../store';
 import { Dish } from '../types';
 import { SUCCESS_MESSAGES, ERROR_MESSAGES, ORDER_CONFIG } from '../constants';
+import { cartService } from '../services/cart';
 
 export const useCart = () => {
     const cartStore = useCartStore();
@@ -28,7 +29,7 @@ export const useCart = () => {
     }, [cartStore.items]);
 
     // Función mejorada para agregar al carrito con validaciones
-    const addToCart = (dish: Dish, quantity: number = 1, specialInstructions?: string) => {
+    const addToCart = async (dish: Dish, quantity: number = 1, specialInstructions?: string) => {
         try {
             // Validaciones
             if (!dish.isAvailable) {
@@ -70,15 +71,8 @@ export const useCart = () => {
                 return false;
             }
 
-            // Agregar al carrito
-            cartStore.addItem({
-                dishId: dish.id,
-                dish,
-                quantity,
-                unitPrice: dish.price,
-                specialInstructions,
-                restaurantId: dish.restaurantId,
-            });
+            const backendItems = await cartService.addToCart(dish.id, quantity, specialInstructions);
+            cartStore.setCartFromBackend(backendItems);
 
             // Notificación de éxito
             addNotification({
@@ -101,9 +95,9 @@ export const useCart = () => {
     };
 
     // Función para actualizar cantidad con validaciones
-    const updateQuantity = (itemId: string, newQuantity: number) => {
+    const updateQuantity = async (itemId: string, newQuantity: number) => {
         if (newQuantity < 1) {
-            removeFromCart(itemId);
+            await removeFromCart(itemId);
             return;
         }
 
@@ -117,29 +111,59 @@ export const useCart = () => {
             return;
         }
 
-        cartStore.updateQuantity(itemId, newQuantity); // Usar la función del store
+        try {
+            const backendItems = await cartService.updateCartItem(itemId, newQuantity);
+            cartStore.setCartFromBackend(backendItems);
+        } catch {
+            addNotification({
+                type: 'error',
+                title: 'Error',
+                message: 'No se pudo actualizar el carrito',
+                duration: 4000,
+            });
+        }
     };
 
     // Función para remover del carrito
-    const removeFromCart = (itemId: string) => {
-        cartStore.removeItem(itemId); // Usar removeItem del store
-        addNotification({
-            type: 'info',
-            title: 'Producto eliminado',
-            message: 'El producto fue eliminado del carrito',
-            duration: 3000,
-        });
+    const removeFromCart = async (itemId: string) => {
+        try {
+            const backendItems = await cartService.removeFromCart(itemId);
+            cartStore.setCartFromBackend(backendItems);
+            addNotification({
+                type: 'info',
+                title: 'Producto eliminado',
+                message: 'El producto fue eliminado del carrito',
+                duration: 3000,
+            });
+        } catch {
+            addNotification({
+                type: 'error',
+                title: 'Error',
+                message: 'No se pudo eliminar el producto',
+                duration: 3000,
+            });
+        }
     };
 
     // Función para limpiar carrito completo
-    const clearCart = () => {
-        cartStore.clearCart();
-        addNotification({
-            type: 'info',
-            title: 'Carrito vaciado',
-            message: 'Se eliminaron todos los productos del carrito',
-            duration: 3000,
-        });
+    const clearCart = async () => {
+        try {
+            await cartService.clearCart();
+            cartStore.clearCart();
+            addNotification({
+                type: 'info',
+                title: 'Carrito vaciado',
+                message: 'Se eliminaron todos los productos del carrito',
+                duration: 3000,
+            });
+        } catch {
+            addNotification({
+                type: 'error',
+                title: 'Error',
+                message: 'No se pudo vaciar el carrito',
+                duration: 3000,
+            });
+        }
     };
 
     // Función para validar antes del checkout

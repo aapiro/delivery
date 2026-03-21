@@ -1,87 +1,125 @@
 package com.ilimitech.delivery.infrastructure.adapter.in.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ilimitech.delivery.application.usecase.CartService;
+import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.HashMap;
 import java.util.Map;
 
 @Path("/cart")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
+@Authenticated
 public class CartResource {
 
-    /**
-     * Get cart contents
-     * GET /cart
-     */
+    @Inject
+    CartService cartService;
+
+    @Inject
+    SecurityIdentity securityIdentity;
+
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     public Response getCart() {
-        // Placeholder implementation - would typically retrieve user's cart from database/session
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Cart retrieved successfully");
-        response.put("items", new Object[0]);  // Empty array for now
-        response.put("total", 0.0);
-        return Response.ok(response).build();
+        CartService.CartSnapshot cart = cartService.getCart(currentUserId());
+        return Response.ok(Map.of(
+                "message", "Cart retrieved successfully",
+                "items", cart.items(),
+                "total", cart.total(),
+                "restaurantId", cart.restaurantId()
+        )).build();
     }
 
-    /**
-     * Add item to cart
-     * POST /cart/add
-     */
     @POST
     @Path("/add")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addToCart(Map<String, Object> cartItem) {
-        // Placeholder implementation - would typically add item to user's cart in database/session
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Item added to cart successfully");
-        response.put("item", cartItem);
-        return Response.ok(response).build();
+    public Response addToCart(AddToCartBody body) {
+        CartService.CartSnapshot cart = cartService.add(
+                currentUserId(),
+                body.dishId,
+                body.quantity,
+                body.specialInstructions
+        );
+        return Response.ok(Map.of(
+                "message", "Item added to cart successfully",
+                "items", cart.items(),
+                "total", cart.total(),
+                "restaurantId", cart.restaurantId()
+        )).build();
     }
 
-    /**
-     * Update quantity of an item in the cart
-     * PUT /cart/update
-     */
     @PUT
     @Path("/update")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateCart(Map<String, Object> updateData) {
-        // Placeholder implementation - would typically update item quantity in user's cart
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Cart updated successfully");
-        response.put("update", updateData);
-        return Response.ok(response).build();
+    public Response updateCart(UpdateCartBody body) {
+        CartService.CartSnapshot cart = cartService.update(
+                currentUserId(),
+                body.itemId,
+                body.quantity
+        );
+        return Response.ok(Map.of(
+                "message", "Cart updated successfully",
+                "items", cart.items(),
+                "total", cart.total(),
+                "restaurantId", cart.restaurantId()
+        )).build();
     }
 
-    /**
-     * Remove item from cart
-     * DELETE /cart/remove
-     */
     @DELETE
     @Path("/remove")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response removeFromCart(Map<String, Object> removeData) {
-        // Placeholder implementation - would typically remove item from user's cart
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Item removed from cart successfully");
-        response.put("removed", removeData);
-        return Response.ok(response).build();
+    public Response removeFromCart(RemoveFromCartBody body) {
+        CartService.CartSnapshot cart = cartService.remove(
+                currentUserId(),
+                body.itemId
+        );
+        return Response.ok(Map.of(
+                "message", "Item removed from cart successfully",
+                "items", cart.items(),
+                "total", cart.total(),
+                "restaurantId", cart.restaurantId()
+        )).build();
     }
 
-    /**
-     * Clear entire cart
-     * DELETE /cart/clear
-     */
     @DELETE
     @Path("/clear")
     public Response clearCart() {
-        // Placeholder implementation - would typically clear user's cart in database/session
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Cart cleared successfully");
-        return Response.ok(response).build();
+        CartService.CartSnapshot cart = cartService.clear(currentUserId());
+        return Response.ok(Map.of(
+                "message", "Cart cleared successfully",
+                "items", cart.items(),
+                "total", cart.total(),
+                "restaurantId", cart.restaurantId()
+        )).build();
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class AddToCartBody {
+        public Long dishId;
+        public Integer quantity;
+        public String specialInstructions;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class UpdateCartBody {
+        public Long itemId;
+        public Integer quantity;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class RemoveFromCartBody {
+        public Long itemId;
+    }
+
+    private Long currentUserId() {
+        if (securityIdentity == null || securityIdentity.isAnonymous()) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+        try {
+            return Long.parseLong(securityIdentity.getPrincipal().getName());
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
     }
 }

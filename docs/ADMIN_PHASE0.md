@@ -21,9 +21,9 @@
 
 - **Usuarios**: fila en `users` con `user_type` ∈ `SUPER_ADMIN`, `ADMIN`, `MANAGER`, `MODERATOR` y `password_hash` (BCrypt).
 - **Endpoints** (`/api` implícito en cliente):
-  - `POST /admin/auth/login` → `{ admin, token, refreshToken, expiresIn }` (JWT con grupo `admin`).
-  - `POST /admin/auth/refresh` → mismo shape.
-  - `POST /admin/auth/logout` | `GET /admin/auth` (perfil) | `PUT /admin/auth` (nombre/email) → **Bearer** obligatorio.
+        - `POST /admin/auth/login` → `{ admin, token, refreshToken, expiresIn }` (JWT con grupo `admin`).
+        - `POST /admin/auth/refresh` → mismo shape.
+        - `POST /admin/auth/logout` | `GET /admin/auth/profile` (perfil) | `PUT /admin/auth/profile` (nombre/email) → **Bearer** obligatorio.
 - **Protección**: recursos bajo `/admin/restaurants`, `/admin/dishes`, `/admin/categories`, `/admin/dashboard`, `.../menu-categories` requieren rol **`admin`** (mismo Bearer).
 - **Login público** `/auth/login`: las cuentas administrativas **no** pueden entrar ahí (deben usar `/admin/auth/login`).
 - **Seed dev** (Liquibase `005-data-seed-admin-user.sql`): `admin@delivery.local` / `admin123` (solo entornos que cargan `data-test`; en dev con Liquibase desde el changelog master).

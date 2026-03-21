@@ -1,14 +1,19 @@
 package com.ilimitech.delivery.infrastructure.adapter.out.persistence;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Table(name = "addresses")
 public class Address {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id")
+    private Long userId;
     
     private String street;
     private String city;
@@ -17,6 +22,20 @@ public class Address {
     private String country;
     @Column(name = "is_default")
     private Boolean isDefault;
+
+    /**
+     * Libre para UI (la tabla ya existe como `delivery_instructions`).
+     * Se mapea con el campo `instructions` del frontend.
+     */
+    @Column(name = "delivery_instructions")
+    private String instructions;
+
+    /**
+     * Etiqueta para UI (tabla: `address_type`).
+     * Ej: HOME / WORK / OTHER
+     */
+    @Column(name = "address_type")
+    private String addressType;
     
     // Constructors
     public Address() {}
@@ -78,11 +97,35 @@ public class Address {
         this.country = country;
     }
     
-    public Boolean getDefault() {
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Boolean getIsDefault() {
         return isDefault;
     }
     
-    public void setDefault(Boolean aDefault) {
+    public void setIsDefault(Boolean aDefault) {
         isDefault = aDefault;
+    }
+
+    public String getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
+    }
+
+    public String getAddressType() {
+        return addressType;
+    }
+
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
     }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CACHE_KEYS } from '../constants';
+import { useAuthStore } from '../store';
 import { loginUser } from '../services/api';
 
 const LoginPage: React.FC = () => {
@@ -9,6 +10,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ const LoginPage: React.FC = () => {
         if (response.refreshToken) {
           localStorage.setItem(CACHE_KEYS.REFRESH_TOKEN, response.refreshToken);
         }
-        localStorage.setItem(CACHE_KEYS.USER, JSON.stringify(response.user));
+        login(response.user as any, response.token);
         
         // Redirigir al usuario a la página principal
         navigate('/');

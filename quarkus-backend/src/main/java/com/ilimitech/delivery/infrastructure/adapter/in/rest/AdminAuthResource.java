@@ -69,6 +69,7 @@ public class AdminAuthResource {
 
     @GET
     @RolesAllowed("admin")
+    @Path("/profile")
     public Response getProfile() {
         long userId = Long.parseLong(securityIdentity.getPrincipal().getName());
         AdminProfileDto profile = adminAuthService.profile(userId);
@@ -77,6 +78,7 @@ public class AdminAuthResource {
 
     @PUT
     @RolesAllowed("admin")
+    @Path("/profile")
     public Response updateProfile(AdminProfileUpdateBody body) {
         long userId = Long.parseLong(securityIdentity.getPrincipal().getName());
         String name = body != null ? body.name : null;

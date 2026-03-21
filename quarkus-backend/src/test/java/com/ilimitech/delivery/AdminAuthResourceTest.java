@@ -78,7 +78,7 @@ class AdminAuthResourceTest {
         given()
                 .header("Authorization", AdminTestAuth.bearerToken())
                 .when()
-                .get("/admin/auth")
+                .get("/admin/auth/profile")
                 .then()
                 .statusCode(200)
                 .body("email", equalTo(AdminTestAuth.EMAIL))

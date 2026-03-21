@@ -48,6 +48,21 @@ public class OrderService {
         if (order.getStatus() == null) {
             order.setStatus(Order.OrderStatus.PENDING);
         }
+
+        // If the request contains items, ensure the bidirectional link is set.
+        // Without this, JPA will fail because OrderItem.order is non-null.
+        if (order.getItems() != null) {
+            order.getItems().forEach(item -> {
+                if (item.getOrder() == null) {
+                    item.setOrder(order);
+                }
+            });
+        }
+
+        // Ensure total amount exists (Quarkus entity requires it as non-null).
+        if (order.getTotalAmount() == null && order.getItems() != null) {
+            order.setTotalAmount(calculateTotalAmount(order.getItems()));
+        }
         
         orderRepository.persist(order);
         return order;

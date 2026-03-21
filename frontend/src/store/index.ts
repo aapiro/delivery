@@ -47,6 +47,11 @@ export const useAuthStore = create<AuthState & AuthActions>()(
                 });
                 // Limpiar otros stores relacionados
                 useCartStore.getState().clearCart();
+
+                // Asegurar que el backend no siga recibiendo un token viejo
+                localStorage.removeItem(CACHE_KEYS.TOKEN);
+                localStorage.removeItem(CACHE_KEYS.REFRESH_TOKEN);
+                localStorage.removeItem(CACHE_KEYS.USER);
             },
 
             updateUser: (userData) => {
@@ -86,6 +91,7 @@ interface CartActions {
     addItem: (item: Omit<CartItem, 'id' | 'totalPrice'>) => void;
     removeItem: (itemId: string) => void;
     updateQuantity: (itemId: string, quantity: number) => void;
+    setCartFromBackend: (items: CartItem[]) => void;
     clearCart: () => void;
     openCart: () => void;
     closeCart: () => void;
@@ -174,6 +180,14 @@ export const useCartStore = create<CartState & CartActions>()(
                 );
 
                 set({ items: updatedItems });
+            },
+
+            setCartFromBackend: (items) => {
+                const restaurantId = items.length > 0 ? items[0].restaurantId : null;
+                set({
+                    items,
+                    restaurantId,
+                });
             },
 
             clearCart: () => {

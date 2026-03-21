@@ -6,6 +6,8 @@ import com.ilimitech.delivery.infrastructure.adapter.out.persistence.Order;
 import com.ilimitech.delivery.application.usecase.OrderService;
 import com.ilimitech.delivery.infrastructure.adapter.out.persistence.RestaurantEntity;
 import com.ilimitech.delivery.application.port.out.RestaurantRepository;
+import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class OrderResource {
 
     @Inject
@@ -31,6 +34,9 @@ public class OrderResource {
     @Inject
     DishRepository dishRepository;
 
+    @Inject
+    SecurityIdentity securityIdentity;
+
     /**
      * Create a new order
      * POST /orders
@@ -39,12 +45,8 @@ public class OrderResource {
     @Transactional
     public Response createOrder(Order order) {
         try {
-            // Validate required fields
-            if (order.getUserId() == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("User ID is required")
-                        .build();
-            }
+            // For security/UX: userId comes from the JWT, not from the client payload.
+            order.setUserId(currentUserId());
             
             if (order.getRestaurant() == null || order.getRestaurant().getId() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -79,7 +81,9 @@ public class OrderResource {
     @GET
     public Response getAllOrders() {
         try {
-            List<Order> orders = orderService.getAllOrders();
+            // Customers should only see their own orders.
+            // (Admin ordering UI uses /admin/* endpoints.)
+            List<Order> orders = orderService.getOrdersByUserId(currentUserId());
             return Response.ok(orders).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -96,13 +100,8 @@ public class OrderResource {
     @Path("/")
     public Response getOrdersByUserId(@QueryParam("userId") Long userId) {
         try {
-            if (userId == null) {
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("User ID query parameter is required")
-                        .build();
-            }
-            
-            List<Order> orders = orderService.getOrdersByUserId(userId);
+            // Backward compatible: ignore query userId and enforce JWT user.
+            List<Order> orders = orderService.getOrdersByUserId(currentUserId());
             return Response.ok(orders).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -121,6 +120,9 @@ public class OrderResource {
         try {
             Optional<Order> order = orderService.getOrderById(id);
             if (order.isPresent()) {
+                if (!currentUserId().equals(order.get().getUserId())) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
                 return Response.ok(order.get()).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
@@ -171,6 +173,11 @@ public class OrderResource {
     @Transactional
     public Response cancelOrder(@PathParam("id") Long id) {
         try {
+            Optional<Order> existing = orderService.getOrderById(id);
+            if (existing.isPresent() && !currentUserId().equals(existing.get().getUserId())) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
             orderService.cancelOrder(id);
             return Response.ok().entity("Order cancelled successfully").build();
         } catch (NotFoundException e) {
@@ -194,6 +201,9 @@ public class OrderResource {
         try {
             Optional<Order> order = orderService.getOrderById(id);
             if (order.isPresent()) {
+                if (!currentUserId().equals(order.get().getUserId())) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
                 // Return order with status and delivery information
                 return Response.ok(order.get()).build();
             } else {
@@ -205,6 +215,17 @@ public class OrderResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error tracking order: " + e.getMessage())
                     .build();
+        }
+    }
+
+    private Long currentUserId() {
+        if (securityIdentity == null || securityIdentity.isAnonymous()) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+        try {
+            return Long.parseLong(securityIdentity.getPrincipal().getName());
+        } catch (NumberFormatException e) {
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
     }
 }
